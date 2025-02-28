@@ -57,7 +57,6 @@ create table attendance_sessions (
 create table attendance_subsessions (
     ass_id int primary key auto_increment,
     ass_name varchar(200) not null,
-    ass_photo_path varchar(200),
     ass_start_time TIMESTAMP NULL,
     ass_end_time TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -69,6 +68,7 @@ create table attendance_subsessions (
 create table student_attendances (
     sa_id int primary key auto_increment,
     sa_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sa_photo_path varchar(200),
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     ass_id int not null,
     student_id int not null,
