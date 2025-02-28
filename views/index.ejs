@@ -1,0 +1,134 @@
+<% showNav = false; %>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+        }
+
+        .login-container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 900px;
+            justify-content: center;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .form-side {
+            padding: 40px;
+            flex: 1;
+            text-align: left;
+        }
+
+        .form-side h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form-side a {
+            color: #0d6efd;
+        }
+
+        .bg-side {
+            flex: 1;
+            background-image: url('img/contohbg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+
+        @media (max-width: 768px) {
+            .bg-side {
+                display: none;
+            }
+
+            .form-side h1 {
+                text-align: center;
+            }
+            .logodetail {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center; /* Optional, if you want to center the text inside the element */
+            }
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .password-container {
+            display: flex;
+            align-items: center;
+        }
+        .bx-show {
+            right: 20px;
+            cursor: pointer;
+            color: #555555;
+            font-size: 24px;
+        }
+        .bx-show:hover {
+            color: #8f8f8f;
+        }
+    </style>
+    <div class="container">
+      <div class="login-container">
+          <!-- Form Section -->
+          <div class="form-side">
+            <!-- add logo here -->
+                  <div class="logodetail d-flex align-items-center mb-5">
+                    <!-- <img src="img/shiroko.jpg" alt="Logo" class="me-2" style="height: 40px;"> -->
+                    <i class='bx bxs-lock-open-alt me-1' style="font-size: 24px;"></i>
+                    <h1 class="mb-0">Masuk</h1>
+                  </div>
+                  <form>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="Enter your username">
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="password-container">
+                            <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                            <!-- <box-icon name='show' id="togglePassword" class="position-absolute show-icon"></box-icon> -->
+                            <i class='bx bx-show position-absolute' id="togglePassword" ></i>
+                        </div>
+                    </div>
+                  <button type="submit" class="btn btn-primary w-100">Masuk</button>
+              </form>
+              <div class="mt-3">
+                  <a href="#">Forgot password?</a>
+              </div>
+              <div class="mt-2">
+                  <p>Don't have an account? <a href="#">Register here</a></p>
+              </div>
+          </div>
+      
+          <!-- Background Section -->
+          <div class="bg-side"></div>
+      </div>
+    </div>
+    <script>
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+      
+        togglePassword.addEventListener('mousedown', function () {
+          passwordInput.type = 'text';
+        });
+      
+        togglePassword.addEventListener('mouseup', function () {
+          passwordInput.type = 'password';
+        });
+      
+        togglePassword.addEventListener('mouseout', function () {
+          passwordInput.type = 'password';
+        });
+      </script>
