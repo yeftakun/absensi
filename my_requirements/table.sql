@@ -72,6 +72,7 @@ create table student_attendances (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     ass_id int not null,
     student_id int not null,
+    pos varchar(200),
     foreign key (ass_id) references attendance_subsessions(ass_id) on update cascade on delete cascade,
     foreign key (student_id) references students(student_id) on update cascade on delete cascade
 );
