@@ -1,18 +1,85 @@
-<nav style="width: 220px; background-color: #f8f9fa; padding: 20px; min-height: 100vh; border-right: 1px solid #dee2e6;">
-    <h3>Menu</h3>
-    <ul class="nav flex-column">
-      <li class="nav-item">
-        <a class="nav-link" href="/home">Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/about">About</a>
-      </li>
-      <li class="nav-item mt-3">
-        <% if (loggedin) { %>
-            <a class="btn btn-danger w-100" href="/logout">Logout</a>
-        <% } else { %>
-            <a class="btn btn-primary w-100" href="/">Login</a>
-        <% } %>
-      </li>
-    </ul>
-  </nav>
+<nav id="sidebar" class="d-none d-md-block" style="width: 220px; background-color: #f8f9fa; padding: 20px; min-height: 100vh; border-right: 1px solid #dee2e6; position: fixed; top: 0; left: 0; z-index: 1000;">
+  <h3>Menu</h3>
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link" href="/home">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/about">About</a>
+    </li>
+    <li class="nav-item mt-3">
+      <% if (loggedin) { %>
+        <button class="btn btn-danger w-100" onclick="confirmLogout()">Logout</button>
+      <% } else { %>
+        <a class="btn btn-primary w-100" href="/">Login</a>
+      <% } %>      
+    </li>
+  </ul>
+</nav>
+
+<!-- Navbar untuk mobile -->
+<div id="mobile-menu" class="d-md-none" style="position: fixed; top: 0; right: 0; z-index: 1001;">
+  <button id="menu-toggle" class="btn btn-primary" style="margin: 10px;">Menu</button>
+</div>
+
+<div id="mobile-sidebar" class="d-md-none" style="width: 220px; background-color: #f8f9fa; padding: 20px; min-height: 100vh; border-left: 1px solid #dee2e6; position: fixed; top: 0; right: -220px; z-index: 1000; transition: right 0.3s;">
+  <h3>Menu</h3>
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link" href="/home">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/about">About</a>
+    </li>
+    <li class="nav-item mt-3">
+      <% if (loggedin) { %>
+        <button class="btn btn-danger w-100" onclick="confirmLogout()">Logout</button>
+      <% } else { %>
+        <a class="btn btn-primary w-100" href="/">Login</a>
+      <% } %>      
+    </li>
+  </ul>
+</div>
+
+<script>
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileSidebar = document.getElementById('mobile-sidebar');
+
+  menuToggle.addEventListener('click', () => {
+    if (mobileSidebar.style.right === '0px') {
+      mobileSidebar.style.right = '-220px';
+    } else {
+      mobileSidebar.style.right = '0px';
+    }
+  });
+  function confirmLogout() {
+    Swal.fire({
+      title: 'Keluar?',
+      text: "Apakah kamu yakin ingin logout?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Ya, logout',
+      cancelButtonText: 'Batal'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = '/logout';
+      }
+    });
+  }
+</script>
+
+<style>
+  body {
+    margin-left: 220px;
+  }
+  @media (max-width: 768px) {
+    #sidebar {
+      display: none;
+    }
+    body {
+      margin-left: 0;
+    }
+  }
+</style>
