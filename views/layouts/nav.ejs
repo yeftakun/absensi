@@ -1,57 +1,96 @@
-<nav id="sidebar" class="d-none d-md-block" style="width: 220px; background-color: #f8f9fa; padding: 20px; min-height: 100vh; border-right: 1px solid #dee2e6; position: fixed; top: 0; left: 0; z-index: 1000;">
-  <h3>Menu</h3>
-  <ul class="nav flex-column">
-    <li class="nav-item">
-      <a class="nav-link" href="/home">Home</a>
+<!-- SIDEBAR DESKTOP -->
+<nav id="sidebar" class="d-none d-md-block" style="width: 220px; background-color: #2b44ff; padding: 20px; min-height: 100vh; position: fixed; top: 0; left: 0; z-index: 1000;">
+  <h4 class="text-white fw-bold" style="margin-top: 10px; font-size: 20px;">Menu.</h4>
+  <ul class="nav flex-column mt-4">
+    <li class="nav-item mb-2">
+      <a class="nav-link text-white d-flex align-items-center" href="/home">
+        <i class="bi bi-house me-2"></i> Home
+      </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" href="/about">About</a>
+    <li class="nav-item mb-2">
+      <a class="nav-link text-white d-flex align-items-center" href="/monitor">
+        <i class="bi bi-graph-up me-2"></i> Pantau
+      </a>
     </li>
-    <li class="nav-item mt-3">
+    <li class="nav-item mb-2">
+      <a class="nav-link text-white d-flex align-items-center" href="/data">
+        <i class="bi bi-database me-2"></i> Data
+      </a>
+    </li>
+    <li class="nav-item mb-2">
+      <a class="nav-link text-white d-flex align-items-center" href="/about">
+        <i class="bi bi-info-circle me-2"></i> About
+      </a>
+    </li>
+    <li class="nav-item mt-4">
       <% if (loggedin) { %>
-        <button class="btn btn-danger w-100" onclick="confirmLogout()">Logout</button>
+        <button class="btn btn-outline-light w-100" onclick="confirmLogout()">Logout</button>
       <% } else { %>
-        <a class="btn btn-primary w-100" href="/">Login</a>
-      <% } %>      
+        <a class="btn btn-light w-100" href="/">Login</a>
+      <% } %>
     </li>
   </ul>
 </nav>
 
-<!-- Navbar untuk mobile -->
-<div id="mobile-menu" class="d-md-none" style="position: fixed; top: 0; right: 0; z-index: 1001;">
-  <button id="menu-toggle" class="btn btn-primary" style="margin: 10px;">Menu</button>
+<!-- NAVBAR MOBILE -->
+<div id="mobile-menu" class="d-md-none mt-3 me-3" style="position: fixed; top: 0; right: 0; z-index: 1001; background-color: #2b44ff; padding: 10px; border-left: 1px solid #fff; border-bottom: 1px solid #fff; border-radius: 50px;">
+  <img src="img/shiroko.jpg" id="menu-toggle" alt="Profile Photo" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;">
 </div>
 
-<div id="mobile-sidebar" class="d-md-none" style="width: 220px; background-color: #f8f9fa; padding: 20px; min-height: 100vh; border-left: 1px solid #dee2e6; position: fixed; top: 0; right: -220px; z-index: 1000; transition: right 0.3s;">
-  <h3>Menu</h3>
-  <ul class="nav flex-column">
-    <li class="nav-item">
-      <a class="nav-link" href="/home">Home</a>
+<div id="mobile-sidebar" class="d-md-none" style="width: 220px; background-color: #2b44ff; color: white; padding: 20px; min-height: 100vh; border-left: 1px solid #dee2e6; position: fixed; top: 0; right: -220px; z-index: 1000; transition: right 0.3s;">
+  <h4 class="text-white fw-bold" style="margin-top: 8px;">Menu.</h4>
+  <ul class="nav flex-column mt-4">
+    <li class="nav-item mb-2">
+      <a class="nav-link text-white d-flex align-items-center" href="/home">
+        <i class="bi bi-house me-2"></i> Home
+      </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" href="/about">About</a>
+    <li class="nav-item mb-2">
+      <a class="nav-link text-white d-flex align-items-center" href="/monitor">
+        <i class="bi bi-graph-up me-2"></i> Pantau
+      </a>
     </li>
-    <li class="nav-item mt-3">
+    <li class="nav-item mb-2">
+      <a class="nav-link text-white d-flex align-items-center" href="/data">
+        <i class="bi bi-database me-2"></i> Data
+      </a>
+    </li>
+    <li class="nav-item mb-2">
+      <a class="nav-link text-white d-flex align-items-center" href="/about">
+        <i class="bi bi-info-circle me-2"></i> About
+      </a>
+    </li>
+    <li class="nav-item mt-4">
       <% if (loggedin) { %>
-        <button class="btn btn-danger w-100" onclick="confirmLogout()">Logout</button>
+        <button class="btn btn-outline-light w-100" onclick="confirmLogout()">Logout</button>
       <% } else { %>
-        <a class="btn btn-primary w-100" href="/">Login</a>
-      <% } %>      
+        <a class="btn btn-light w-100" href="/">Login</a>
+      <% } %>
     </li>
   </ul>
 </div>
 
+<!-- JAVASCRIPT -->
 <script>
   const menuToggle = document.getElementById('menu-toggle');
   const mobileSidebar = document.getElementById('mobile-sidebar');
+  const mobileMenu = document.getElementById('mobile-menu');
 
   menuToggle.addEventListener('click', () => {
-    if (mobileSidebar.style.right === '0px') {
+    const isOpen = mobileSidebar.style.right === '0px';
+    mobileSidebar.style.right = isOpen ? '-220px' : '0px';
+    mobileMenu.classList.toggle('active', !isOpen);
+  });
+
+  document.addEventListener('click', (event) => {
+    const isClickInsideSidebar = mobileSidebar.contains(event.target);
+    const isClickOnToggle = menuToggle.contains(event.target);
+    if (!isClickInsideSidebar && !isClickOnToggle) {
       mobileSidebar.style.right = '-220px';
-    } else {
-      mobileSidebar.style.right = '0px';
+      mobileMenu.classList.remove('active');
     }
   });
+
   function confirmLogout() {
     Swal.fire({
       title: 'Keluar?',
@@ -68,18 +107,69 @@
       }
     });
   }
+
+  // Tambahkan class aktif berdasarkan path
+  document.addEventListener("DOMContentLoaded", function () {
+    const path = window.location.pathname;
+    const links = document.querySelectorAll('.nav-link');
+
+    links.forEach(link => {
+      const href = link.getAttribute('href');
+      if (path === href) {
+        link.classList.add('active');
+      }
+    });
+  });
 </script>
 
+<!-- STYLING -->
 <style>
   body {
+    margin-top: 120px;
     margin-left: 220px;
   }
+
   @media (max-width: 768px) {
     #sidebar {
       display: none;
     }
     body {
       margin-left: 0;
+      margin-top: 10px;
     }
+    .title-header,
+    #dashboard-header {
+      display: none !important;
+    }
+  }
+
+  #mobile-menu {
+    transition: all 0.3s ease;
+  }
+
+  #mobile-menu.active {
+    background-color: transparent !important;
+    padding: 0 !important;
+    border-left: none !important;
+    border-bottom: none !important;
+    border-radius: 0 !important;
+  }
+
+  .nav-link.d-flex {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px; /* beri jarak antara ikon dan teks */
+    position: relative;
+  }
+
+  .nav-link.active::after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    right: 10px;
   }
 </style>

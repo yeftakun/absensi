@@ -94,6 +94,22 @@ app.get('/about', (req, res) => {
   });
 });
 
+app.get('/monitor', (req, res) => {
+  res.render('monitor', {
+    layout: 'layouts/main-layout',
+    title: "Pantau",
+    loggedin: req.session.loggedin || false
+  });
+});
+
+app.get('/data', (req, res) => {
+  res.render('data', {
+    layout: 'layouts/main-layout',
+    title: "Pantau",
+    loggedin: req.session.loggedin || false
+  })
+})
+
 app.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {

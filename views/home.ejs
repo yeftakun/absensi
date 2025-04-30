@@ -2,13 +2,9 @@
   <%- include('layouts/nav') %>
 
   <main class="container py-4" style="flex-grow: 1;">
-
-    <!-- Welcome Text -->
-    <div class="mb-4">
-      <h2>Dashboard Data Kehadiran Siswa</h2>
-      <p class="text-muted">Kelola data presensi siswa dengan mudah dan cepat.</p>
-    </div>
-
+    <!-- Header -->
+    <%- include('layouts/header-main') %>
+    
     <!-- Summary Cards -->
     <div class="row mb-4">
       <div class="col-md-3 mb-3">
@@ -45,8 +41,53 @@
       </div>
     </div>
 
+  <!-- Ringkasan Aktivitas Hari Ini -->
+<div class="row mb-4">
+  <div class="col-md-6 mb-3">
+    <div class="card h-100">
+      <div class="card-header bg-light">
+        Aktivitas Hari Ini
+      </div>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Absensi Tercatat: <strong>180</strong> siswa</li>
+          <li class="list-group-item">Sesi Berlangsung: <strong>2</strong></li>
+          <li class="list-group-item">Guru Login Hari Ini: <strong>5</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grafik Ringkas (Placeholder) -->
+  <div class="col-md-6 mb-3">
+    <div class="card h-100">
+      <div class="card-header bg-light">
+        Statistik Mingguan
+      </div>
+      <div class="card-body">
+        <canvas id="chartMingguan" height="150"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Log Aktivitas Terakhir dengan Scrollspy -->
+<div class="mb-4">
+  <h4>Aktivitas Terakhir</h4>
+  <div class="scrollspy-log border rounded" style="max-height: 200px; overflow-y: auto;">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">[08:10] Siswa <strong>Rina</strong> melakukan absen</li>
+      <li class="list-group-item">[08:05] Guru <strong>Pak Dedi</strong> membuat sesi baru</li>
+      <li class="list-group-item">[07:50] Admin <strong>Bu Rani</strong> menambahkan siswa baru</li>
+      <li class="list-group-item">[07:45] Siswa <strong>Andi</strong> melakukan absen</li>
+      <li class="list-group-item">[07:40] Admin <strong>Bu Wati</strong> menghapus sesi lama</li>
+      <!-- Tambahkan log lainnya di sini -->
+    </ul>
+  </div>
+</div>
+
   <!-- Absensi Hari Ini & Sesi Berlangsung -->
-  <div class="row mb-4">
+  <!-- <div class="row mb-4">
     <div class="col-md-6 mb-3">
       <div class="card h-100">
         <div class="card-header">
@@ -60,9 +101,9 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
-    <div class="col-md-6 mb-3">
+    <!-- <div class="col-md-6 mb-3">
       <div class="card h-100">
         <div class="card-header">
           Sesi Berlangsung
@@ -74,10 +115,21 @@
         </div>
       </div>
     </div>
+  </div> -->
+  
+  <!-- Aksi Cepat -->
+  <div class="mb-4">
+    <h4>Aksi Cepat</h4>
+    <div class="d-flex flex-wrap gap-2">
+      <a href="#" class="btn btn-primary">Tambah Guru</a>
+      <a href="#" class="btn btn-success">Tambah Siswa</a>
+      <a href="#" class="btn btn-warning">Buat Sesi Baru</a>
+      <a href="#" class="btn btn-info">Lihat Laporan</a>
+    </div>
   </div>
 
   <!-- Foto Absensi Terbaru -->
-  <div class="mb-4">
+  <!-- <div class="mb-4">
     <h4>Absensi Terbaru (Kelas X - Matematika)</h4>
     <div class="row">
       <div class="col-6 col-md-3 mb-3">
@@ -98,20 +150,8 @@
           </div>
         </div>
       </div>
-      <!-- Tambahkan lebih banyak foto jika mau -->
     </div>
-  </div>
-
-  <!-- Aksi Cepat -->
-  <div class="mb-4">
-    <h4>Aksi Cepat</h4>
-    <div class="d-flex flex-wrap gap-2">
-      <a href="#" class="btn btn-primary">Tambah Guru</a>
-      <a href="#" class="btn btn-success">Tambah Siswa</a>
-      <a href="#" class="btn btn-warning">Buat Sesi Baru</a>
-      <a href="#" class="btn btn-info">Lihat Laporan</a>
-    </div>
-  </div>
+  </div> -->
 
   <!-- Notifikasi -->
   <div class="mb-4">
@@ -120,3 +160,27 @@
     </div>
   </main>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('chartMingguan').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum'],
+      datasets: [{
+        label: 'Jumlah Absen',
+        data: [120, 130, 125, 140, 150],
+        backgroundColor: 'rgba(54, 162, 235, 0.7)'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>

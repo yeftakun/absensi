@@ -2,121 +2,36 @@
   <%- include('layouts/nav') %>
 
   <main class="container py-4" style="flex-grow: 1;">
+    <!-- Header -->
+    <%- include('layouts/header-main') %>
 
-    <!-- Welcome Text -->
-    <div class="mb-4">
-      <h2>Selamat datang di Dashboard Admin!</h2>
-      <p class="text-muted">Kelola data absensi siswa dengan mudah dan cepat.</p>
-    </div>
-
-    <!-- Summary Cards -->
-    <div class="row mb-4">
-      <div class="col-md-3 mb-3">
-        <div class="card text-white bg-primary h-100">
-          <div class="card-body">
-            <h5 class="card-title">Guru</h5>
-            <p class="card-text fs-3">10</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 mb-3">
-        <div class="card text-white bg-success h-100">
-          <div class="card-body">
-            <h5 class="card-title">Siswa</h5>
-            <p class="card-text fs-3">200</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 mb-3">
-        <div class="card text-white bg-info h-100">
-          <div class="card-body">
-            <h5 class="card-title">Orang Tua</h5>
-            <p class="card-text fs-3">190</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 mb-3">
-        <div class="card text-white bg-warning h-100">
-          <div class="card-body">
-            <h5 class="card-title">Sesi Aktif</h5>
-            <p class="card-text fs-3">2</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  <!-- Absensi Hari Ini & Sesi Berlangsung -->
-  <div class="row mb-4">
-    <div class="col-md-6 mb-3">
-      <div class="card h-100">
-        <div class="card-header">
-          Absensi Hari Ini
-        </div>
-        <div class="card-body">
-          <p>Sudah Absen: 180 siswa</p>
-          <p>Belum Absen: 20 siswa</p>
-          <div class="progress">
-            <div class="progress-bar" style="width: 90%;">90%</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6 mb-3">
-      <div class="card h-100">
-        <div class="card-header">
-          Sesi Berlangsung
-        </div>
-        <div class="card-body">
-          <h5>Kelas X - Matematika</h5>
-          <p>12/04/2025 | 08:00 - 09:30</p>
-          <span class="badge bg-success">Sedang Berlangsung</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Foto Absensi Terbaru -->
-  <div class="mb-4">
-    <h4>Foto Absensi Terbaru</h4>
+    <!-- About Content -->
     <div class="row">
-      <div class="col-6 col-md-3 mb-3">
-        <div class="card">
-          <img src="img/shiroko.jpg" class="card-img-top" alt="Foto Siswa 1" style="height: 300px; object-fit: cover;">
+      <div class="col-12">
+        <div class="card shadow-sm">
           <div class="card-body">
-            <h6 class="card-title">Andi Saputra</h6>
-            <p class="card-text"><small>Pos A</small> | <small>08:05</small></p>
+            <h3 class="card-title mb-3">Tentang Aplikasi</h3>
+            <p class="card-text">
+              Aplikasi ini dirancang untuk membantu pengelolaan sesi kelas secara efektif dan efisien. Dengan fitur pencarian, filter status, dan pemantauan sesi secara real-time, aplikasi ini memberikan kemudahan bagi guru, admin, maupun pengelola kegiatan pembelajaran.
+            </p>
+            <p class="card-text">
+              Fitur utama:
+              <ul>
+                <li>Manajemen sesi dengan filter dan pencarian</li>
+                <li>Monitoring status sesi aktif dan selesai</li>
+                <li>Notifikasi dan laporan aktivitas</li>
+              </ul>
+            </p>
+            <p class="card-text">
+              Aplikasi ini merupakan bagian dari proyek <strong>PKM Karya Inovatif</strong> dan dikembangkan oleh tim mahasiswa Universitas Sam Ratulangi.
+            </p>
+            <p class="card-text">
+              Versi: <strong>1.0.0</strong><br>
+              Tanggal Rilis: <strong>April 2025</strong>
+            </p>
           </div>
         </div>
       </div>
-      <div class="col-6 col-md-3 mb-3">
-        <div class="card">
-          <img src="img/logo_sekolah.png" class="card-img-top" alt="Foto Siswa 2" style="height: 300px; object-fit: cover;">
-          <div class="card-body">
-            <h6 class="card-title">Budi Santoso</h6>
-            <p class="card-text"><small>Pos B</small> | <small>08:10</small></p>
-          </div>
-        </div>
-      </div>
-      <!-- Tambahkan lebih banyak foto jika mau -->
-    </div>
-  </div>
-
-  <!-- Aksi Cepat -->
-  <div class="mb-4">
-    <h4>Aksi Cepat</h4>
-    <div class="d-flex flex-wrap gap-2">
-      <a href="#" class="btn btn-primary">Tambah Guru</a>
-      <a href="#" class="btn btn-success">Tambah Siswa</a>
-      <a href="#" class="btn btn-warning">Buat Sesi Baru</a>
-      <a href="#" class="btn btn-info">Lihat Laporan</a>
-    </div>
-  </div>
-
-  <!-- Notifikasi -->
-  <div class="mb-4">
-    <div class="alert alert-danger" role="alert">
-      Perhatian! 2 siswa belum melakukan absensi hari ini.
     </div>
   </main>
 </div>
