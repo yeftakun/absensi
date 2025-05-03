@@ -3,19 +3,18 @@ const expressLayouts = require('express-ejs-layouts');
 const mysql = require('mysql2');
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const app = express();
 const port = 3001;
-
-app.use(express.urlencoded({ extended: true }));
 
 // MySQL Connection
 const db = mysql.createConnection({
   host: 'localhost',
   port: 3309,
-  user: 'root', // default root (kalau pakai user lain ubah di sini)
-  password: '', // kosong (tidak pakai password)
-  database: 'try_login'
+  user: 'root',
+  password: '',
+  database: 'absensi_db'
 });
 
 db.connect((err) => {
@@ -25,12 +24,13 @@ db.connect((err) => {
 
 // Middlewares
 app.use(expressLayouts);
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Session
 app.use(session({
-  secret: 'secretkey', // bebas, buat session encryption
+  secret: 'secretkey',
   resave: false,
   saveUninitialized: true
 }));
@@ -40,7 +40,7 @@ app.set('view engine', 'ejs');
 
 // Routes
 app.get('/', (req, res) => {
-  res.render('index', { 
+  res.render('index', {
     layout: 'layouts/main-layout',
     title: "Login",
     error: null
@@ -50,16 +50,15 @@ app.get('/', (req, res) => {
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  db.query('SELECT * FROM users WHERE user_name = ? AND user_pass = ?', [username, password], (err, results) => {
+  db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, results) => {
     if (err) throw err;
 
     if (results.length > 0) {
-      // Login sukses
       req.session.loggedin = true;
-      req.session.name = results[0].name;
+      req.session.name = results[0].username;
+      req.session.role = results[0].role;
       res.redirect('/home');
     } else {
-      // Login gagal
       res.render('index', {
         layout: 'layouts/main-layout',
         title: "Login",
@@ -102,13 +101,63 @@ app.get('/monitor', (req, res) => {
   });
 });
 
-app.get('/data', (req, res) => {
-  res.render('data', {
+app.get('/session_monitor', (req, res) => {
+  res.render('session_monitor', {
     layout: 'layouts/main-layout',
     title: "Pantau",
     loggedin: req.session.loggedin || false
-  })
-})
+  });
+});
+
+// Data Route - load semua data yang dibutuhkan
+app.get('/data', (req, res) => {
+  const queries = {
+    parents: 'SELECT * FROM parents',
+    students: 'SELECT * FROM students',
+    teachers: 'SELECT * FROM teachers',
+    sessions: 'SELECT * FROM attendance_sessions',
+    users: 'SELECT * FROM users'
+  };
+
+  const results = {};
+
+  // Jalankan query secara berurutan
+  db.query(queries.parents, (err, parents) => {
+    if (err) throw err;
+    results.parents = parents;
+
+    db.query(queries.students, (err, students) => {
+      if (err) throw err;
+      results.students = students;
+
+      db.query(queries.teachers, (err, teachers) => {
+        if (err) throw err;
+        results.teachers = teachers;
+
+        db.query(queries.sessions, (err, sessions) => {
+          if (err) throw err;
+          results.sessions = sessions;
+
+          db.query(queries.users, (err, users) => {
+            if (err) throw err;
+            results.users = users;
+
+            res.render('data', {
+              layout: 'layouts/main-layout',
+              title: "Data",
+              loggedin: req.session.loggedin || false,
+              parents: results.parents,
+              students: results.students,
+              teachers: results.teachers,
+              sessions: results.sessions,
+              users: results.users
+            });
+          });
+        });
+      });
+    });
+  });
+});
 
 app.get('/logout', (req, res) => {
   req.session.destroy((err) => {
@@ -120,7 +169,7 @@ app.get('/logout', (req, res) => {
   });
 });
 
-// 404
+// 404 Not Found
 app.use((req, res) => {
   res.status(404).render('404', {
     layout: 'layouts/main-layout',
@@ -129,5 +178,5 @@ app.use((req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });

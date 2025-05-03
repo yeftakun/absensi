@@ -1,165 +1,400 @@
 <div style="display: flex; min-height: 100vh;">
-    <%- include('layouts/nav') %>
-  
-    <main class="container py-4" style="flex-grow: 1; position: relative;">
-      <!-- Header -->
-      <%- include('layouts/header-main') %>
-  
-      <!-- Searchbar Overlay -->
-      <div style="position: absolute; top: 20px; right: 80px; z-index: 10;">
-        <input type="text" class="form-control" placeholder="Search..." style="width: 250px;">
+  <%- include('layouts/nav') %>
+
+  <main class="container py-4 position-relative" style="flex-grow: 1;">
+    <!-- Header -->
+    <%- include('layouts/header-main') %>
+
+    <!-- Search Bar Overlay -->
+    <!-- Modern Search Bar -->
+    <div class="position-absolute top-0 end-0 mt-3 me-5">
+      <div class="input-group shadow-sm" style="width: 280px;">
+        <span class="input-group-text bg-white border-end-0" style="border-radius: 20px 0 0 20px;">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" class="form-control border-start-0" placeholder="Cari Data..." 
+              style="border-radius: 0 20px 20px 0; transition: all 0.3s ease;">
       </div>
-  
-      <!-- ScrollSpy Nav -->
-      <div class="row mb-4">
-        <div class="col-md-3">
-          <div id="list-example" class="list-group position-sticky top-0">
-            <a class="list-group-item list-group-item-action" href="#users">Users</a>
-            <a class="list-group-item list-group-item-action" href="#teachers">Teachers</a>
-            <a class="list-group-item list-group-item-action" href="#parents">Parents</a>
-            <a class="list-group-item list-group-item-action" href="#students">Students</a>
-            <a class="list-group-item list-group-item-action" href="#attendance_sessions">Attendance Sessions</a>
-            <a class="list-group-item list-group-item-action" href="#attendance_subsessions">Attendance Subsessions</a>
-            <a class="list-group-item list-group-item-action" href="#student_attendances">Student Attendances</a>
+    </div>
+
+
+    <!-- Wilayah Tabel Users -->
+    <div class="col-md-12 mt-5 mb-4">
+      <div class="table-header mb-3 d-flex justify-content-between align-items-center">
+        <h4 class="card-title">Data Users</h4>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahUser">
+          <i class="bi bi-plus"></i> Tambah
+        </button>        
+      </div>
+      <div class="card border-primary">
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+          <div id="data-users" class="mb-4">
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>WA Number</th>
+                    <th>Created</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Contoh data statis -->
+                  <% // Loop di sini jika dari database %>
+                  <tr>
+                    <td>1</td>
+                    <td>admin01</td>
+                    <td>admin@mail.com</td>
+                    <td>admin</td>
+                    <td>081234567890</td>
+                    <td>2025-04-29</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning">Edit</button>
+                      <button class="btn btn-sm btn-danger">Hapus</button>
+                    </td>
+                  </tr>
+                  <!-- Tambahan data lainnya -->
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-  
-        <div class="col-md-9">
-  
-          <!-- USERS -->
-          <div id="users" class="mb-5">
-            <h4>Users</h4>
-            <div style="max-height: 300px; overflow-y: auto;">
-              <table class="table table-bordered table-striped">
-                <thead>
+      </div>
+    </div>
+
+    <!-- MOdal User -->
+     <!-- Modal Tambah User -->
+    <div class="modal fade" id="modalTambahUser" tabindex="-1" aria-labelledby="modalTambahUserLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form action="/user/add" method="POST" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTambahUserLabel">Tambah Data User</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input type="text" name="username" class="form-control" id="username" required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" name="password" class="form-control" id="password" required>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" id="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="role" class="form-label">Role</label>
+              <select name="role" id="role" class="form-select" required>
+                <option value="">Pilih Role</option>
+                <option value="admin">Admin</option>
+                <option value="guru">Guru</option>
+                <option value="murid">Murid</option>
+                <option value="orangtua">Orang Tua</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="wa_num" class="form-label">WhatsApp number</label>
+              <input type="text" name="wa_num" class="form-control" id="wa_num" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- Wilayah Tabel Guru -->
+    <div class="col-md-12 mb-4">
+      <div class="table-header mb-3 d-flex justify-content-between align-items-center">
+        <h4 class="card-title">Data Guru</h4>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahGuru">
+          <i class="bi bi-plus"></i> Tambah
+        </button>        
+      </div>
+      <div class="card border-success">
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+          <div id="data-teachers" class="mb-4">
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped align-middle">
+                <thead class="table-light">
                   <tr>
-                    <th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>WA</th><th>Created</th>
+                    <th>ID</th>
+                    <th>Nama</th>
+                    <th>NIP</th>
+                    <th>Foto</th>
+                    <th>User ID</th>
+                    <th>Created</th>
+                    <th>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>1</td><td>admin</td><td>admin@mail.com</td><td>admin</td><td>+628123456789</td><td>2024-01-01</td>
+                    <td>1</td>
+                    <td>Pak Dedi</td>
+                    <td>12345678</td>
+                    <td><img src="/img/teacher1.jpg" alt="Foto" width="50"></td>
+                    <td>2</td>
+                    <td>2025-04-29</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning">Edit</button>
+                      <button class="btn btn-sm btn-danger">Hapus</button>
+                    </td>
                   </tr>
+                  <!-- Tambahan data lainnya -->
                 </tbody>
               </table>
             </div>
           </div>
-  
-          <!-- TEACHERS -->
-          <div id="teachers" class="mb-5">
-            <h4>Teachers</h4>
-            <div style="max-height: 300px; overflow-y: auto;">
-              <table class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>ID</th><th>Name</th><th>NIP</th><th>Photo</th><th>User ID</th><th>Created</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td><td>John Doe</td><td>123456</td><td>photo.jpg</td><td>1</td><td>2024-01-01</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-  
-          <!-- PARENTS -->
-          <div id="parents" class="mb-5">
-            <h4>Parents</h4>
-            <div style="max-height: 300px; overflow-y: auto;">
-              <table class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>ID</th><th>Name</th><th>User ID</th><th>Created</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td><td>Jane Doe</td><td>2</td><td>2024-01-01</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-  
-          <!-- STUDENTS -->
-          <div id="students" class="mb-5">
-            <h4>Students</h4>
-            <div style="max-height: 300px; overflow-y: auto;">
-              <table class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>ID</th><th>NIS</th><th>NISN</th><th>Name</th><th>DOB</th><th>POB</th><th>Photo</th><th>Address</th><th>RFID</th><th>Parent ID</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td><td>1234</td><td>5678</td><td>Student A</td><td>2005-06-01</td><td>City A</td><td>photo.jpg</td><td>Jl. Kebon</td><td>RFID123</td><td>1</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-  
-          <!-- ATTENDANCE SESSIONS -->
-          <div id="attendance_sessions" class="mb-5">
-            <h4>Attendance Sessions</h4>
-            <div style="max-height: 300px; overflow-y: auto;">
-              <table class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>ID</th><th>Name</th><th>Created</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td><td>Sesi Pagi</td><td>2024-01-01</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-  
-          <!-- ATTENDANCE SUBSESSIONS -->
-          <div id="attendance_subsessions" class="mb-5">
-            <h4>Attendance Subsessions</h4>
-            <div style="max-height: 300px; overflow-y: auto;">
-              <table class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>ID</th><th>Name</th><th>Start</th><th>End</th><th>Session ID</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td><td>Masuk Pagi</td><td>07:00</td><td>07:30</td><td>1</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-  
-          <!-- STUDENT ATTENDANCES -->
-          <div id="student_attendances" class="mb-5">
-            <h4>Student Attendances</h4>
-            <div style="max-height: 300px; overflow-y: auto;">
-              <table class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>ID</th><th>Time</th><th>Photo</th><th>Student ID</th><th>Subsession ID</th><th>Pos</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td><td>2024-01-01 07:05</td><td>attend.jpg</td><td>1</td><td>1</td><td>Depan Kelas</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-  
         </div>
       </div>
-    </main>
-  </div>
+    </div>
+
+    <div class="modal fade" id="modalTambahGuru" tabindex="-1" aria-labelledby="modalTambahGuruLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form action="/guru/add" method="POST" enctype="multipart/form-data" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTambahGuruLabel">Tambah Data Guru</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="teacher_name" class="form-label">Nama Guru</label>
+              <input type="text" name="teacher_name" class="form-control" id="teacher_name" required>
+            </div>
+            <div class="mb-3">
+              <label for="nip" class="form-label">NIP</label>
+              <input type="text" name="nip" class="form-control" id="nip">
+            </div>
+            <div class="mb-3">
+              <label for="teacher_photo" class="form-label">Foto (1:1)</label>
+              <input type="file" name="photo" accept="image/*" class="form-control" id="teacher_photo" onchange="previewImage(event, 'previewGuru')">
+              <img id="previewGuru" class="img-thumbnail mt-2" style="display:none; max-width: 150px;">
+            </div>
+            <div class="mb-3">
+              <label for="username_guru" class="form-label">Username (Opsional)</label>
+              <input type="text" name="username" class="form-control" id="username_guru">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+
+    <!-- Tambahkan Tabel lainnya -->
+     <!-- Wilayah Tabel Orang Tua -->
+    <div class="col-md-12 mb-4">
+      <div class="table-header mb-3 d-flex justify-content-between align-items-center">
+        <h4 class="card-title">Data Orang Tua</h4>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahOrangTua">
+          <i class="bi bi-plus"></i> Tambah
+        </button>        
+      </div>
+      <div class="card border-warning">
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+          <div id="data-parents" class="mb-4">
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>Nama Orang Tua</th>
+                    <th>User ID</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Contoh data statis -->
+                  <tr>
+                    <td>1</td>
+                    <td>Ibu Sari</td>
+                    <td>3</td>
+                    <td>2025-04-29</td>
+                    <td>2025-04-29</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning">Edit</button>
+                      <button class="btn btn-sm btn-danger">Hapus</button>
+                    </td>
+                  </tr>
+                  <!-- Tambahan data lainnya -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalTambahOrangTua" tabindex="-1" aria-labelledby="modalTambahOrangTuaLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form action="/orangtua/add" method="POST" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTambahOrangTuaLabel">Tambah Data Orang Tua</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="parent_name" class="form-label">Nama Orang Tua</label>
+              <input type="text" name="parent_name" class="form-control" id="parent_name" required>
+            </div>
+            <div class="mb-3">
+              <label for="username_ot" class="form-label">Username (Opsional)</label>
+              <input type="text" name="username" class="form-control" id="username_ot">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+
+    <!-- Wilayah Tabel Siswa -->
+    <div class="col-md-12 mb-4">
+      <div class="table-header mb-3 d-flex justify-content-between align-items-center">
+        <h4 class="card-title">Data Siswa</h4>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambahSiswa">
+          <i class="bi bi-plus"></i> Tambah
+        </button>        
+      </div>
+      <div class="card border-info">
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+          <div id="data-students" class="mb-4">
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>NIS</th>
+                    <th>NISN</th>
+                    <th>Nama</th>
+                    <th>Tanggal Lahir</th>
+                    <th>Tempat Lahir</th>
+                    <th>Foto</th>
+                    <th>Alamat</th>
+                    <th>RFID</th>
+                    <th>User ID</th>
+                    <th>Parent ID</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Contoh data statis -->
+                  <tr>
+                    <td>1</td>
+                    <td>20230001</td>
+                    <td>9900112233</td>
+                    <td>Andi Saputra</td>
+                    <td>2010-01-15</td>
+                    <td>Manado</td>
+                    <td><img src="/img/student1.jpg" alt="Foto" width="50"></td>
+                    <td>Jl. Merdeka No.1</td>
+                    <td>1234567890</td>
+                    <td>4</td>
+                    <td>1</td>
+                    <td>2025-04-29</td>
+                    <td>2025-04-29</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning">Edit</button>
+                      <button class="btn btn-sm btn-danger">Hapus</button>
+                    </td>
+                  </tr>
+                  <!-- Tambahan data lainnya -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalTambahSiswa" tabindex="-1" aria-labelledby="modalTambahSiswaLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form action="/siswa/add" method="POST" enctype="multipart/form-data" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTambahSiswaLabel">Tambah Data Siswa</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="student_name" class="form-label">Nama Siswa</label>
+              <input type="text" name="student_name" class="form-control" id="student_name" required>
+            </div>
+            <div class="mb-3">
+              <label for="nis" class="form-label">NIS</label>
+              <input type="text" name="nis" class="form-control" id="nis" required>
+            </div>
+            <div class="mb-3">
+              <label for="nisn" class="form-label">NISN</label>
+              <input type="text" name="nisn" class="form-control" id="nisn" required>
+            </div>
+            <div class="mb-3">
+              <label for="dob" class="form-label">Tanggal Lahir</label>
+              <input type="date" name="dob" class="form-control" id="dob" required>
+            </div>
+            <div class="mb-3">
+              <label for="pob" class="form-label">Tempat Lahir</label>
+              <input type="text" name="pob" class="form-control" id="pob" required>
+            </div>
+            <div class="mb-3">
+              <label for="student_photo" class="form-label">Foto (1:1)</label>
+              <input type="file" name="photo" accept="image/*" class="form-control" id="student_photo" onchange="previewImage(event, 'previewSiswa')">
+              <img id="previewSiswa" class="img-thumbnail mt-2" style="display:none; max-width: 150px;">
+            </div>
+            <div class="mb-3">
+              <label for="rfid" class="form-label">RFID (opsional)</label>
+              <input type="text" name="rfid" class="form-control" id="rfid">
+            </div>
+            <div class="mb-3">
+              <label for="username_siswa" class="form-label">Username (Opsional)</label>
+              <input type="text" name="username" class="form-control" id="username_siswa">
+            </div>
+            <div class="mb-3">
+              <label for="parent_id" class="form-label">Orang tua</label>
+              <input type="text" name="parent_id" class="form-control" id="parent_id">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+  </main>
+</div>
+<script>
+  function previewImage(event, previewId) {
+    const input = event.target;
+    const reader = new FileReader();
+
+    reader.onload = function(){
+      const img = document.getElementById(previewId);
+      img.src = reader.result;
+      img.style.display = 'block';
+    };
+
+    if(input.files[0]) {
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>

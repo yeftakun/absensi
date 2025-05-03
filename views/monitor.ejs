@@ -31,8 +31,8 @@
           <select id="sortDropdown" class="form-select">
             <option value="waktu-desc">Waktu Terbaru</option>
             <option value="waktu-asc">Waktu Terlama</option>
-            <option value="kelas-asc">Nama Kelas (A-Z)</option>
-            <option value="kelas-desc">Nama Kelas (Z-A)</option>
+            <option value="kelas-asc">Nama Sesi (A-Z)</option>
+            <option value="kelas-desc">Nama Sesi (Z-A)</option>
           </select>
         </div>
         <div class="col-md-4">
@@ -48,11 +48,11 @@
       <!-- Daftar Sesi (Tabel) -->
         <div class="table-responsive mb-4" id="tableWrapper">
             <table class="table table-striped table-bordered align-middle">
-            <thead class="table-dark">
+            <thead class="table-dark" style="position: sticky; top: 0; z-index: 1;">
             <tr>
               <th>#</th>
               <th>Nama Sesi</th>
-              <th>Kelas</th>
+              <th>Jenis</th>
               <th>Mulai</th>
               <th>Berakhir</th>
               <th>Status</th>
@@ -63,8 +63,8 @@
             <!-- Contoh Baris -->
             <tr>
               <td>1</td>
-              <td>Sesi 1 - Matematika</td>
-              <td>Kelas X</td>
+              <td>Matematika</td>
+              <td>Kelas</td>
               <td>08:00, 12/04/2025</td>
               <td>09:00, 12/04/2025</td>
               <td><span class="badge bg-success">Aktif</span></td>
@@ -72,94 +72,103 @@
             </tr>
             <tr>
               <td>2</td>
-              <td>Sesi 2 - Fisika</td>
-              <td>Kelas XI</td>
+              <td>Fisika</td>
+              <td>Kelas</td>
               <td>08:00, 12/04/2025</td>
               <td>09:00, 12/04/2025</td>
               <td><span class="badge bg-secondary">Selesai</span></td>
               <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
             </tr>
             <tr>
-                <td>2</td>
-                <td>Sesi 2 - Fisika</td>
-                <td>Kelas XI</td>
-                <td>08:00, 12/04/2025</td>
-                <td>09:00, 12/04/2025</td>
-                <td><span class="badge bg-secondary">Selesai</span></td>
-                <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Sesi 2 - Fisika</td>
-                <td>Kelas XI</td>
-                <td>08:00, 12/04/2025</td>
-                <td>09:00, 12/04/2025</td>
-                <td><span class="badge bg-secondary">Selesai</span></td>
-                <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Sesi 2 - Fisika</td>
-                <td>Kelas XI</td>
-                <td>08:00, 12/04/2025</td>
-                <td>09:00, 12/04/2025</td>
-                <td><span class="badge bg-secondary">Selesai</span></td>
-                <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Sesi 2 - Fisika</td>
-                <td>Kelas XI</td>
-                <td>08:00, 12/04/2025</td>
-                <td>09:00, 12/04/2025</td>
-                <td><span class="badge bg-secondary">Selesai</span></td>
-                <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Sesi 2 - Fisika</td>
-                <td>Kelas XI</td>
-                <td>08:00, 12/04/2025</td>
-                <td>09:00, 12/04/2025</td>
-                <td><span class="badge bg-secondary">Selesai</span></td>
-                <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Sesi 2 - Fisika</td>
-                <td>Kelas XI</td>
-                <td>08:00, 12/04/2025</td>
-                <td>09:00, 12/04/2025</td>
-                <td><span class="badge bg-secondary">Selesai</span></td>
-                <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Sesi 2 - Fisika</td>
-                <td>Kelas XI</td>
-                <td>08:00, 12/04/2025</td>
-                <td>09:00, 12/04/2025</td>
-                <td><span class="badge bg-secondary">Selesai</span></td>
-                <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Sesi 2 - Fisika</td>
-                <td>Kelas XI</td>
-                <td>08:00, 12/04/2025</td>
-                <td>09:00, 12/04/2025</td>
-                <td><span class="badge bg-secondary">Selesai</span></td>
-                <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Sesi 2 - Fisika</td>
-                <td>Kelas XI</td>
-                <td>08:00, 12/04/2025</td>
-                <td>09:00, 12/04/2025</td>
-                <td><span class="badge bg-secondary">Selesai</span></td>
-                <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-              </tr>
+              <td>3</td>
+              <td>Sosialisasi Pandawara</td>
+              <td>Acara</td>
+              <td>08:00, 12/04/2025</td>
+              <td>09:00, 12/04/2025</td>
+              <td><span class="badge bg-secondary">Selesai</span></td>
+              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Matematika</td>
+              <td>Kelas</td>
+              <td>08:00, 12/04/2025</td>
+              <td>09:00, 12/04/2025</td>
+              <td><span class="badge bg-success">Aktif</span></td>
+              <td><a href="/session_monitor/1" class="btn btn-sm btn-primary">Pantau</a></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Fisika</td>
+              <td>Kelas</td>
+              <td>08:00, 12/04/2025</td>
+              <td>09:00, 12/04/2025</td>
+              <td><span class="badge bg-secondary">Selesai</span></td>
+              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Sosialisasi Pandawara</td>
+              <td>Acara</td>
+              <td>08:00, 12/04/2025</td>
+              <td>09:00, 12/04/2025</td>
+              <td><span class="badge bg-secondary">Selesai</span></td>
+              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Matematika</td>
+              <td>Kelas</td>
+              <td>08:00, 12/04/2025</td>
+              <td>09:00, 12/04/2025</td>
+              <td><span class="badge bg-success">Aktif</span></td>
+              <td><a href="/session_monitor/1" class="btn btn-sm btn-primary">Pantau</a></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Fisika</td>
+              <td>Kelas</td>
+              <td>08:00, 12/04/2025</td>
+              <td>09:00, 12/04/2025</td>
+              <td><span class="badge bg-secondary">Selesai</span></td>
+              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Sosialisasi Pandawara</td>
+              <td>Acara</td>
+              <td>08:00, 12/04/2025</td>
+              <td>09:00, 12/04/2025</td>
+              <td><span class="badge bg-secondary">Selesai</span></td>
+              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Matematika</td>
+              <td>Kelas</td>
+              <td>08:00, 12/04/2025</td>
+              <td>09:00, 12/04/2025</td>
+              <td><span class="badge bg-success">Aktif</span></td>
+              <td><a href="/session_monitor/1" class="btn btn-sm btn-primary">Pantau</a></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Fisika</td>
+              <td>Kelas</td>
+              <td>08:00, 12/04/2025</td>
+              <td>09:00, 12/04/2025</td>
+              <td><span class="badge bg-secondary">Selesai</span></td>
+              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Sosialisasi Pandawara</td>
+              <td>Acara</td>
+              <td>08:00, 12/04/2025</td>
+              <td>09:00, 12/04/2025</td>
+              <td><span class="badge bg-secondary">Selesai</span></td>
+              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
+            </tr>
             <!-- Data lainnya akan di-generate secara dinamis -->
                 <!-- Baris-baris tabel -->
             </tbody>

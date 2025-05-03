@@ -17,7 +17,7 @@ create table teachers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     user_id int not null,
-    foreign key (user_id) references users(user_id) on update cascade on delete cascade
+    foreign key (user_id) references users(user_id) on update cascade on delete cascade 
 );
 
 create table parents (
@@ -47,22 +47,22 @@ create table students (
     foreign key (parent_id) references parents(parent_id) on update cascade on delete cascade
 );
 
+-- Ini ga jadi dipake
+-- create table attendance_sessions (
+--     as_id int primary key auto_increment,
+--     as_name varchar(200) not null,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+-- );
+
 create table attendance_sessions (
     as_id int primary key auto_increment,
     as_name varchar(200) not null,
+    as_type enum('class', 'event') not null,
+    as_start_time TIMESTAMP NULL,
+    as_end_time TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-create table attendance_subsessions (
-    ass_id int primary key auto_increment,
-    ass_name varchar(200) not null,
-    ass_start_time TIMESTAMP NULL,
-    ass_end_time TIMESTAMP NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    as_id int not null,
-    foreign key (as_id) references attendance_sessions(as_id) on update cascade on delete cascade
 );
 
 create table student_attendances (
@@ -70,9 +70,9 @@ create table student_attendances (
     sa_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     sa_photo_path varchar(200),
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    ass_id int not null,
+    as_id int not null,
     student_id int not null,
     pos varchar(200),
-    foreign key (ass_id) references attendance_subsessions(ass_id) on update cascade on delete cascade,
+    foreign key (as_id) references attendance_sessions(as_id) on update cascade on delete cascade,
     foreign key (student_id) references students(student_id) on update cascade on delete cascade
 );

@@ -1,0 +1,149 @@
+<div style="display: flex; min-height: 100vh;">
+    <%- include('layouts/nav') %>
+  
+    <main class="container py-4" style="flex-grow: 1;">
+      <!-- Header -->
+      <%- include('layouts/header-main') %>
+  
+      <!-- Info Sesi -->
+      <div class="mb-4">
+        <div class="d-flex align-items-center mb-3">
+            <a href="javascript:history.back()" class="btn btn-outline-secondary me-2">
+              <i class="bi bi-arrow-left"></i>
+            </a>
+            <h3 class="mb-0">Detail Sesi Kehadiran</h3>
+        </div>                   
+        <div class="card">
+          <div class="card-body">
+            <p><strong>ID Sesi:</strong> 1</p>
+            <p><strong>Nama Sesi:</strong> Kelas X - Matematika</p>
+            <p><strong>Tipe:</strong> Masuk Pagi</p>
+            <p><strong>Waktu Mulai:</strong> 07:30</p>
+            <p><strong>Waktu Selesai:</strong> 08:30</p>
+            <p><strong>Status:</strong> 
+              <span class="badge bg-success">Sisa 15 menit</span> 
+              <!-- Atau: <span class="badge bg-secondary">Selesai</span> -->
+            </p>
+            <p><strong>Dibuat pada:</strong> 2025-04-30 06:00</p>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Statistik Kehadiran -->
+      <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+          <div class="card h-100">
+            <div class="card-header">Statistik Kehadiran</div>
+            <div class="card-body">
+              <p>Sudah Absen: 180 siswa</p>
+              <p>Belum Absen: 20 siswa</p>
+              <div class="progress">
+                <div class="progress-bar bg-success" style="width: 90%;">90%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Absensi Terbaru (Scroll Horizontal) -->
+      <div class="mb-4">
+        <h4>Absensi Terbaru (Kelas X - Matematika)</h4>
+        <div class="d-flex overflow-auto gap-3">
+          <div class="card" style="min-width: 200px;">
+            <img src="/img/shiroko.jpg" class="card-img-top" alt="Foto Siswa 1" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+              <h6 class="card-title">Andi Saputra</h6>
+              <p class="card-text"><small>Pos A</small> | <small>08:05</small></p>
+            </div>
+          </div>
+          <div class="card" style="min-width: 200px;">
+            <img src="/img/shiroko.jpg" class="card-img-top" alt="Foto Siswa 1" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+              <h6 class="card-title">Andi Saputra</h6>
+              <p class="card-text"><small>Pos A</small> | <small>08:05</small></p>
+            </div>
+          </div>
+          <div class="card" style="min-width: 200px;">
+            <img src="/img/shiroko.jpg" class="card-img-top" alt="Foto Siswa 1" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+              <h6 class="card-title">Andi Saputra</h6>
+              <p class="card-text"><small>Pos A</small> | <small>08:05</small></p>
+            </div>
+          </div>
+          <div class="card" style="min-width: 200px;">
+            <img src="/img/shiroko.jpg" class="card-img-top" alt="Foto Siswa 1" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+              <h6 class="card-title">Andi Saputra</h6>
+              <p class="card-text"><small>Pos A</small> | <small>08:05</small></p>
+            </div>
+          </div>
+          <div class="card" style="min-width: 200px;">
+            <img src="/img/shiroko.jpg" class="card-img-top" alt="Foto Siswa 1" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+              <h6 class="card-title">Andi Saputra</h6>
+              <p class="card-text"><small>Pos A</small> | <small>08:05</small></p>
+            </div>
+          </div>
+          <div class="card" style="min-width: 200px;">
+            <img src="/img/shiroko.jpg" class="card-img-top" alt="Foto Siswa 1" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+              <h6 class="card-title">Andi Saputra</h6>
+              <p class="card-text"><small>Pos A</small> | <small>08:05</small></p>
+            </div>
+          </div>
+          <div class="card" style="min-width: 200px;">
+            <img src="/img/shiroko.jpg" class="card-img-top" alt="Foto Siswa 1" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+              <h6 class="card-title">Andi Saputra</h6>
+              <p class="card-text"><small>Pos A</small> | <small>08:05</small></p>
+            </div>
+          </div>
+          <div class="card" style="min-width: 200px;">
+            <img src="/img/logo_sekolah.png" class="card-img-top" alt="Foto Siswa 2" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+              <h6 class="card-title">Budi Santoso</h6>
+              <p class="card-text"><small>Pos B</small> | <small>08:10</small></p>
+            </div>
+          </div>
+          <!-- Tambah lebih banyak item jika diperlukan -->
+        </div>
+      </div>
+  
+      <!-- Log Kehadiran Siswa -->
+      <div class="mb-4">
+        <h4>Log Kehadiran Siswa</h4>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>Nama Siswa</th>
+                <th>NIS</th>
+                <th>Pos</th>
+                <th>Waktu Absen</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Andi Saputra</td>
+                <td>2212345</td>
+                <td>Pos A</td>
+                <td>08:05</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Budi Santoso</td>
+                <td>2212346</td>
+                <td>Pos B</td>
+                <td>08:10</td>
+              </tr>
+              <!-- Tambahkan baris dummy lainnya -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+  
+    </main>
+  </div>
+  
