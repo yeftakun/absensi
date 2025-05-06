@@ -93,13 +93,21 @@ app.get('/about', (req, res) => {
   });
 });
 
-app.get('/monitor', (req, res) => {
-  res.render('monitor', {
+app.get('/session', (req, res) => {
+  res.render('session', {
     layout: 'layouts/main-layout',
     title: "Pantau",
     loggedin: req.session.loggedin || false
   });
 });
+
+app.get('/scan', (req, res) => {
+  res.render('scan', {
+    layout: 'layouts/main-layout',
+    title: "Scan RFID",
+    loggedin: req.session.loggedin || false
+  });
+})
 
 app.get('/session_monitor', (req, res) => {
   res.render('session_monitor', {
