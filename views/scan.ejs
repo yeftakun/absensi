@@ -1,0 +1,167 @@
+<style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+  
+  <div style="display: flex; height: 100vh;">
+    <%- include('layouts/nav') %>
+  
+    <main class="flex-grow-1 d-flex flex-column" style="padding: 0;">
+      
+      <!-- Header tetap di atas -->
+      <%- include('layouts/header-main') %>
+  
+      <!-- Konten utama di tengah dengan grow dan flex -->
+      <div class="d-flex flex-grow-1 justify-content-center align-items-center" style="margin-top: -40px;">
+        <div class="w-100" style="max-width: 1000px;">
+          <h3 class="text-center mb-4">Scan Kehadiran Siswa</h3>
+  
+          <div class="d-flex flex-column flex-md-row gap-4 align-items-center justify-content-center">
+            <!-- Kamera -->
+            <div class="flex-fill" style="max-width: 480px;">
+              <label class="form-label">Kamera:</label>
+              <div class="border rounded p-2">
+                <video id="video" autoplay playsinline width="100%" style="border-radius: 10px;"></video>
+              </div>
+            </div>
+  
+            <!-- Opsi Sesi -->
+            <div class="flex-fill" style="max-width: 400px;">
+              <label class="form-label">Pilih Sesi Aktif:</label>
+  
+              <div class="d-flex justify-content-center mb-2">
+                <button class="btn btn-outline-secondary btn-sm" onclick="scrollUp()">▲</button>
+              </div>
+  
+              <div id="sessionContainer" class="border rounded p-2" style="height: 180px; overflow: hidden; position: relative;">
+                <ul id="sessionList" class="list-unstyled m-0"></ul>
+              </div>
+  
+              <div class="d-flex justify-content-center mt-2">
+                <button class="btn btn-outline-secondary btn-sm" onclick="scrollDown()">▼</button>
+              </div>
+  
+              <small class="text-muted d-block text-center mt-2">Gunakan ↑ ↓ atau klik tombol untuk memilih sesi</small>
+            </div>
+          </div>
+  
+          <div class="alert alert-success mt-4 text-center" role="alert">
+            ✅ Berhasil mengambil kehadiran.
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>  
+  
+  <script>
+    // Kamera 480p
+    const video = document.getElementById('video');
+    navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false })
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(err => {
+        console.error('Gagal mengakses kamera:', err);
+        alert('Tidak bisa mengakses kamera. Pastikan Anda memberi izin!');
+      });
+  
+    // Simulasi sesi
+    const allSessions = [
+      "Sesi Subuh (05:00 - 06:00)",
+      "Sesi Pagi (07:00 - 08:00)",
+      "Sesi Kedua (08:30 - 09:30)",
+      "Sesi Siang (13:00 - 14:00)",
+      "Sesi Tambahan (16:00 - 17:00)",
+      "Sesi Ekstra (18:00 - 19:00)",
+      "Sesi Malam (20:00 - 21:00)",
+      "Sesi Akhir (21:30 - 22:00)"
+    ];
+  
+    const sessionList = document.getElementById('sessionList');
+    let selectedIndex = 0;
+  
+    function renderSessions() {
+      sessionList.innerHTML = '';
+      for (let offset = -2; offset <= 2; offset++) {
+        const index = (selectedIndex + offset + allSessions.length) % allSessions.length;
+        const item = document.createElement('li');
+        item.className = 'session-item';
+        item.textContent = allSessions[index];
+  
+        // Opacity dan style
+        if (offset === 0) {
+          item.style.opacity = '1';
+          item.style.fontWeight = 'bold';
+          item.style.fontSize = '1.1rem';
+        } else if (Math.abs(offset) === 1) {
+          item.style.opacity = '0.5';
+        } else if (Math.abs(offset) === 2) {
+          item.style.opacity = '0.25';
+        }
+  
+        sessionList.appendChild(item);
+      }
+    }
+  
+    // Tombol virtual
+    function scrollUp() {
+      selectedIndex = (selectedIndex - 1 + allSessions.length) % allSessions.length;
+      renderSessions();
+    }
+  
+    function scrollDown() {
+      selectedIndex = (selectedIndex + 1) % allSessions.length;
+      renderSessions();
+    }
+  
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'ArrowDown' || e.code === 'Space') {
+        e.preventDefault();
+        scrollDown();
+      } else if (e.code === 'ArrowUp') {
+        scrollUp();
+      }
+    });
+  
+    renderSessions();
+  </script>
+  
+  <style>
+    #sessionList {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.2rem;
+      padding: 0;
+      margin: 0;
+    }
+  
+    .session-item {
+      transition: opacity 0.3s, font-size 0.3s;
+      list-style: none;
+      white-space: nowrap;
+    }
+  
+    @media (max-width: 768px) {
+      .flex-md-row {
+        flex-direction: column !important;
+      }
+    }
+  </style>
+  <script>
+    window.addEventListener('load', () => {
+      const header = document.querySelector('header'); // pastikan tag header ada
+      const main = document.getElementById('mainContent');
+      if (header && main) {
+        const height = header.offsetHeight;
+        main.style.marginTop = `-${height / 2}px`;
+      }
+    });
+  </script>
+  
