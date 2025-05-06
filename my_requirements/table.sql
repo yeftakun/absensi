@@ -5,7 +5,7 @@ create table users (
     email varchar(50) not null,
     created_at timestamp default current_timestamp,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    role enum('admin', 'teacher', 'parent', 'student') not null,
+    role enum('admin', 'teacher', 'parent', 'student', 'scanner') not null,
     wa_num varchar(20) not null
 );
 
@@ -41,8 +41,8 @@ create table students (
     rfid varchar(50) UNIQUE NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    user_id int not null,
-    parent_id int not null,
+    user_id int null,
+    parent_id int null,
     foreign key (user_id) references users(user_id) on update cascade on delete cascade,
     foreign key (parent_id) references parents(parent_id) on update cascade on delete cascade
 );
