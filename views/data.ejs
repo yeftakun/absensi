@@ -43,20 +43,28 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- Contoh data statis -->
-                  <% // Loop di sini jika dari database %>
+                  <!-- Ini data dinamis -->
+                  <% if (users && users.length > 0) { %>
+                  <% users.forEach(user => { %>
                   <tr>
-                    <td>1</td>
-                    <td>admin01</td>
-                    <td>admin@mail.com</td>
-                    <td>admin</td>
-                    <td>081234567890</td>
-                    <td>2025-04-29</td>
+                    <td><%= user.user_id || 'N/A' %></td>
+                    <td><%= user.username || 'N/A' %></td>
+                    <td><%= user.email || 'N/A' %></td>
+                    <td><%= user.role || 'N/A' %></td>
+                    <td><%= user.wa_num || 'N/A' %></td>
+                    <td><%= user.created_at || 'N/A' %></td>
                     <td>
                       <button class="btn btn-sm btn-warning">Edit</button>
                       <button class="btn btn-sm btn-danger">Hapus</button>
                     </td>
                   </tr>
+                  <% }); %>
+                  <% } else { %>
+                  <tr>
+                    <td colspan="7" class="text-center">Tidak ada data pengguna.</td>
+                  </tr>
+                  <% } %>
+                  <!-- Contoh data statis -->
                   <!-- Tambahan data lainnya -->
                 </tbody>
               </table>
@@ -137,18 +145,27 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Pak Dedi</td>
-                    <td>12345678</td>
-                    <td><img src="/img/teacher1.jpg" alt="Foto" width="50"></td>
-                    <td>2</td>
-                    <td>2025-04-29</td>
-                    <td>
-                      <button class="btn btn-sm btn-warning">Edit</button>
-                      <button class="btn btn-sm btn-danger">Hapus</button>
-                    </td>
-                  </tr>
+                  <!-- Ini data dinamis -->
+                  <% if (teachers && teachers.length > 0) { %>
+                    <% teachers.forEach(teacher => { %>
+                    <tr>
+                      <td><%= teacher.teacher_id || 'N/A' %></td>
+                      <td><%= teacher.teacher_name || 'N/A' %></td>
+                      <td><%= teacher.nip || 'N/A' %></td>
+                      <td><%= teacher.photo_path || 'N/A' %></td>
+                      <td><%= teacher.user_id || 'N/A' %></td>
+                      <td><%= teacher.created_at || 'N/A' %></td>
+                      <td>
+                        <button class="btn btn-sm btn-warning">Edit</button>
+                        <button class="btn btn-sm btn-danger">Hapus</button>
+                      </td>
+                    </tr>
+                    <% }); %>
+                    <% } else { %>
+                    <tr>
+                      <td colspan="7" class="text-center">Tidak ada data pengguna.</td>
+                    </tr>
+                    <% } %>
                   <!-- Tambahan data lainnya -->
                 </tbody>
               </table>
@@ -218,18 +235,26 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- Contoh data statis -->
-                  <tr>
-                    <td>1</td>
-                    <td>Ibu Sari</td>
-                    <td>3</td>
-                    <td>2025-04-29</td>
-                    <td>2025-04-29</td>
-                    <td>
-                      <button class="btn btn-sm btn-warning">Edit</button>
-                      <button class="btn btn-sm btn-danger">Hapus</button>
-                    </td>
-                  </tr>
+                  <!-- Ini data dinamis -->
+                  <% if (parents && parents.length > 0) { %>
+                    <% parents.forEach(parent => { %>
+                    <tr>
+                      <td><%= parent.parent_id || 'N/A' %></td>
+                      <td><%= parent.parent_name || 'N/A' %></td>
+                      <td><%= parent.user_id || 'N/A' %></td>
+                      <td><%= parent.created_at || 'N/A' %></td>
+                      <td><%= parent.updated_at || 'N/A' %></td>
+                      <td>
+                        <button class="btn btn-sm btn-warning">Edit</button>
+                        <button class="btn btn-sm btn-danger">Hapus</button>
+                      </td>
+                    </tr>
+                    <% }); %>
+                    <% } else { %>
+                    <tr>
+                      <td colspan="7" class="text-center">Tidak ada data pengguna.</td>
+                    </tr>
+                  <% } %>
                   <!-- Tambahan data lainnya -->
                 </tbody>
               </table>
@@ -297,27 +322,34 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- Contoh data statis -->
-                  <tr>
-                    <td>1</td>
-                    <td>20230001</td>
-                    <td>9900112233</td>
-                    <td>Andi Saputra</td>
-                    <td>2010-01-15</td>
-                    <td>Manado</td>
-                    <td><img src="/img/student1.jpg" alt="Foto" width="50"></td>
-                    <td>Jl. Merdeka No.1</td>
-                    <td>1234567890</td>
-                    <td>4</td>
-                    <td>1</td>
-                    <td>2025-04-29</td>
-                    <td>2025-04-29</td>
-                    <td>
-                      <button class="btn btn-sm btn-warning">Edit</button>
-                      <button class="btn btn-sm btn-danger">Hapus</button>
-                    </td>
-                  </tr>
-                  <!-- Tambahan data lainnya -->
+                  <!-- Ini data dinamis -->
+                  <% if (students && students.length > 0) { %>
+                    <% students.forEach(student => { %>
+                    <tr>
+                      <td><%= student.student_id || 'N/A' %></td>
+                      <td><%= student.nis || 'N/A' %></td>
+                      <td><%= student.nisn || 'N/A' %></td>
+                      <td><%= student.student_name || 'N/A' %></td>
+                      <td><%= student.pob || 'N/A' %></td>
+                      <td><%= student.dob || 'N/A' %></td>
+                      <td><%= student.photo_path || 'N/A' %></td>
+                      <td><%= student.address || 'N/A' %></td>
+                      <td><%= student.rfid || 'N/A' %></td>
+                      <td><%= student.user_id || 'N/A' %></td>
+                      <td><%= student.parent_id || 'N/A' %></td>
+                      <td><%= student.created_at || 'N/A' %></td>
+                      <td><%= student.updated_at || 'N/A' %></td>
+                      <td>
+                        <button class="btn btn-sm btn-warning">Edit</button>
+                        <button class="btn btn-sm btn-danger">Hapus</button>
+                      </td>
+                    </tr>
+                    <% }); %>
+                    <% } else { %>
+                    <tr>
+                      <td colspan="7" class="text-center">Tidak ada data pengguna.</td>
+                    </tr>
+                  <% } %>
                 </tbody>
               </table>
             </div>
