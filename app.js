@@ -11,7 +11,7 @@ const port = 3001;
 // MySQL Connection
 const db = mysql.createConnection({
   host: 'localhost',
-  port: 3309,
+  port: 3310,
   user: 'root',
   password: '',
   database: 'absensi_db'
