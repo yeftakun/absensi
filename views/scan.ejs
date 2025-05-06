@@ -15,7 +15,7 @@
       <%- include('layouts/header-main') %>
   
       <!-- Konten utama di tengah dengan grow dan flex -->
-      <div class="d-flex flex-grow-1 justify-content-center align-items-center" style="margin-top: -40px;">
+      <div class="desktop-only d-flex flex-grow-1 justify-content-center align-items-center" style="margin-top: -40px;">
         <div class="w-100" style="max-width: 1000px;">
           <h3 class="text-center mb-4">Scan Kehadiran Siswa</h3>
   
@@ -53,6 +53,12 @@
           </div>
         </div>
       </div>
+
+      <!-- Tampil hanya di mobile -->
+      <div class="mobile-only text-center flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+        <img src="img/desktop-logo.png" alt="Logo Desktop" style="max-width: 200px; margin-bottom: 1rem;">
+        <p class="text-muted">📱 Gunakan tampilan desktop untuk melakukan scan kehadiran siswa.</p>
+      </div>      
     </main>
   </div>  
   
@@ -154,6 +160,24 @@
       }
     }
   </style>
+  <style>
+    /* Sembunyikan default */
+    .mobile-only {
+      display: none !important;
+    }
+  
+    /* Tampilkan/hilangkan sesuai media query */
+    @media (max-width: 768px) {
+      .desktop-only {
+        display: none !important;
+      }
+  
+      .mobile-only {
+        display: flex !important;
+      }
+    }
+  </style>
+  
   <script>
     window.addEventListener('load', () => {
       const header = document.querySelector('header'); // pastikan tag header ada
