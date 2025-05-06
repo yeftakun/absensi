@@ -14,11 +14,52 @@
                 <h5 class="card-title">Ringkasan Sesi</h5>
                 <p class="card-text mb-0">Total Sesi: <strong>10</strong> | Aktif: <strong>2</strong> | Selesai: <strong>8</strong></p>
               </div>
-              <a href="#" class="btn btn-light">Tambah Sesi</a>
+              <!-- <a href="#" class="btn btn-light">Tambah Sesi</a> -->
+              <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modalTambahSesi">
+                <i class="bi bi-plus"></i> Tambah Sesi
+              </button>   
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Modal Tambah sesi -->
+    <div class="modal fade" id="modalTambahSesi" tabindex="-1" aria-labelledby="modalTambahSesiLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form action="/session/add" method="POST" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTambahSesiLabel">Tambah Sesi Presensi</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="as_name" class="form-label">Nama sesi</label>
+              <input type="text" name="as_name" class="form-control" id="as_name" required>
+            </div>
+            <div class="mb-3">
+              <label for="as_type" class="form-label">Session Type</label>
+              <select name="as_type" id="as_type" class="form-select" required>
+                <!-- <option value="">Select Type</option> -->
+                <option value="class">Class</option>
+                <option value="event">Event</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="as_start_time" class="form-label">Waktu Mulai</label>
+              <input type="datetime-local" name="as_start_time" class="form-control" id="as_start_time" required>
+            </div>
+            <div class="mb-3">
+              <label for="as_end_time" class="form-label">Waktu Berakhir</label>
+              <input type="datetime-local" name="as_end_time" class="form-control" id="as_end_time" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          </div>
+        </form>
+      </div>
+    </div>
   
       <!-- Filter & Search -->
       <div class="row mb-3 align-items-end">
