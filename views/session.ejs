@@ -101,126 +101,25 @@
             </tr>
           </thead>
           <tbody id="sessionTableBody">
-            <!-- Contoh Baris -->
+            <% sessions.forEach((session, index) => { %>
             <tr>
-              <td>1</td>
-              <td>Contoh Sesi</td>
-              <td>Kelas</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-success">Aktif</span></td>
-              <td><a href="/session_monitor" class="btn btn-sm btn-primary">Pantau</a></td>
+              <td><%= index + 1 %></td>
+              <td><%= session.as_name %></td>
+              <td><%= session.as_type === 'class' ? 'Kelas' : 'Acara' %></td>
+              <td><%= session.as_start_time %></td>
+              <td><%= session.as_end_time %></td>
+              <td>
+                <% if (new Date(session.as_start_time) <= new Date() && new Date(session.as_end_time) >= new Date()) { %>
+                  <span class="badge bg-success">Aktif</span>
+                <% } else { %>
+                  <span class="badge bg-secondary">Selesai</span>
+                <% } %>
+              </td>
+              <td>
+                <a href="/session_monitor/<%= session.as_id %>" class="btn btn-sm btn-primary">Pantau</a>
+              </td>
             </tr>
-            <tr>
-              <td>1</td>
-              <td>Matematika</td>
-              <td>Kelas</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-success">Aktif</span></td>
-              <td><a href="/session_monitor/1" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Fisika</td>
-              <td>Kelas</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-secondary">Selesai</span></td>
-              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Sosialisasi Pandawara</td>
-              <td>Acara</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-secondary">Selesai</span></td>
-              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Matematika</td>
-              <td>Kelas</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-success">Aktif</span></td>
-              <td><a href="/session_monitor/1" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Fisika</td>
-              <td>Kelas</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-secondary">Selesai</span></td>
-              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Sosialisasi Pandawara</td>
-              <td>Acara</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-secondary">Selesai</span></td>
-              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Matematika</td>
-              <td>Kelas</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-success">Aktif</span></td>
-              <td><a href="/session_monitor/1" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Fisika</td>
-              <td>Kelas</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-secondary">Selesai</span></td>
-              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Sosialisasi Pandawara</td>
-              <td>Acara</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-secondary">Selesai</span></td>
-              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Matematika</td>
-              <td>Kelas</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-success">Aktif</span></td>
-              <td><a href="/session_monitor/1" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Fisika</td>
-              <td>Kelas</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-secondary">Selesai</span></td>
-              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Sosialisasi Pandawara</td>
-              <td>Acara</td>
-              <td>08:00, 12/04/2025</td>
-              <td>09:00, 12/04/2025</td>
-              <td><span class="badge bg-secondary">Selesai</span></td>
-              <td><a href="/session_monitor/2" class="btn btn-sm btn-primary">Pantau</a></td>
-            </tr>
-            <!-- Data lainnya akan di-generate secara dinamis -->
-                <!-- Baris-baris tabel -->
+            <% }); %>
             </tbody>
         </table>
         </div>
