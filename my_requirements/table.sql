@@ -16,8 +16,8 @@ create table teachers (
     photo_path varchar(200) not null,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    user_id int not null,
-    foreign key (user_id) references users(user_id) on update cascade on delete cascade 
+    user_id int null,
+    foreign key (user_id) references users(user_id) on update cascade
 );
 
 create table parents (
@@ -25,8 +25,8 @@ create table parents (
     parent_name varchar(50) not null,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    user_id int not null,
-    foreign key (user_id) references users(user_id) on update cascade on delete cascade
+    user_id int null,
+    foreign key (user_id) references users(user_id) on update cascade
 );
 
 create table students (
@@ -43,8 +43,8 @@ create table students (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     user_id int null,
     parent_id int null,
-    foreign key (user_id) references users(user_id) on update cascade on delete cascade,
-    foreign key (parent_id) references parents(parent_id) on update cascade on delete cascade
+    foreign key (user_id) references users(user_id) on update cascade,
+    foreign key (parent_id) references parents(parent_id) on update cascade
 );
 
 -- Ini ga jadi dipake
