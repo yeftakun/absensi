@@ -61,6 +61,7 @@ create table attendance_sessions (
     as_type enum('class', 'event') not null,
     as_start_time TIMESTAMP NULL,
     as_end_time TIMESTAMP NULL,
+    number_of_student int null,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
