@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const pageController = require('../controllers/pagesController');
 
-router.get('/', pageController.index);
-router.get('/home', pageController.home);
-router.get('/about', pageController.about);
-router.get('/session', pageController.session);
-router.get('/session_monitor', pageController.sessionMonitor);
-router.get('/data', pageController.data);
-router.get('/scan', pageController.scan);
+// Tambahkan ini
+const pagesController = require('../controllers/pagesController');
+
+// Rute-rute lainnya
+router.get('/', pagesController.index);
+router.get('/home', pagesController.home);
+router.get('/about', pagesController.about);
+router.get('/scan', pagesController.scan);
+router.get('/session', pagesController.session);
+router.get('/session_monitor/:as_id', pagesController.sessionMonitor);
+router.get('/data', pagesController.data);
 
 module.exports = router;
