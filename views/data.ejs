@@ -204,9 +204,10 @@
               <input type="file" name="photo" accept="image/*" class="form-control" id="teacher_photo" onchange="previewImage(event, 'previewGuru')">
               <img id="previewGuru" class="img-thumbnail mt-2" style="display:none; max-width: 150px;">
             </div>
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
               <label for="username_guru" class="form-label">Username (Opsional)</label>
-              <input type="text" name="username" class="form-control" id="username_guru">
+              <input type="text" name="username" class="form-control" id="username_guru" autocomplete="off">
+              <div id="usernameGuruAutocomplete" class="list-group position-absolute w-100" style="z-index: 1051; top:100%;"></div>
             </div>
           </div>
           <div class="modal-footer">
@@ -460,5 +461,75 @@
         });
       });
     });
+  });
+
+  // Autocomplete username guru
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById('username_guru');
+    const list = document.getElementById('usernameGuruAutocomplete');
+    let currentFocus = -1;
+
+    if (input) {
+      input.addEventListener('input', async function () {
+        const val = this.value.trim();
+        list.innerHTML = '';
+        list.style.display = 'none';
+        if (val.length < 1) return;
+        try {
+          const res = await fetch(`/api/teacher-usernames?q=${encodeURIComponent(val)}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            data.forEach(username => {
+              const item = document.createElement('button');
+              item.type = 'button';
+              item.className = 'list-group-item list-group-item-action';
+              item.textContent = username;
+              item.onclick = function () {
+                input.value = username;
+                list.innerHTML = '';
+                list.style.display = 'none';
+              };
+              list.appendChild(item);
+            });
+            list.style.display = 'block';
+          }
+        } catch (e) {
+          // ignore error
+        }
+      });
+
+      // Hide autocomplete when clicking outside
+      document.addEventListener('click', function (e) {
+        if (!input.contains(e.target) && !list.contains(e.target)) {
+          list.innerHTML = '';
+          list.style.display = 'none';
+        }
+      });
+
+      // Keyboard navigation
+      input.addEventListener('keydown', function(e) {
+        const items = list.querySelectorAll('.list-group-item');
+        if (!items.length) return;
+        if (e.key === 'ArrowDown') {
+          currentFocus++;
+          if (currentFocus >= items.length) currentFocus = 0;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          currentFocus--;
+          if (currentFocus < 0) currentFocus = items.length - 1;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'Enter') {
+          if (currentFocus > -1 && items[currentFocus]) {
+            items[currentFocus].click();
+            e.preventDefault();
+          }
+        } else {
+          currentFocus = -1;
+        }
+      });
+    }
   });
 </script>

@@ -15,5 +15,9 @@ router.post('/session/delete/:as_id', pagesController.deleteSession);
 router.get('/session_monitor/:as_id', pagesController.sessionMonitor);
 router.get('/data', pagesController.data);
 router.post('/guru/add', pagesController.uploadTeacherPhoto.single('photo'), pagesController.addTeacher);
+router.get('/api/teacher-usernames', pagesController.autocompleteTeacherUsernames);
+
+// Tambahkan route berikut:
+router.post('/user/add', pagesController.addUser);
 
 module.exports = router;

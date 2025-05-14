@@ -298,22 +298,35 @@ exports.addUser = async (req, res) => {
     try {
         const { username, password, email, role, wa_num } = req.body;
         if (!username || !password || !email || !role || !wa_num) {
-            return res.status(400).send('Semua field wajib diisi.');
+            req.session.alert = { type: 'danger', message: 'Semua field wajib diisi.' };
+            return res.redirect('/data');
         }
         // Validasi role agar sesuai enum di database
         const allowedRoles = ['admin', 'teacher', 'parent', 'student', 'scanner'];
         if (!allowedRoles.includes(role)) {
-            return res.status(400).send('Role tidak valid.');
+            req.session.alert = { type: 'danger', message: 'Role tidak valid.' };
+            return res.redirect('/data');
+        }
+        // Cek username/email/wa_num unik
+        const [exist] = await db.promise().query(
+            'SELECT * FROM users WHERE username = ? OR email = ? OR wa_num = ?',
+            [username, email, wa_num]
+        );
+        if (exist.length > 0) {
+            req.session.alert = { type: 'danger', message: 'Username, email, atau nomor WA sudah terdaftar.' };
+            return res.redirect('/data');
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         await db.promise().query(
             'INSERT INTO users (username, password, email, role, wa_num) VALUES (?, ?, ?, ?, ?)',
             [username, hashedPassword, email, role, wa_num]
         );
+        req.session.alert = { type: 'success', message: 'User berhasil ditambahkan.' };
         res.redirect('/data');
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Gagal menambah user.');
+        console.error('Gagal menambah user:', err);
+        req.session.alert = { type: 'danger', message: 'Gagal menambah user.' };
+        res.redirect('/data');
     }
 };
 
@@ -354,5 +367,26 @@ exports.addTeacher = async (req, res) => {
         console.error(err);
         req.session.alert = { type: 'danger', message: 'Gagal menambah guru.' };
         res.redirect('/data');
+    }
+};
+
+// API untuk autocomplete username guru
+exports.autocompleteTeacherUsernames = async (req, res) => {
+    try {
+        const q = (req.query.q || '').trim();
+        if (!q) return res.json([]);
+        // Cari username teacher yang belum dipakai di teachers
+        const [rows] = await db.promise().query(
+            `SELECT username FROM users 
+             WHERE role = 'teacher' 
+             AND user_id NOT IN (SELECT user_id FROM teachers WHERE user_id IS NOT NULL)
+             AND username LIKE ? 
+             ORDER BY username ASC
+             LIMIT 3`,
+            [`%${q}%`]
+        );
+        res.json(rows.map(r => r.username));
+    } catch (err) {
+        res.json([]);
     }
 };
