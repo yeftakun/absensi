@@ -666,3 +666,107 @@ exports.deleteStudent = async (req, res) => {
         res.redirect('/data');
     }
 };
+
+exports.editUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { username, email, role, wa_num, password } = req.body;
+        if (!username || !role || !wa_num) {
+            req.session.alert = { type: 'danger', message: 'Username, role, dan nomor WA wajib diisi.' };
+            return res.redirect('/data');
+        }
+        // Cek username/wa_num/email unik (kecuali milik user ini sendiri)
+        let checkQuery = 'SELECT * FROM users WHERE (username = ? OR wa_num = ?';
+        let checkParams = [username, wa_num];
+        if (email && email.trim() !== '') {
+            checkQuery += ' OR email = ?';
+            checkParams.push(email);
+        }
+        checkQuery += ') AND user_id != ?';
+        checkParams.push(id);
+
+        const [exist] = await db.promise().query(checkQuery, checkParams);
+        if (exist.length > 0) {
+            req.session.alert = { type: 'danger', message: 'Username, email, atau nomor WA sudah terdaftar.' };
+            return res.redirect('/data');
+        }
+
+        let emailValue = email && email.trim() !== '' ? email : 'N/A';
+        let updateQuery = 'UPDATE users SET username = ?, email = ?, role = ?, wa_num = ?';
+        let updateParams = [username, emailValue, role, wa_num];
+
+        if (password && password.trim() !== '') {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            updateQuery += ', password = ?';
+            updateParams.push(hashedPassword);
+        }
+        updateQuery += ' WHERE user_id = ?';
+        updateParams.push(id);
+
+        await db.promise().query(updateQuery, updateParams);
+        req.session.alert = { type: 'success', message: 'User berhasil diupdate.' };
+        res.redirect('/data');
+    } catch (err) {
+        req.session.alert = { type: 'danger', message: 'Gagal update user.' };
+        res.redirect('/data');
+    }
+};
+
+exports.editTeacher = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { teacher_name, nip, username } = req.body;
+        let photo_path = null;
+
+        // Ambil data lama
+        const [oldRows] = await db.promise().query('SELECT photo_path, user_id FROM teachers WHERE teacher_id = ?', [id]);
+        if (oldRows.length === 0) {
+            req.session.alert = { type: 'danger', message: 'Guru tidak ditemukan.' };
+            return res.redirect('/data');
+        }
+        const oldPhoto = oldRows[0].photo_path;
+        let user_id = oldRows[0].user_id;
+
+        // Handle username (optional)
+        if (username && username.trim() !== '') {
+            const [users] = await db.promise().query('SELECT user_id FROM users WHERE username = ?', [username]);
+            if (users.length === 0) {
+                req.session.alert = { type: 'danger', message: 'Username tidak tersedia.' };
+                return res.redirect('/data');
+            }
+            user_id = users[0].user_id;
+            // Cek apakah user_id sudah dipakai di teachers lain
+            const [teachers] = await db.promise().query('SELECT teacher_id FROM teachers WHERE user_id = ? AND teacher_id != ?', [user_id, id]);
+            if (teachers.length > 0) {
+                req.session.alert = { type: 'danger', message: 'Username sudah dipakai guru lain.' };
+                return res.redirect('/data');
+            }
+        } else {
+            user_id = null;
+        }
+
+        // Handle foto baru
+        if (req.file) {
+            photo_path = req.file.filename;
+            // Hapus foto lama jika bukan default
+            if (oldPhoto && oldPhoto !== 'default/default.jpg') {
+                const fullPath = path.join(__dirname, '..', 'public', 'img', 'profile', oldPhoto);
+                if (fs.existsSync(fullPath)) {
+                    try { fs.unlinkSync(fullPath); } catch (e) {}
+                }
+            }
+        } else {
+            photo_path = oldPhoto;
+        }
+
+        await db.promise().query(
+            'UPDATE teachers SET teacher_name = ?, nip = ?, photo_path = ?, user_id = ? WHERE teacher_id = ?',
+            [teacher_name, nip, photo_path, user_id, id]
+        );
+        req.session.alert = { type: 'success', message: 'Data guru berhasil diupdate.' };
+        res.redirect('/data');
+    } catch (err) {
+        req.session.alert = { type: 'danger', message: 'Gagal update guru.' };
+        res.redirect('/data');
+    }
+};

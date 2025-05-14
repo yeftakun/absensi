@@ -66,7 +66,12 @@
                     <td><%= user.wa_num || 'N/A' %></td>
                     <td><%= user.created_at || 'N/A' %></td>
                     <td>
-                      <button class="btn btn-sm btn-warning">Edit</button>
+                      <button class="btn btn-sm btn-warning btn-edit-user"
+                        data-id="<%= user.user_id %>"
+                        data-username="<%= user.username %>"
+                        data-email="<%= user.email %>"
+                        data-role="<%= user.role %>"
+                        data-wa="<%= user.wa_num %>">Edit</button>
                       <button class="btn btn-sm btn-danger btn-delete"
                         data-type="user"
                         data-id="<%= user.user_id %>"
@@ -135,6 +140,53 @@
       </div>
     </div>
 
+    <!-- Modal Edit User -->
+    <div class="modal fade" id="modalEditUser" tabindex="-1" aria-labelledby="modalEditUserLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="formEditUser" method="POST">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalEditUserLabel">Edit Data User</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="edit_username" class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" id="edit_username" required>
+              </div>
+              <div class="mb-3">
+                <label for="edit_email" class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" id="edit_email" placeholder="Opsional, jika kosong akan diisi N/A">
+              </div>
+              <div class="mb-3">
+                <label for="edit_role" class="form-label">Role</label>
+                <select name="role" id="edit_role" class="form-select" required>
+                  <option value="">Pilih Role</option>
+                  <option value="admin">Admin</option>
+                  <option value="teacher">Guru</option>
+                  <option value="student">Murid</option>
+                  <option value="parent">Orang Tua</option>
+                  <option value="scanner">Scan Client</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="edit_wa_num" class="form-label">WhatsApp number</label>
+                <input type="text" name="wa_num" class="form-control" id="edit_wa_num" required>
+              </div>
+              <div class="mb-3">
+                <label for="edit_password" class="form-label">Password (kosongkan jika tidak ingin mengubah)</label>
+                <input type="password" name="password" class="form-control" id="edit_password" autocomplete="new-password">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
 
     <!-- Wilayah Tabel Guru -->
     <div class="col-md-12 mb-4">
@@ -172,7 +224,12 @@
                       <td><%= teacher.user_id || 'N/A' %></td>
                       <td><%= teacher.created_at || 'N/A' %></td>
                       <td>
-                        <button class="btn btn-sm btn-warning">Edit</button>
+                        <button class="btn btn-sm btn-warning btn-edit-teacher"
+                          data-id="<%= teacher.teacher_id %>"
+                          data-name="<%= teacher.teacher_name %>"
+                          data-nip="<%= teacher.nip %>"
+                          data-photo="<%= teacher.photo_path %>"
+                          data-username="<%= teacher.user_id %>">Edit</button>
                         <button class="btn btn-sm btn-danger btn-delete"
                           data-type="teacher"
                           data-id="<%= teacher.teacher_id %>"
@@ -229,6 +286,44 @@
       </div>
     </div>
     
+    <!-- Modal Edit Guru -->
+    <div class="modal fade" id="modalEditGuru" tabindex="-1" aria-labelledby="modalEditGuruLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="formEditGuru" method="POST" enctype="multipart/form-data">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalEditGuruLabel">Edit Data Guru</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="edit_teacher_name" class="form-label">Nama Guru</label>
+                <input type="text" name="teacher_name" class="form-control" id="edit_teacher_name" required>
+              </div>
+              <div class="mb-3">
+                <label for="edit_nip" class="form-label">NIP</label>
+                <input type="text" name="nip" class="form-control" id="edit_nip">
+              </div>
+              <div class="mb-3">
+                <label for="edit_teacher_photo" class="form-label">Foto (1:1)</label>
+                <input type="file" name="photo" accept="image/*" class="form-control" id="edit_teacher_photo" onchange="previewImage(event, 'previewEditGuru')">
+                <img id="previewEditGuru" class="img-thumbnail mt-2" style="display:none; max-width: 150px;">
+                <div id="currentPhotoGuru" class="mt-2"></div>
+              </div>
+              <div class="mb-3 position-relative">
+                <label for="edit_username_guru" class="form-label">Username (Opsional)</label>
+                <input type="text" name="username" class="form-control" id="edit_username_guru" autocomplete="off" autocapitalize="off" spellcheck="false">
+                <div id="editUsernameGuruAutocomplete" class="list-group position-absolute w-100" style="z-index: 1051; top:100%;"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Tambahkan Tabel lainnya -->
      <!-- Wilayah Tabel Orang Tua -->
@@ -836,5 +931,133 @@
         else $(modal).modal('show');
       });
     });
+  });
+
+  // Modal Edit User
+  document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById('modalEditUser');
+    const form = document.getElementById('formEditUser');
+    let bsModal = null;
+    if (window.bootstrap && bootstrap.Modal) {
+      bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+    }
+
+    document.querySelectorAll('.btn-edit-user').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const id = btn.getAttribute('data-id');
+        const username = btn.getAttribute('data-username') || '';
+        const email = btn.getAttribute('data-email') || '';
+        const role = btn.getAttribute('data-role') || '';
+        const wa = btn.getAttribute('data-wa') || '';
+        form.action = `/user/edit/${id}`;
+        form.querySelector('#edit_username').value = username;
+        form.querySelector('#edit_email').value = email === 'N/A' ? '' : email;
+        form.querySelector('#edit_role').value = role;
+        form.querySelector('#edit_wa_num').value = wa;
+        form.querySelector('#edit_password').value = '';
+        if (bsModal) bsModal.show();
+        else $(modal).modal('show');
+      });
+    });
+  });
+
+  // Modal Edit Guru
+  document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById('modalEditGuru');
+    const form = document.getElementById('formEditGuru');
+    const previewImg = document.getElementById('previewEditGuru');
+    const currentPhotoDiv = document.getElementById('currentPhotoGuru');
+    let bsModal = null;
+    if (window.bootstrap && bootstrap.Modal) {
+      bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+    }
+
+    document.querySelectorAll('.btn-edit-teacher').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name') || '';
+        const nip = btn.getAttribute('data-nip') || '';
+        const photo = btn.getAttribute('data-photo') || '';
+        // Username guru: Anda bisa mengambil username dari user_id jika ingin menampilkan username, atau biarkan kosong
+        // Untuk demo, field username dikosongkan (atau bisa diisi jika ada data username)
+        form.action = `/guru/edit/${id}`;
+        form.querySelector('#edit_teacher_name').value = name;
+        form.querySelector('#edit_nip').value = nip;
+        form.querySelector('#edit_username_guru').value = '';
+        form.querySelector('#edit_teacher_photo').value = '';
+        previewImg.style.display = 'none';
+        if (photo && photo !== 'default/default.jpg') {
+          currentPhotoDiv.innerHTML = `<small>Foto saat ini:</small><br><img src="/img/profile/${photo}" class="img-thumbnail" style="max-width:100px;">`;
+        } else {
+          currentPhotoDiv.innerHTML = '';
+        }
+        if (bsModal) bsModal.show();
+        else $(modal).modal('show');
+      });
+    });
+
+    // Autocomplete username guru pada modal edit
+    const input = document.getElementById('edit_username_guru');
+    const list = document.getElementById('editUsernameGuruAutocomplete');
+    let currentFocus = -1;
+
+    if (input) {
+      input.addEventListener('input', async function () {
+        const val = this.value.trim();
+        list.innerHTML = '';
+        list.style.display = 'none';
+        if (val.length < 1) return;
+        try {
+          const res = await fetch(`/api/teacher-usernames?q=${encodeURIComponent(val)}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            data.forEach(username => {
+              const item = document.createElement('button');
+              item.type = 'button';
+              item.className = 'list-group-item list-group-item-action';
+              item.textContent = username;
+              item.onclick = function () {
+                input.value = username;
+                list.innerHTML = '';
+                list.style.display = 'none';
+              };
+              list.appendChild(item);
+            });
+            list.style.display = 'block';
+          }
+        } catch (e) {}
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!input.contains(e.target) && !list.contains(e.target)) {
+          list.innerHTML = '';
+          list.style.display = 'none';
+        }
+      });
+
+      input.addEventListener('keydown', function(e) {
+        const items = list.querySelectorAll('.list-group-item');
+        if (!items.length) return;
+        if (e.key === 'ArrowDown') {
+          currentFocus++;
+          if (currentFocus >= items.length) currentFocus = 0;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          currentFocus--;
+          if (currentFocus < 0) currentFocus = items.length - 1;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'Enter') {
+          if (currentFocus > -1 && items[currentFocus]) {
+            items[currentFocus].click();
+            e.preventDefault();
+          }
+        } else {
+          currentFocus = -1;
+        }
+      });
+    }
   });
 </script>
