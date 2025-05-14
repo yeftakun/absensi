@@ -544,15 +544,15 @@
             </div>
             <div class="mb-3">
               <label for="dob" class="form-label">Tanggal Lahir</label>
-              <input type="date" name="dob" class="form-control" id="dob" required>
+              <input type="date" name="dob" class="form-control" id="dob" value="<%= (new Date()).toISOString().slice(0,10) %>">
             </div>
             <div class="mb-3">
               <label for="pob" class="form-label">Tempat Lahir</label>
-              <input type="text" name="pob" class="form-control" id="pob" required>
+              <input type="text" name="pob" class="form-control" id="pob">
             </div>
             <div class="mb-3">
               <label for="address" class="form-label">Alamat</label>
-              <input type="text" name="address" class="form-control" id="address" required>
+              <input type="text" name="address" class="form-control" id="address">
             </div>
             <div class="mb-3">
               <label for="student_photo" class="form-label">Foto (1:1)</label>

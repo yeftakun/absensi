@@ -533,6 +533,13 @@ exports.addStudent = async (req, res) => {
             photo_path = req.file.filename;
         }
 
+        // Set default values for optional fields
+        const nisValue = nis && nis.trim() !== '' ? nis : 'N/A';
+        const nisnValue = nisn && nisn.trim() !== '' ? nisn : 'N/A';
+        const dobValue = dob && dob.trim() !== '' ? dob : format(new Date(), 'yyyy-MM-dd');
+        const pobValue = pob && pob.trim() !== '' ? pob : 'N/A';
+        const addressValue = address && address.trim() !== '' ? address : 'N/A';
+
         // Cari user_id jika username diisi
         let user_id = null;
         if (username && username.trim() !== '') {
@@ -557,7 +564,6 @@ exports.addStudent = async (req, res) => {
         // Ambil parent_id dari input (bisa berupa "Nama Ortu (username)" atau hanya nama)
         let parentIdValue = null;
         if (parent_id && parent_id.trim() !== '') {
-            // Coba ambil parent_id dari database berdasarkan nama (dan username jika ada)
             let parentName = parent_id;
             let usernameOrtu = null;
             const match = parent_id.match(/^(.*?)\s*\((.*?)\)$/);
@@ -585,7 +591,7 @@ exports.addStudent = async (req, res) => {
             (student_name, nis, nisn, dob, pob, photo_path, address, rfid, user_id, parent_id) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
-                student_name, nis, nisn, dob, pob, photo_path, address || '', rfid || null, user_id, parentIdValue
+                student_name, nisValue, nisnValue, dobValue, pobValue, photo_path, addressValue, rfid || null, user_id, parentIdValue
             ]
         );
         req.session.alert = { type: 'success', message: 'Data siswa berhasil ditambahkan.' };
@@ -826,6 +832,13 @@ exports.editStudent = async (req, res) => {
         } = req.body;
         let photo_path = null;
 
+        // Set default values for optional fields
+        const nisValue = nis && nis.trim() !== '' ? nis : 'N/A';
+        const nisnValue = nisn && nisn.trim() !== '' ? nisn : 'N/A';
+        const dobValue = dob && dob.trim() !== '' ? dob : format(new Date(), 'yyyy-MM-dd');
+        const pobValue = pob && pob.trim() !== '' ? pob : 'N/A';
+        const addressValue = address && address.trim() !== '' ? address : 'N/A';
+
         // Ambil data lama
         const [oldRows] = await db.promise().query('SELECT photo_path, user_id, parent_id FROM students WHERE student_id = ?', [id]);
         if (oldRows.length === 0) {
@@ -905,7 +918,7 @@ exports.editStudent = async (req, res) => {
                 student_name = ?, nis = ?, nisn = ?, dob = ?, pob = ?, photo_path = ?, address = ?, rfid = ?, user_id = ?, parent_id = ?
              WHERE student_id = ?`,
             [
-                student_name, nis, nisn, dob, pob, photo_path, address || '', rfid || null, user_id, parentIdValue, id
+                student_name, nisValue, nisnValue, dobValue, pobValue, photo_path, addressValue, rfid || null, user_id, parentIdValue, id
             ]
         );
         req.session.alert = { type: 'success', message: 'Data siswa berhasil diupdate.' };
