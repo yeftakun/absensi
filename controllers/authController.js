@@ -12,7 +12,28 @@ exports.login = async (req, res) => {
       req.session.loggedin = true;
       req.session.name = results[0].username;
       req.session.role = results[0].role;
-      res.redirect('/home');
+
+      const userId = results[0].user_id;
+      const role = results[0].role;
+
+      // Ambil foto profil dari tabel relasi sesuai role
+      if (role === 'teacher') {
+        db.query('SELECT photo_path FROM teachers WHERE user_id = ?', [userId], (err2, teacherResults) => {
+          if (err2) throw err2;
+          req.session.photo = (teacherResults.length > 0) ? teacherResults[0].photo_path : null;
+          res.redirect('/home');
+        });
+      } else if (role === 'student') {
+        db.query('SELECT photo_path FROM students WHERE user_id = ?', [userId], (err2, studentResults) => {
+          if (err2) throw err2;
+          req.session.photo = (studentResults.length > 0) ? studentResults[0].photo_path : null;
+          res.redirect('/home');
+        });
+      } else {
+        // Role lain atau tidak ada relasi
+        req.session.photo = null;
+        res.redirect('/home');
+      }
     } else {
       res.render('index', {
         layout: 'layouts/main-layout',

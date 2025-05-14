@@ -28,6 +28,16 @@ app.use(session({
   saveUninitialized: true
 }));
 
+// Tambahkan middleware ini sebelum router
+app.use((req, res, next) => {
+  res.locals.user = req.session && req.session.name ? {
+    username: req.session.name,
+    role: req.session.role,
+    photo: req.session.photo
+  } : null;
+  next();
+});
+
 // ===== Route Imports =====
 const authRoutes = require('./routes/auth');
 // const studentRoutes = require('./routes/student');
