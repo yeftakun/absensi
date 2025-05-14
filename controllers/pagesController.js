@@ -256,8 +256,10 @@ exports.data = async (req, res) => {
             parents: parents || [],
             students: students || [],
             teachers: teachers || [],
-            users: users || []
+            users: users || [],
+            alert: req.session.alert || null // Tambahkan alert
         });
+        req.session.alert = null; // Reset alert setelah render
     } catch (err) {
         console.error(err);
         res.status(500).send('Terjadi kesalahan pada server.');
@@ -323,14 +325,34 @@ exports.addTeacher = async (req, res) => {
         if (req.file) {
             photo_path = req.file.filename;
         }
-        // Simpan hanya nama file, path diakses via /img/profile/:photo_path
+
+        let user_id = null;
+        if (username && username.trim() !== '') {
+            // Cek username di tabel users
+            const [users] = await db.promise().query('SELECT user_id FROM users WHERE username = ?', [username]);
+            if (users.length === 0) {
+                req.session.alert = { type: 'danger', message: 'Username tidak tersedia.' };
+                return res.redirect('/data');
+            }
+            user_id = users[0].user_id;
+            // Cek apakah user_id sudah dipakai di teachers
+            const [teachers] = await db.promise().query('SELECT teacher_id FROM teachers WHERE user_id = ?', [user_id]);
+            if (teachers.length > 0) {
+                req.session.alert = { type: 'danger', message: 'Username sudah dipakai guru lain.' };
+                return res.redirect('/data');
+            }
+        }
+
+        // Simpan data guru
         await db.promise().query(
-            'INSERT INTO teachers (teacher_name, nip, photo_path) VALUES (?, ?, ?)',
-            [teacher_name, nip, photo_path]
+            'INSERT INTO teachers (teacher_name, nip, photo_path, user_id) VALUES (?, ?, ?, ?)',
+            [teacher_name, nip, photo_path, user_id]
         );
+        req.session.alert = { type: 'success', message: 'Data guru berhasil ditambahkan.' };
         res.redirect('/data');
     } catch (err) {
         console.error(err);
-        res.status(500).send('Gagal menambah guru.');
+        req.session.alert = { type: 'danger', message: 'Gagal menambah guru.' };
+        res.redirect('/data');
     }
 };

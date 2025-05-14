@@ -14,5 +14,6 @@ router.post('/session/add', pagesController.addSession);
 router.post('/session/delete/:as_id', pagesController.deleteSession);
 router.get('/session_monitor/:as_id', pagesController.sessionMonitor);
 router.get('/data', pagesController.data);
+router.post('/guru/add', pagesController.uploadTeacherPhoto.single('photo'), pagesController.addTeacher);
 
 module.exports = router;

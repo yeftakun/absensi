@@ -2,6 +2,13 @@
   <%- include('layouts/nav') %>
 
   <main class="container py-4 position-relative" style="flex-grow: 1;">
+    <!-- Alert -->
+    <% if (typeof alert !== 'undefined' && alert) { %>
+      <div class="alert alert-<%= alert.type %> alert-dismissible fade show" role="alert" style="z-index:9999;">
+        <%= alert.message %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
     <!-- Header -->
     <%- include('layouts/header-main') %>
 
@@ -13,7 +20,7 @@
           <i class="bi bi-search"></i>
         </span>
         <input type="text" class="form-control border-start-0" placeholder="Cari Data..." 
-              style="border-radius: 0 20px 20px 0; transition: all 0.3s ease;">
+              style="border-radius: 0 20px 20px 0; transition: all 0.3s ease;" id="searchGlobalInput">
       </div>
     </div>
 
@@ -42,7 +49,7 @@
                     <th>Aksi</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="usersTableBody">
                   <!-- Ini data dinamis -->
                   <% if (users && users.length > 0) { %>
                   <% users.forEach(user => { %>
@@ -101,9 +108,10 @@
               <select name="role" id="role" class="form-select" required>
                 <option value="">Pilih Role</option>
                 <option value="admin">Admin</option>
-                <option value="guru">Guru</option>
-                <option value="murid">Murid</option>
-                <option value="orangtua">Orang Tua</option>
+                <option value="teacher">Guru</option>
+                <option value="student">Murid</option>
+                <option value="parent">Orang Tua</option>
+                <option value="scanner">Scan Client</option>
               </select>
             </div>
             <div class="mb-3">
@@ -144,7 +152,7 @@
                     <th>Aksi</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="teachersTableBody">
                   <!-- Ini data dinamis -->
                   <% if (teachers && teachers.length > 0) { %>
                     <% teachers.forEach(teacher => { %>
@@ -234,7 +242,7 @@
                     <th>Aksi</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="parentsTableBody">
                   <!-- Ini data dinamis -->
                   <% if (parents && parents.length > 0) { %>
                     <% parents.forEach(parent => { %>
@@ -321,7 +329,7 @@
                     <th>Aksi</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="studentsTableBody">
                   <!-- Ini data dinamis -->
                   <% if (students && students.length > 0) { %>
                     <% students.forEach(student => { %>
@@ -429,4 +437,28 @@
       reader.readAsDataURL(input.files[0]);
     }
   }
+
+  // Global searchbar filter for all tables
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById('searchGlobalInput');
+    const tableBodies = [
+      document.getElementById('usersTableBody'),
+      document.getElementById('teachersTableBody'),
+      document.getElementById('parentsTableBody'),
+      document.getElementById('studentsTableBody')
+    ];
+    if (!searchInput) return;
+    searchInput.addEventListener('input', function () {
+      const search = this.value.toLowerCase();
+      tableBodies.forEach(tableBody => {
+        if (!tableBody) return;
+        Array.from(tableBody.getElementsByTagName('tr')).forEach(row => {
+          // Only filter data rows, not the "Tidak ada data pengguna" row
+          if (row.querySelectorAll('td').length < 2) return;
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(search) ? '' : 'none';
+        });
+      });
+    });
+  });
 </script>
