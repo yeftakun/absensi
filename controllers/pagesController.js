@@ -2,6 +2,22 @@ const db = require('../config/db');
 const { format } = require('date-fns');
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcrypt');
+const multer = require('multer');
+
+// Konfigurasi multer untuk upload foto guru
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '..', 'public', 'img', 'profile'));
+    },
+    filename: function (req, file, cb) {
+        const ext = path.extname(file.originalname);
+        const timestamp = Date.now();
+        const rand = Math.floor(Math.random() * 90 + 10); // 2 digit random
+        cb(null, `${timestamp}_${rand}${ext}`);
+    }
+});
+exports.uploadTeacherPhoto = multer({ storage: storage });
 
 exports.index = (req, res) => {
     res.render('index', {
@@ -273,5 +289,48 @@ exports.deleteSession = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send('Gagal menghapus sesi.');
+    }
+};
+
+exports.addUser = async (req, res) => {
+    try {
+        const { username, password, email, role, wa_num } = req.body;
+        if (!username || !password || !email || !role || !wa_num) {
+            return res.status(400).send('Semua field wajib diisi.');
+        }
+        // Validasi role agar sesuai enum di database
+        const allowedRoles = ['admin', 'teacher', 'parent', 'student', 'scanner'];
+        if (!allowedRoles.includes(role)) {
+            return res.status(400).send('Role tidak valid.');
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await db.promise().query(
+            'INSERT INTO users (username, password, email, role, wa_num) VALUES (?, ?, ?, ?, ?)',
+            [username, hashedPassword, email, role, wa_num]
+        );
+        res.redirect('/data');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Gagal menambah user.');
+    }
+};
+
+// Handler tambah guru
+exports.addTeacher = async (req, res) => {
+    try {
+        const { teacher_name, nip, username } = req.body;
+        let photo_path = 'default/default.jpg';
+        if (req.file) {
+            photo_path = req.file.filename;
+        }
+        // Simpan hanya nama file, path diakses via /img/profile/:photo_path
+        await db.promise().query(
+            'INSERT INTO teachers (teacher_name, nip, photo_path) VALUES (?, ?, ?)',
+            [teacher_name, nip, photo_path]
+        );
+        res.redirect('/data');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Gagal menambah guru.');
     }
 };
