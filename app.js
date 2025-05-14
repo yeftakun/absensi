@@ -32,11 +32,13 @@ app.use(session({
 const authRoutes = require('./routes/auth');
 // const studentRoutes = require('./routes/student');
 const pageRoutes = require('./routes/pages');
+const apiRoutes = require('./routes/api');
 
 // ===== Use Routes =====
 app.use('/', authRoutes);
 // app.use('/', studentRoutes);
 app.use('/', pageRoutes);
+app.use('/', apiRoutes);
 
 // ===== Global 404 Handler =====
 app.use((req, res) => {
