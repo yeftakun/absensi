@@ -115,7 +115,7 @@ exports.session = async (req, res) => {
             layout: 'layouts/main-layout',
             title: "Sesi",
             loggedin: req.session.loggedin || false,
-            sessions
+            sessions // number_of_student sudah ikut
         });
     } catch (err) {
         console.error(err);
@@ -271,13 +271,13 @@ exports.data = async (req, res) => {
 
 exports.addSession = async (req, res) => {
     try {
-        const { as_name, as_type, as_start_time, as_end_time } = req.body;
-        if (!as_name || !as_type || !as_start_time || !as_end_time) {
+        const { as_name, as_type, as_start_time, as_end_time, number_of_student } = req.body;
+        if (!as_name || !as_type || !as_start_time || !as_end_time || !number_of_student) {
             return res.status(400).send('Semua field wajib diisi.');
         }
         await db.promise().query(
-            'INSERT INTO attendance_sessions (as_name, as_type, as_start_time, as_end_time) VALUES (?, ?, ?, ?)',
-            [as_name, as_type, as_start_time, as_end_time]
+            'INSERT INTO attendance_sessions (as_name, as_type, as_start_time, as_end_time, number_of_student) VALUES (?, ?, ?, ?, ?)',
+            [as_name, as_type, as_start_time, as_end_time, Number(number_of_student)]
         );
         res.redirect('/session');
     } catch (err) {
@@ -574,7 +574,7 @@ exports.addStudent = async (req, res) => {
             let query = "SELECT parent_id FROM parents";
             let params = [];
             if (usernameOrtu) {
-                query += " p LEFT JOIN users u ON p.user_id = u.user_id WHERE p.parent_name = ? AND u.username = ?";
+                query += " p.LEFT JOIN users u ON p.user_id = u.user_id WHERE p.parent_name = ? AND u.username = ?";
                 params = [parentName, usernameOrtu];
             } else {
                 query += " WHERE parent_name = ?";
@@ -932,14 +932,14 @@ exports.editStudent = async (req, res) => {
 exports.editSession = async (req, res) => {
     try {
         const id = req.params.id;
-        const { as_name, as_type, as_start_time, as_end_time } = req.body;
-        if (!as_name || !as_type || !as_start_time || !as_end_time) {
+        const { as_name, as_type, as_start_time, as_end_time, number_of_student } = req.body;
+        if (!as_name || !as_type || !as_start_time || !as_end_time || !number_of_student) {
             req.session.alert = { type: 'danger', message: 'Semua field wajib diisi.' };
             return res.redirect('/session');
         }
         await db.promise().query(
-            'UPDATE attendance_sessions SET as_name = ?, as_type = ?, as_start_time = ?, as_end_time = ? WHERE as_id = ?',
-            [as_name, as_type, as_start_time, as_end_time, id]
+            'UPDATE attendance_sessions SET as_name = ?, as_type = ?, as_start_time = ?, as_end_time = ?, number_of_student = ? WHERE as_id = ?',
+            [as_name, as_type, as_start_time, as_end_time, Number(number_of_student), id]
         );
         req.session.alert = { type: 'success', message: 'Sesi berhasil diupdate.' };
         res.redirect('/session');

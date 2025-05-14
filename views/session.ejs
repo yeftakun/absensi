@@ -69,6 +69,13 @@
               <label for="as_end_time" class="form-label">Waktu Berakhir</label>
               <input type="datetime-local" name="as_end_time" class="form-control" id="as_end_time" required>
             </div>
+            <div class="mb-3">
+              <label for="number_of_student" class="form-label">Estimasi Jumlah Siswa</label>
+              <input type="number" min="1" name="number_of_student" class="form-control" id="number_of_student" required>
+              <small class="form-text text-muted">
+                Ini akan digunakan untuk menghitung persentase siswa yang sudah absen pada sesi ini.
+              </small>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Simpan</button>
@@ -113,6 +120,7 @@
               <th>Jenis</th>
               <th>Mulai</th>
               <th>Berakhir</th>
+              <th>Estimasi Siswa</th>
               <th>Status</th>
               <th>Aksi</th>
             </tr>
@@ -128,12 +136,14 @@
               data-start="<%= session.as_start_time %>"
               data-end="<%= session.as_end_time %>"
               data-status="<%= status %>"
+              data-number-of-student="<%= session.number_of_student || '' %>"
             >
               <td><%= index + 1 %></td>
               <td><%= session.as_name %></td>
               <td><%= session.as_type === 'class' ? 'Kelas' : 'Acara' %></td>
               <td><%= session.as_start_time %></td>
               <td><%= session.as_end_time %></td>
+              <td><%= session.number_of_student || '-' %></td>
               <td>
                 <% if (status === 'active') { %>
                   <span class="badge bg-success">Aktif</span>
@@ -221,6 +231,13 @@
                 <div class="mb-3">
                   <label for="edit_as_end_time" class="form-label">Waktu Berakhir</label>
                   <input type="datetime-local" name="as_end_time" class="form-control" id="edit_as_end_time" required>
+                </div>
+                <div class="mb-3">
+                  <label for="edit_number_of_student" class="form-label">Estimasi Jumlah Siswa</label>
+                  <input type="number" min="1" name="number_of_student" class="form-control" id="edit_number_of_student" required>
+                  <small class="form-text text-muted">
+                    Ini akan digunakan untuk menghitung persentase siswa yang sudah absen pada sesi ini.
+                  </small>
                 </div>
               </div>
               <div class="modal-footer">
@@ -323,6 +340,9 @@
           const type = btn.getAttribute('data-session-type') || '';
           let start = btn.getAttribute('data-session-start') || '';
           let end = btn.getAttribute('data-session-end') || '';
+          // Ambil estimasi jumlah siswa dari baris tabel (data attribute atau hidden col)
+          const row = btn.closest('tr');
+          let numberOfStudent = row && row.getAttribute('data-number-of-student') ? row.getAttribute('data-number-of-student') : '';
           // Format to yyyy-MM-ddTHH:mm for input[type=datetime-local]
           if (start && start.length > 16) start = start.slice(0, 16);
           if (end && end.length > 16) end = end.slice(0, 16);
@@ -331,6 +351,7 @@
           formEdit.querySelector('#edit_as_type').value = type;
           formEdit.querySelector('#edit_as_start_time').value = start;
           formEdit.querySelector('#edit_as_end_time').value = end;
+          formEdit.querySelector('#edit_number_of_student').value = numberOfStudent;
         });
       });
     });
