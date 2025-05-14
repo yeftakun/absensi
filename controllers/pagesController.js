@@ -770,3 +770,148 @@ exports.editTeacher = async (req, res) => {
         res.redirect('/data');
     }
 };
+
+exports.editParent = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { parent_name, username } = req.body;
+
+        // Ambil data lama
+        const [oldRows] = await db.promise().query('SELECT user_id FROM parents WHERE parent_id = ?', [id]);
+        if (oldRows.length === 0) {
+            req.session.alert = { type: 'danger', message: 'Orang tua tidak ditemukan.' };
+            return res.redirect('/data');
+        }
+        let user_id = oldRows[0].user_id;
+
+        // Handle username (optional)
+        if (username && username.trim() !== '') {
+            const [users] = await db.promise().query(
+                "SELECT user_id FROM users WHERE username = ? AND role = 'parent'", [username]
+            );
+            if (users.length === 0) {
+                req.session.alert = { type: 'danger', message: 'Username tidak tersedia.' };
+                return res.redirect('/data');
+            }
+            user_id = users[0].user_id;
+            // Cek apakah user_id sudah dipakai di parents lain
+            const [parents] = await db.promise().query(
+                'SELECT parent_id FROM parents WHERE user_id = ? AND parent_id != ?', [user_id, id]
+            );
+            if (parents.length > 0) {
+                req.session.alert = { type: 'danger', message: 'Username sudah dipakai orang tua lain.' };
+                return res.redirect('/data');
+            }
+        } else {
+            user_id = null;
+        }
+
+        await db.promise().query(
+            'UPDATE parents SET parent_name = ?, user_id = ? WHERE parent_id = ?',
+            [parent_name, user_id, id]
+        );
+        req.session.alert = { type: 'success', message: 'Data orang tua berhasil diupdate.' };
+        res.redirect('/data');
+    } catch (err) {
+        req.session.alert = { type: 'danger', message: 'Gagal update orang tua.' };
+        res.redirect('/data');
+    }
+};
+
+exports.editStudent = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const {
+            student_name, nis, nisn, dob, pob, address, rfid, username, parent_id
+        } = req.body;
+        let photo_path = null;
+
+        // Ambil data lama
+        const [oldRows] = await db.promise().query('SELECT photo_path, user_id, parent_id FROM students WHERE student_id = ?', [id]);
+        if (oldRows.length === 0) {
+            req.session.alert = { type: 'danger', message: 'Siswa tidak ditemukan.' };
+            return res.redirect('/data');
+        }
+        const oldPhoto = oldRows[0].photo_path;
+        let user_id = oldRows[0].user_id;
+        let parentIdValue = oldRows[0].parent_id;
+
+        // Handle username (optional)
+        if (username && username.trim() !== '') {
+            const [users] = await db.promise().query(
+                "SELECT user_id FROM users WHERE username = ? AND role = 'student'", [username]
+            );
+            if (users.length === 0) {
+                req.session.alert = { type: 'danger', message: 'Username siswa tidak tersedia.' };
+                return res.redirect('/data');
+            }
+            user_id = users[0].user_id;
+            // Pastikan user_id belum dipakai di students lain
+            const [students] = await db.promise().query(
+                'SELECT student_id FROM students WHERE user_id = ? AND student_id != ?', [user_id, id]
+            );
+            if (students.length > 0) {
+                req.session.alert = { type: 'danger', message: 'Username siswa sudah dipakai siswa lain.' };
+                return res.redirect('/data');
+            }
+        } else {
+            user_id = null;
+        }
+
+        // Handle parent_id dari input (bisa berupa "Nama Ortu (username)" atau hanya nama)
+        if (parent_id && parent_id.trim() !== '') {
+            let parentName = parent_id;
+            let usernameOrtu = null;
+            const match = parent_id.match(/^(.*?)\s*\((.*?)\)$/);
+            if (match) {
+                parentName = match[1].trim();
+                usernameOrtu = match[2].trim();
+            }
+            let query = "SELECT parent_id FROM parents";
+            let params = [];
+            if (usernameOrtu) {
+                query += " p LEFT JOIN users u ON p.user_id = u.user_id WHERE p.parent_name = ? AND u.username = ?";
+                params = [parentName, usernameOrtu];
+            } else {
+                query += " WHERE parent_name = ?";
+                params = [parentName];
+            }
+            const [parents] = await db.promise().query(query, params);
+            if (parents.length > 0) {
+                parentIdValue = parents[0].parent_id;
+            } else {
+                parentIdValue = null;
+            }
+        } else {
+            parentIdValue = null;
+        }
+
+        // Handle foto baru
+        if (req.file) {
+            photo_path = req.file.filename;
+            // Hapus foto lama jika bukan default
+            if (oldPhoto && oldPhoto !== 'default/default.jpg') {
+                const fullPath = path.join(__dirname, '..', 'public', 'img', 'profile', oldPhoto);
+                if (fs.existsSync(fullPath)) {
+                    try { fs.unlinkSync(fullPath); } catch (e) {}
+                }
+            }
+        } else {
+            photo_path = oldPhoto;
+        }
+
+        await db.promise().query(
+            `UPDATE students SET 
+                student_name = ?, nis = ?, nisn = ?, dob = ?, pob = ?, photo_path = ?, address = ?, rfid = ?, user_id = ?, parent_id = ?
+             WHERE student_id = ?`,
+            [
+                student_name, nis, nisn, dob, pob, photo_path, address || '', rfid || null, user_id, parentIdValue, id
+            ]
+        );
+        req.session.alert = { type: 'success', message: 'Data siswa berhasil diupdate.' };
+        res.redirect('/data');
+    } catch (err) {
+        req.session.alert = { type: 'danger', message: 'Gagal update siswa.' };
+        res.redirect('/data');
+    }
+};

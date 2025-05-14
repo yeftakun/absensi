@@ -36,5 +36,7 @@ router.post('/siswa/delete/:id', pagesController.deleteStudent);
 // Tambahkan route POST untuk edit user
 router.post('/user/edit/:id', pagesController.editUser);
 router.post('/guru/edit/:id', pagesController.uploadTeacherPhoto.single('photo'), pagesController.editTeacher);
+router.post('/orangtua/edit/:id', pagesController.editParent);
+router.post('/siswa/edit/:id', pagesController.uploadTeacherPhoto.single('photo'), pagesController.editStudent);
 
 module.exports = router;

@@ -360,7 +360,10 @@
                       <td><%= parent.created_at || 'N/A' %></td>
                       <td><%= parent.updated_at || 'N/A' %></td>
                       <td>
-                        <button class="btn btn-sm btn-warning">Edit</button>
+                        <button class="btn btn-sm btn-warning btn-edit-parent"
+                          data-id="<%= parent.parent_id %>"
+                          data-name="<%= parent.parent_name %>"
+                          data-username="<%= parent.user_id %>">Edit</button>
                         <button class="btn btn-sm btn-danger btn-delete"
                           data-type="parent"
                           data-id="<%= parent.parent_id %>"
@@ -408,6 +411,34 @@
       </div>
     </div>
     
+    <!-- Modal Edit Orang Tua -->
+    <div class="modal fade" id="modalEditParent" tabindex="-1" aria-labelledby="modalEditParentLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="formEditParent" method="POST">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalEditParentLabel">Edit Data Orang Tua</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="edit_parent_name" class="form-label">Nama Orang Tua</label>
+                <input type="text" name="parent_name" class="form-control" id="edit_parent_name" required>
+              </div>
+              <div class="mb-3 position-relative">
+                <label for="edit_username_ot" class="form-label">Username (Opsional)</label>
+                <input type="text" name="username" class="form-control" id="edit_username_ot" autocomplete="off" autocapitalize="off" spellcheck="false">
+                <div id="editUsernameParentAutocomplete" class="list-group position-absolute w-100" style="z-index: 1051; top:100%;"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Wilayah Tabel Siswa -->
     <div class="col-md-12 mb-4">
@@ -459,7 +490,18 @@
                       <td><%= student.created_at || 'N/A' %></td>
                       <td><%= student.updated_at || 'N/A' %></td>
                       <td>
-                        <button class="btn btn-sm btn-warning">Edit</button>
+                        <button class="btn btn-sm btn-warning btn-edit-student"
+                          data-id="<%= student.student_id %>"
+                          data-name="<%= student.student_name %>"
+                          data-nis="<%= student.nis %>"
+                          data-nisn="<%= student.nisn %>"
+                          data-dob="<%= student.dob %>"
+                          data-pob="<%= student.pob %>"
+                          data-photo="<%= student.photo_path %>"
+                          data-address="<%= student.address %>"
+                          data-rfid="<%= student.rfid %>"
+                          data-username="<%= student.user_id %>"
+                          data-parentid="<%= student.parent_id %>">Edit</button>
                         <button class="btn btn-sm btn-danger btn-delete"
                           data-type="student"
                           data-id="<%= student.student_id %>"
@@ -535,6 +577,69 @@
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Simpan</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="modalEditSiswa" tabindex="-1" aria-labelledby="modalEditSiswaLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="formEditSiswa" method="POST" enctype="multipart/form-data">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalEditSiswaLabel">Edit Data Siswa</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="edit_student_name" class="form-label">Nama Siswa</label>
+                <input type="text" name="student_name" class="form-control" id="edit_student_name" required>
+              </div>
+              <div class="mb-3">
+                <label for="edit_nis" class="form-label">NIS</label>
+                <input type="text" name="nis" class="form-control" id="edit_nis" required>
+              </div>
+              <div class="mb-3">
+                <label for="edit_nisn" class="form-label">NISN</label>
+                <input type="text" name="nisn" class="form-control" id="edit_nisn" required>
+              </div>
+              <div class="mb-3">
+                <label for="edit_dob" class="form-label">Tanggal Lahir</label>
+                <input type="date" name="dob" class="form-control" id="edit_dob" required>
+              </div>
+              <div class="mb-3">
+                <label for="edit_pob" class="form-label">Tempat Lahir</label>
+                <input type="text" name="pob" class="form-control" id="edit_pob" required>
+              </div>
+              <div class="mb-3">
+                <label for="edit_address" class="form-label">Alamat</label>
+                <input type="text" name="address" class="form-control" id="edit_address" required>
+              </div>
+              <div class="mb-3">
+                <label for="edit_student_photo" class="form-label">Foto (1:1)</label>
+                <input type="file" name="photo" accept="image/*" class="form-control" id="edit_student_photo" onchange="previewImage(event, 'previewEditSiswa')">
+                <img id="previewEditSiswa" class="img-thumbnail mt-2" style="display:none; max-width: 150px;">
+                <div id="currentPhotoSiswa" class="mt-2"></div>
+              </div>
+              <div class="mb-3">
+                <label for="edit_rfid" class="form-label">RFID (opsional)</label>
+                <input type="text" name="rfid" class="form-control" id="edit_rfid">
+              </div>
+              <div class="mb-3 position-relative">
+                <label for="edit_username_siswa" class="form-label">Username (Opsional)</label>
+                <input type="text" name="username" class="form-control" id="edit_username_siswa" autocomplete="off" autocapitalize="off" spellcheck="false">
+                <div id="editUsernameSiswaAutocomplete" class="list-group position-absolute w-100" style="z-index: 1051; top:100%;"></div>
+              </div>
+              <div class="mb-3 position-relative">
+                <label for="edit_parent_id" class="form-label">Orang tua</label>
+                <input type="text" name="parent_id" class="form-control" id="edit_parent_id" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Cari Nama Orang Tua">
+                <div id="editParentSiswaAutocomplete" class="list-group position-absolute w-100" style="z-index: 1051; top:100%;"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            </div>
           </div>
         </form>
       </div>
@@ -1056,6 +1161,264 @@
           }
         } else {
           currentFocus = -1;
+        }
+      });
+    }
+  });
+
+  // Modal Edit Orang Tua
+  document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById('modalEditParent');
+    const form = document.getElementById('formEditParent');
+    let bsModal = null;
+    if (window.bootstrap && bootstrap.Modal) {
+      bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+    }
+
+    document.querySelectorAll('.btn-edit-parent').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name') || '';
+        // Username orang tua: Anda bisa mengambil username dari user_id jika ingin menampilkan username, atau biarkan kosong
+        form.action = `/orangtua/edit/${id}`;
+        form.querySelector('#edit_parent_name').value = name;
+        form.querySelector('#edit_username_ot').value = '';
+        if (bsModal) bsModal.show();
+        else $(modal).modal('show');
+      });
+    });
+
+    // Autocomplete username orang tua pada modal edit
+    const input = document.getElementById('edit_username_ot');
+    const list = document.getElementById('editUsernameParentAutocomplete');
+    let currentFocus = -1;
+
+    if (input) {
+      input.addEventListener('input', async function () {
+        const val = this.value.trim();
+        list.innerHTML = '';
+        list.style.display = 'none';
+        if (val.length < 1) return;
+        try {
+          const res = await fetch(`/api/parent-usernames?q=${encodeURIComponent(val)}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            data.forEach(username => {
+              const item = document.createElement('button');
+              item.type = 'button';
+              item.className = 'list-group-item list-group-item-action';
+              item.textContent = username;
+              item.onclick = function () {
+                input.value = username;
+                list.innerHTML = '';
+                list.style.display = 'none';
+              };
+              list.appendChild(item);
+            });
+            list.style.display = 'block';
+          }
+        } catch (e) {}
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!input.contains(e.target) && !list.contains(e.target)) {
+          list.innerHTML = '';
+          list.style.display = 'none';
+        }
+      });
+
+      input.addEventListener('keydown', function(e) {
+        const items = list.querySelectorAll('.list-group-item');
+        if (!items.length) return;
+        if (e.key === 'ArrowDown') {
+          currentFocus++;
+          if (currentFocus >= items.length) currentFocus = 0;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          currentFocus--;
+          if (currentFocus < 0) currentFocus = items.length - 1;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'Enter') {
+          if (currentFocus > -1 && items[currentFocus]) {
+            items[currentFocus].click();
+            e.preventDefault();
+          }
+        } else {
+          currentFocus = -1;
+        }
+      });
+    }
+  });
+
+  // Modal Edit Siswa
+  document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById('modalEditSiswa');
+    const form = document.getElementById('formEditSiswa');
+    const previewImg = document.getElementById('previewEditSiswa');
+    const currentPhotoDiv = document.getElementById('currentPhotoSiswa');
+    let bsModal = null;
+    if (window.bootstrap && bootstrap.Modal) {
+      bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+    }
+
+    document.querySelectorAll('.btn-edit-student').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const id = btn.getAttribute('data-id');
+        form.action = `/siswa/edit/${id}`;
+        form.querySelector('#edit_student_name').value = btn.getAttribute('data-name') || '';
+        form.querySelector('#edit_nis').value = btn.getAttribute('data-nis') || '';
+        form.querySelector('#edit_nisn').value = btn.getAttribute('data-nisn') || '';
+        form.querySelector('#edit_dob').value = btn.getAttribute('data-dob') || '';
+        form.querySelector('#edit_pob').value = btn.getAttribute('data-pob') || '';
+        form.querySelector('#edit_address').value = btn.getAttribute('data-address') || '';
+        form.querySelector('#edit_rfid').value = btn.getAttribute('data-rfid') || '';
+        form.querySelector('#edit_username_siswa').value = '';
+        form.querySelector('#edit_student_photo').value = '';
+        previewImg.style.display = 'none';
+        const photo = btn.getAttribute('data-photo') || '';
+        if (photo && photo !== 'default/default.jpg') {
+          currentPhotoDiv.innerHTML = `<small>Foto saat ini:</small><br><img src="/img/profile/${photo}" class="img-thumbnail" style="max-width:100px;">`;
+        } else {
+          currentPhotoDiv.innerHTML = '';
+        }
+        // Untuk parent_id, Anda bisa menampilkan label "Nama Ortu (username)" jika ingin, atau biarkan kosong
+        form.querySelector('#edit_parent_id').value = '';
+        if (bsModal) bsModal.show();
+        else $(modal).modal('show');
+      });
+    });
+
+    // Autocomplete username siswa pada modal edit
+    const inputUsername = document.getElementById('edit_username_siswa');
+    const listUsername = document.getElementById('editUsernameSiswaAutocomplete');
+    let currentFocusUsername = -1;
+
+    if (inputUsername) {
+      inputUsername.addEventListener('input', async function () {
+        const val = this.value.trim();
+        listUsername.innerHTML = '';
+        listUsername.style.display = 'none';
+        if (val.length < 1) return;
+        try {
+          const res = await fetch(`/api/student-usernames?q=${encodeURIComponent(val)}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            data.forEach(username => {
+              const item = document.createElement('button');
+              item.type = 'button';
+              item.className = 'list-group-item list-group-item-action';
+              item.textContent = username;
+              item.onclick = function () {
+                inputUsername.value = username;
+                listUsername.innerHTML = '';
+                listUsername.style.display = 'none';
+              };
+              listUsername.appendChild(item);
+            });
+            listUsername.style.display = 'block';
+          }
+        } catch (e) {}
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!inputUsername.contains(e.target) && !listUsername.contains(e.target)) {
+          listUsername.innerHTML = '';
+          listUsername.style.display = 'none';
+        }
+      });
+
+      inputUsername.addEventListener('keydown', function(e) {
+        const items = listUsername.querySelectorAll('.list-group-item');
+        if (!items.length) return;
+        if (e.key === 'ArrowDown') {
+          currentFocusUsername++;
+          if (currentFocusUsername >= items.length) currentFocusUsername = 0;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocusUsername));
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          currentFocusUsername--;
+          if (currentFocusUsername < 0) currentFocusUsername = items.length - 1;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocusUsername));
+          e.preventDefault();
+        } else if (e.key === 'Enter') {
+          if (currentFocusUsername > -1 && items[currentFocusUsername]) {
+            items[currentFocusUsername].click();
+            e.preventDefault();
+          }
+        } else {
+          currentFocusUsername = -1;
+        }
+      });
+    }
+
+    // Autocomplete parent siswa pada modal edit
+    const inputParent = document.getElementById('edit_parent_id');
+    const listParent = document.getElementById('editParentSiswaAutocomplete');
+    let currentFocusParent = -1;
+
+    if (inputParent) {
+      inputParent.addEventListener('input', async function () {
+        const val = this.value.trim();
+        listParent.innerHTML = '';
+        listParent.style.display = 'none';
+        if (val.length < 1) return;
+        try {
+          const res = await fetch(`/api/parent-siswa?q=${encodeURIComponent(val)}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            data.forEach(parent => {
+              const label = parent.username
+                ? `${parent.parent_name} (${parent.username})`
+                : parent.parent_name;
+              const item = document.createElement('button');
+              item.type = 'button';
+              item.className = 'list-group-item list-group-item-action';
+              item.textContent = label;
+              item.onclick = function () {
+                inputParent.value = label;
+                inputParent.dataset.parentId = parent.parent_id;
+                listParent.innerHTML = '';
+                listParent.style.display = 'none';
+              };
+              listParent.appendChild(item);
+            });
+            listParent.style.display = 'block';
+          }
+        } catch (e) {}
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!inputParent.contains(e.target) && !listParent.contains(e.target)) {
+          listParent.innerHTML = '';
+          listParent.style.display = 'none';
+        }
+      });
+
+      inputParent.addEventListener('keydown', function(e) {
+        const items = listParent.querySelectorAll('.list-group-item');
+        if (!items.length) return;
+        if (e.key === 'ArrowDown') {
+          currentFocusParent++;
+          if (currentFocusParent >= items.length) currentFocusParent = 0;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocusParent));
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          currentFocusParent--;
+          if (currentFocusParent < 0) currentFocusParent = items.length - 1;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocusParent));
+          e.preventDefault();
+        } else if (e.key === 'Enter') {
+          if (currentFocusParent > -1 && items[currentFocusParent]) {
+            items[currentFocusParent].click();
+            e.preventDefault();
+          }
+        } else {
+          currentFocusParent = -1;
         }
       });
     }
