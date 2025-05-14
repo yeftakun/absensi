@@ -12,7 +12,24 @@
             <div class="card-body d-flex justify-content-between align-items-center">
               <div>
                 <h5 class="card-title">Ringkasan Sesi</h5>
-                <p class="card-text mb-0">Total Sesi: <strong>10</strong> | Aktif: <strong>2</strong> | Selesai: <strong>8</strong></p>
+                <%
+                  // Hitung total, aktif, selesai
+                  const totalSesi = sessions.length;
+                  const now = new Date();
+                  let aktif = 0, selesai = 0;
+                  sessions.forEach(s => {
+                    if (new Date(s.as_start_time) <= now && new Date(s.as_end_time) >= now) {
+                      aktif++;
+                    } else {
+                      selesai++;
+                    }
+                  });
+                %>
+                <p class="card-text mb-0">
+                  Total Sesi: <strong><%= totalSesi %></strong>
+                  | Aktif: <strong><%= aktif %></strong>
+                  | Selesai: <strong><%= selesai %></strong>
+                </p>
               </div>
               <!-- <a href="#" class="btn btn-light">Tambah Sesi</a> -->
               <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modalTambahSesi">
