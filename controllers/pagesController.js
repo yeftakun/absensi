@@ -85,8 +85,7 @@ exports.sessionMonitor = async (req, res) => {
             JOIN student_attendances sa ON s.student_id = sa.student_id
             WHERE sa.as_id = ?
             ORDER BY sa.sa_time DESC
-            LIMIT 10
-        `
+            LIMIT 10`
     };
 
     try {
@@ -157,39 +156,38 @@ exports.data = async (req, res) => {
 
     try {
         // Jalankan semua query secara paralel
-        const [parents, students, teachers, sessions, users] = await Promise.all([
+        const [parents, students, teachers, users] = await Promise.all([
             db.promise().query(queries.parents).then(([rows]) => rows),
             db.promise().query(queries.students).then(([rows]) => rows),
             db.promise().query(queries.teachers).then(([rows]) => rows),
-            // db.promise().query(queries.sessions).then(([rows]) => rows),
             db.promise().query(queries.users).then(([rows]) => rows)
         ]);
 
         // Format created_at field
-        users.forEach(user => {
+        (users || []).forEach(user => {
             user.created_at = format(new Date(user.created_at), 'yyyy-MM-dd HH:mm:ss');
         });
-        teachers.forEach(teacher => {
+        (teachers || []).forEach(teacher => {
             teacher.created_at = format(new Date(teacher.created_at), 'yyyy-MM-dd HH:mm:ss');
         });
-        parents.forEach(parent => {
+        (parents || []).forEach(parent => {
             parent.created_at = format(new Date(parent.created_at), 'yyyy-MM-dd HH:mm:ss');
         });
-        students.forEach(student => {
+        (students || []).forEach(student => {
             student.created_at = format(new Date(student.created_at), 'yyyy-MM-dd HH:mm:ss');
         });
 
         // Format updated_at field
-        users.forEach(user => {
+        (users || []).forEach(user => {
             user.updated_at = format(new Date(user.updated_at), 'yyyy-MM-dd HH:mm:ss');
         });
-        teachers.forEach(teacher => {
+        (teachers || []).forEach(teacher => {
             teacher.updated_at = format(new Date(teacher.updated_at), 'yyyy-MM-dd HH:mm:ss');
         });
-        parents.forEach(parent => {
+        (parents || []).forEach(parent => {
             parent.updated_at = format(new Date(parent.updated_at), 'yyyy-MM-dd HH:mm:ss');
         });
-        students.forEach(student => {
+        (students || []).forEach(student => {
             student.updated_at = format(new Date(student.updated_at), 'yyyy-MM-dd HH:mm:ss');
             student.dob = format(new Date(student.dob), 'yyyy-MM-dd');
         });
@@ -199,11 +197,10 @@ exports.data = async (req, res) => {
             layout: 'layouts/main-layout',
             title: "Data",
             loggedin: req.session.loggedin || false,
-            parents,
-            students,
-            teachers,
-            // sessions,
-            users
+            parents: parents || [],
+            students: students || [],
+            teachers: teachers || [],
+            users: users || []
         });
     } catch (err) {
         console.error(err);
