@@ -87,7 +87,7 @@
         <div class="col-md-4">
           <label for="sortDropdown" class="form-label">Diurutkan</label>
           <select id="sortDropdown" class="form-select">
-            <option value="waktu-desc">Waktu Terbaru</option>
+            <option value="waktu-desc" selected>Waktu Terbaru</option>
             <option value="waktu-asc">Waktu Terlama</option>
             <option value="kelas-asc">Nama Sesi (A-Z)</option>
             <option value="kelas-desc">Nama Sesi (Z-A)</option>
@@ -118,15 +118,24 @@
             </tr>
           </thead>
           <tbody id="sessionTableBody">
-            <% sessions.forEach((session, index) => { %>
-            <tr>
+            <% sessions.forEach((session, index) => { 
+                // Determine status for data-status attribute
+                let status = (new Date(session.as_start_time) <= new Date() && new Date(session.as_end_time) >= new Date()) ? 'active' : 'inactive';
+            %>
+            <tr 
+              data-name="<%= session.as_name.toLowerCase() %>" 
+              data-type="<%= session.as_type %>"
+              data-start="<%= session.as_start_time %>"
+              data-end="<%= session.as_end_time %>"
+              data-status="<%= status %>"
+            >
               <td><%= index + 1 %></td>
               <td><%= session.as_name %></td>
               <td><%= session.as_type === 'class' ? 'Kelas' : 'Acara' %></td>
               <td><%= session.as_start_time %></td>
               <td><%= session.as_end_time %></td>
               <td>
-                <% if (new Date(session.as_start_time) <= new Date() && new Date(session.as_end_time) >= new Date()) { %>
+                <% if (status === 'active') { %>
                   <span class="badge bg-success">Aktif</span>
                 <% } else { %>
                   <span class="badge bg-secondary">Selesai</span>
@@ -134,11 +143,42 @@
               </td>
               <td>
                 <a href="/session_monitor/<%= session.as_id %>" class="btn btn-sm btn-primary">Pantau</a>
+                <button 
+                  type="button" 
+                  class="btn btn-sm btn-danger ms-1 btn-delete-session" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#modalDeleteSession"
+                  data-session-id="<%= session.as_id %>"
+                  data-session-name="<%= session.as_name %>"
+                >
+                  Hapus
+                </button>
               </td>
             </tr>
             <% }); %>
             </tbody>
         </table>
+        </div>
+
+        <!-- Modal Konfirmasi Hapus Sesi -->
+        <div class="modal fade" id="modalDeleteSession" tabindex="-1" aria-labelledby="modalDeleteSessionLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <form id="deleteSessionForm" method="POST">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalDeleteSessionLabel">Konfirmasi Hapus Sesi</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                  <p>Yakin ingin menghapus sesi <strong id="deleteSessionName"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-danger">Hapus</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
     </main>
   </div>
@@ -146,13 +186,81 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
       const tableBody = document.getElementById("sessionTableBody");
-      const rows = tableBody.getElementsByTagName("tr");
-  
+      const rows = Array.from(tableBody.getElementsByTagName("tr"));
+      const searchInput = document.getElementById("searchInput");
+      const sortDropdown = document.getElementById("sortDropdown");
+      const statusFilter = document.getElementById("statusFilter");
+
+      // Table scroll if > 10 rows
       if (rows.length > 10) {
         const tableWrapper = document.getElementById("tableWrapper");
         tableWrapper.style.maxHeight = "500px";
         tableWrapper.style.overflowY = "auto";
-        tableWrapper.style.border = "1px solid #dee2e6"; // opsional: style tambahan
+        tableWrapper.style.border = "1px solid #dee2e6";
       }
+
+      function filterAndSort() {
+        const search = (searchInput.value || "").toLowerCase();
+        const sort = sortDropdown.value;
+        const status = statusFilter.value;
+
+        // Filter
+        let filteredRows = rows.filter(row => {
+          const name = row.getAttribute("data-name");
+          const type = row.getAttribute("data-type");
+          const rowStatus = row.getAttribute("data-status");
+          // Search by name or type
+          const matchesSearch = name.includes(search) || type.includes(search);
+          // Status filter
+          const matchesStatus = (status === "all") || (rowStatus === status);
+          return matchesSearch && matchesStatus;
+        });
+
+        // Sort
+        filteredRows.sort((a, b) => {
+          if (sort === "waktu-desc") {
+            return new Date(b.getAttribute("data-start")) - new Date(a.getAttribute("data-start"));
+          }
+          if (sort === "waktu-asc") {
+            return new Date(a.getAttribute("data-start")) - new Date(b.getAttribute("data-start"));
+          }
+          if (sort === "kelas-asc") {
+            return a.getAttribute("data-name").localeCompare(b.getAttribute("data-name"));
+          }
+          if (sort === "kelas-desc") {
+            return b.getAttribute("data-name").localeCompare(a.getAttribute("data-name"));
+          }
+          return 0;
+        });
+
+        // Remove all rows
+        while (tableBody.firstChild) tableBody.removeChild(tableBody.firstChild);
+
+        // Re-add filtered/sorted rows and update numbering
+        filteredRows.forEach((row, idx) => {
+          row.children[0].textContent = idx + 1;
+          tableBody.appendChild(row);
+        });
+      }
+
+      searchInput.addEventListener("input", filterAndSort);
+      sortDropdown.addEventListener("change", filterAndSort);
+      statusFilter.addEventListener("change", filterAndSort);
+
+      // Trigger default sort/filter on page load
+      filterAndSort();
+
+      // Modal delete logic
+      const modalDelete = document.getElementById('modalDeleteSession');
+      const deleteForm = document.getElementById('deleteSessionForm');
+      const deleteSessionName = document.getElementById('deleteSessionName');
+      document.querySelectorAll('.btn-delete-session').forEach(btn => {
+        btn.addEventListener('click', function () {
+          const sessionId = this.getAttribute('data-session-id');
+          const sessionName = this.getAttribute('data-session-name');
+          deleteForm.action = '/session/delete/' + sessionId;
+          deleteSessionName.textContent = sessionName;
+        });
+      });
     });
   </script>

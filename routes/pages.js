@@ -10,6 +10,8 @@ router.get('/home', pagesController.home);
 router.get('/about', pagesController.about);
 router.get('/scan', pagesController.scan);
 router.get('/session', pagesController.session);
+router.post('/session/add', pagesController.addSession);
+router.post('/session/delete/:as_id', pagesController.deleteSession);
 router.get('/session_monitor/:as_id', pagesController.sessionMonitor);
 router.get('/data', pagesController.data);
 

@@ -28,12 +28,52 @@ exports.about = (req, res) => {
     });
 };
 
-exports.scan = (req, res) => {
-    res.render('scan', {
-        layout: 'layouts/main-layout',
-        title: "Scan RFID",
-        loggedin: req.session.loggedin || false
-    });
+exports.scan = async (req, res) => {
+    try {
+        const [sessions] = await db.promise().query('SELECT * FROM attendance_sessions');
+        // Format date fields
+        sessions.forEach(session => {
+            session.as_start_time = session.as_start_time ? format(new Date(session.as_start_time), 'yyyy-MM-dd HH:mm:ss') : null;
+            session.as_end_time = session.as_end_time ? format(new Date(session.as_end_time), 'yyyy-MM-dd HH:mm:ss') : null;
+            session.as_created_at = session.as_created_at ? format(new Date(session.as_created_at), 'yyyy-MM-dd HH:mm:ss') : null;
+            session.as_updated_at = session.as_updated_at ? format(new Date(session.as_updated_at), 'yyyy-MM-dd HH:mm:ss') : null;
+        });
+        // Filter sessions where end time is in the future
+        const now = new Date();
+        const filteredSessions = sessions.filter(session =>
+            session.as_end_time && new Date(session.as_end_time) > now
+        );
+
+        // Buat array string: "{Nama Sesi} ({sisa waktu})"
+        const allSessions = filteredSessions.map(session => {
+            const end = new Date(session.as_end_time);
+            const diffMs = end - now;
+            if (diffMs <= 0) return `${session.as_name} (Berakhir)`;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+            const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60);
+            let sisa = '';
+            if (diffDays > 0) {
+                sisa = `Sisa ${diffDays} hari ${diffHours} jam`;
+            } else if (diffHours > 0) {
+                sisa = `Sisa ${diffHours} jam ${diffMinutes} menit`;
+            } else {
+                sisa = `Sisa ${diffMinutes} menit`;
+            }
+            return `${session.as_name} (${sisa})`;
+        });
+
+        res.render('scan', {
+            layout: 'layouts/main-layout',
+            title: "Scan RFID",
+            loggedin: req.session.loggedin || false,
+            allSessions
+        });
+        // console.log('Filtered sessions:', filteredSessions);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Terjadi kesalahan pada server.');
+    }
 };
 
 exports.session = async (req, res) => {
@@ -205,5 +245,33 @@ exports.data = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send('Terjadi kesalahan pada server.');
+    }
+};
+
+exports.addSession = async (req, res) => {
+    try {
+        const { as_name, as_type, as_start_time, as_end_time } = req.body;
+        if (!as_name || !as_type || !as_start_time || !as_end_time) {
+            return res.status(400).send('Semua field wajib diisi.');
+        }
+        await db.promise().query(
+            'INSERT INTO attendance_sessions (as_name, as_type, as_start_time, as_end_time) VALUES (?, ?, ?, ?)',
+            [as_name, as_type, as_start_time, as_end_time]
+        );
+        res.redirect('/session');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Gagal menambah sesi.');
+    }
+};
+
+exports.deleteSession = async (req, res) => {
+    try {
+        const as_id = req.params.as_id;
+        await db.promise().query('DELETE FROM attendance_sessions WHERE as_id = ?', [as_id]);
+        res.redirect('/session');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Gagal menghapus sesi.');
     }
 };
