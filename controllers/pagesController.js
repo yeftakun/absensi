@@ -928,3 +928,23 @@ exports.editStudent = async (req, res) => {
         res.redirect('/data');
     }
 };
+
+exports.editSession = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { as_name, as_type, as_start_time, as_end_time } = req.body;
+        if (!as_name || !as_type || !as_start_time || !as_end_time) {
+            req.session.alert = { type: 'danger', message: 'Semua field wajib diisi.' };
+            return res.redirect('/session');
+        }
+        await db.promise().query(
+            'UPDATE attendance_sessions SET as_name = ?, as_type = ?, as_start_time = ?, as_end_time = ? WHERE as_id = ?',
+            [as_name, as_type, as_start_time, as_end_time, id]
+        );
+        req.session.alert = { type: 'success', message: 'Sesi berhasil diupdate.' };
+        res.redirect('/session');
+    } catch (err) {
+        req.session.alert = { type: 'danger', message: 'Gagal update sesi.' };
+        res.redirect('/session');
+    }
+};

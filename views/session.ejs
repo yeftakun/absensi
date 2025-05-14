@@ -145,6 +145,19 @@
                 <a href="/session_monitor/<%= session.as_id %>" class="btn btn-sm btn-primary">Pantau</a>
                 <button 
                   type="button" 
+                  class="btn btn-sm btn-warning ms-1 btn-edit-session"
+                  data-session-id="<%= session.as_id %>"
+                  data-session-name="<%= session.as_name %>"
+                  data-session-type="<%= session.as_type %>"
+                  data-session-start="<%= session.as_start_time ? session.as_start_time.replace(' ', 'T') : '' %>"
+                  data-session-end="<%= session.as_end_time ? session.as_end_time.replace(' ', 'T') : '' %>"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalEditSesi"
+                >
+                  Edit
+                </button>
+                <button 
+                  type="button" 
                   class="btn btn-sm btn-danger ms-1 btn-delete-session" 
                   data-bs-toggle="modal" 
                   data-bs-target="#modalDeleteSession"
@@ -176,6 +189,43 @@
                   <button type="submit" class="btn btn-danger">Hapus</button>
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Modal Edit Sesi -->
+        <div class="modal fade" id="modalEditSesi" tabindex="-1" aria-labelledby="modalEditSesiLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <form id="formEditSesi" method="POST" class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalEditSesiLabel">Edit Sesi Presensi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="edit_as_name" class="form-label">Nama sesi</label>
+                  <input type="text" name="as_name" class="form-control" id="edit_as_name" required>
+                </div>
+                <div class="mb-3">
+                  <label for="edit_as_type" class="form-label">Session Type</label>
+                  <select name="as_type" id="edit_as_type" class="form-select" required>
+                    <option value="class">Class</option>
+                    <option value="event">Event</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="edit_as_start_time" class="form-label">Waktu Mulai</label>
+                  <input type="datetime-local" name="as_start_time" class="form-control" id="edit_as_start_time" required>
+                </div>
+                <div class="mb-3">
+                  <label for="edit_as_end_time" class="form-label">Waktu Berakhir</label>
+                  <input type="datetime-local" name="as_end_time" class="form-control" id="edit_as_end_time" required>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
               </div>
             </form>
           </div>
@@ -260,6 +310,27 @@
           const sessionName = this.getAttribute('data-session-name');
           deleteForm.action = '/session/delete/' + sessionId;
           deleteSessionName.textContent = sessionName;
+        });
+      });
+
+      // Modal Edit Sesi
+      const modalEdit = document.getElementById('modalEditSesi');
+      const formEdit = document.getElementById('formEditSesi');
+      document.querySelectorAll('.btn-edit-session').forEach(btn => {
+        btn.addEventListener('click', function () {
+          const id = btn.getAttribute('data-session-id');
+          const name = btn.getAttribute('data-session-name') || '';
+          const type = btn.getAttribute('data-session-type') || '';
+          let start = btn.getAttribute('data-session-start') || '';
+          let end = btn.getAttribute('data-session-end') || '';
+          // Format to yyyy-MM-ddTHH:mm for input[type=datetime-local]
+          if (start && start.length > 16) start = start.slice(0, 16);
+          if (end && end.length > 16) end = end.slice(0, 16);
+          formEdit.action = `/session/edit/${id}`;
+          formEdit.querySelector('#edit_as_name').value = name;
+          formEdit.querySelector('#edit_as_type').value = type;
+          formEdit.querySelector('#edit_as_start_time').value = start;
+          formEdit.querySelector('#edit_as_end_time').value = end;
         });
       });
     });
