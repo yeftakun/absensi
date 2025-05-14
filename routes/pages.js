@@ -19,5 +19,7 @@ router.get('/api/teacher-usernames', pagesController.autocompleteTeacherUsername
 
 // Tambahkan route berikut:
 router.post('/user/add', pagesController.addUser);
+router.get('/api/parent-usernames', pagesController.autocompleteParentUsernames);
+router.post('/orangtua/add', pagesController.addParent);
 
 module.exports = router;

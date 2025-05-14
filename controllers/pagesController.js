@@ -390,3 +390,61 @@ exports.autocompleteTeacherUsernames = async (req, res) => {
         res.json([]);
     }
 };
+
+// API untuk autocomplete username orang tua
+exports.autocompleteParentUsernames = async (req, res) => {
+    try {
+        const q = (req.query.q || '').trim();
+        if (!q) return res.json([]);
+        // Cari username parent yang belum dipakai di parents
+        const [rows] = await db.promise().query(
+            `SELECT username FROM users 
+             WHERE role = 'parent' 
+             AND user_id NOT IN (SELECT user_id FROM parents WHERE user_id IS NOT NULL)
+             AND username LIKE ? 
+             ORDER BY username ASC
+             LIMIT 3`,
+            [`%${q}%`]
+        );
+        res.json(rows.map(r => r.username));
+    } catch (err) {
+        res.json([]);
+    }
+};
+
+// Handler tambah orang tua
+exports.addParent = async (req, res) => {
+    try {
+        const { parent_name, username } = req.body;
+        let user_id = null;
+        if (username && username.trim() !== '') {
+            // Cek username di tabel users
+            const [users] = await db.promise().query(
+                "SELECT user_id FROM users WHERE username = ? AND role = 'parent'", [username]
+            );
+            if (users.length === 0) {
+                req.session.alert = { type: 'danger', message: 'Username tidak tersedia.' };
+                return res.redirect('/data');
+            }
+            user_id = users[0].user_id;
+            // Cek apakah user_id sudah dipakai di parents
+            const [parents] = await db.promise().query(
+                'SELECT parent_id FROM parents WHERE user_id = ?', [user_id]
+            );
+            if (parents.length > 0) {
+                req.session.alert = { type: 'danger', message: 'Username sudah dipakai orang tua lain.' };
+                return res.redirect('/data');
+            }
+        }
+        await db.promise().query(
+            'INSERT INTO parents (parent_name, user_id) VALUES (?, ?)',
+            [parent_name, user_id]
+        );
+        req.session.alert = { type: 'success', message: 'Data orang tua berhasil ditambahkan.' };
+        res.redirect('/data');
+    } catch (err) {
+        console.error(err);
+        req.session.alert = { type: 'danger', message: 'Gagal menambah orang tua.' };
+        res.redirect('/data');
+    }
+};

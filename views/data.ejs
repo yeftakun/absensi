@@ -2,9 +2,11 @@
   <%- include('layouts/nav') %>
 
   <main class="container py-4 position-relative" style="flex-grow: 1;">
-    <!-- Alert -->
+    <!-- Floating Alert -->
     <% if (typeof alert !== 'undefined' && alert) { %>
-      <div class="alert alert-<%= alert.type %> alert-dismissible fade show" role="alert" style="z-index:9999;">
+      <div id="floatingAlert" class="alert alert-<%= alert.type %> alert-dismissible fade show position-fixed"
+        role="alert"
+        style="top: 30px; right: 30px; min-width: 300px; max-width: 90vw; z-index: 2000; box-shadow: 0 2px 16px rgba(0,0,0,0.15);">
         <%= alert.message %>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
@@ -285,9 +287,10 @@
               <label for="parent_name" class="form-label">Nama Orang Tua</label>
               <input type="text" name="parent_name" class="form-control" id="parent_name" required>
             </div>
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
               <label for="username_ot" class="form-label">Username (Opsional)</label>
-              <input type="text" name="username" class="form-control" id="username_ot">
+              <input type="text" name="username" class="form-control" id="username_ot" autocomplete="off">
+              <div id="usernameParentAutocomplete" class="list-group position-absolute w-100" style="z-index: 1051; top:100%;"></div>
             </div>
           </div>
           <div class="modal-footer">
@@ -463,6 +466,24 @@
     });
   });
 
+  // Floating alert auto-dismiss after 5 seconds
+  document.addEventListener("DOMContentLoaded", function () {
+    const alertEl = document.getElementById('floatingAlert');
+    if (alertEl) {
+      setTimeout(() => {
+        if (window.bootstrap && bootstrap.Alert) {
+          // Bootstrap 5
+          const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
+          bsAlert.close();
+        } else {
+          // Fallback
+          alertEl.classList.remove('show');
+          setTimeout(() => alertEl.remove(), 500);
+        }
+      }, 5000);
+    }
+  });
+
   // Autocomplete username guru
   document.addEventListener("DOMContentLoaded", function () {
     const input = document.getElementById('username_guru');
@@ -477,6 +498,76 @@
         if (val.length < 1) return;
         try {
           const res = await fetch(`/api/teacher-usernames?q=${encodeURIComponent(val)}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            data.forEach(username => {
+              const item = document.createElement('button');
+              item.type = 'button';
+              item.className = 'list-group-item list-group-item-action';
+              item.textContent = username;
+              item.onclick = function () {
+                input.value = username;
+                list.innerHTML = '';
+                list.style.display = 'none';
+              };
+              list.appendChild(item);
+            });
+            list.style.display = 'block';
+          }
+        } catch (e) {
+          // ignore error
+        }
+      });
+
+      // Hide autocomplete when clicking outside
+      document.addEventListener('click', function (e) {
+        if (!input.contains(e.target) && !list.contains(e.target)) {
+          list.innerHTML = '';
+          list.style.display = 'none';
+        }
+      });
+
+      // Keyboard navigation
+      input.addEventListener('keydown', function(e) {
+        const items = list.querySelectorAll('.list-group-item');
+        if (!items.length) return;
+        if (e.key === 'ArrowDown') {
+          currentFocus++;
+          if (currentFocus >= items.length) currentFocus = 0;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          currentFocus--;
+          if (currentFocus < 0) currentFocus = items.length - 1;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'Enter') {
+          if (currentFocus > -1 && items[currentFocus]) {
+            items[currentFocus].click();
+            e.preventDefault();
+          }
+        } else {
+          currentFocus = -1;
+        }
+      });
+    }
+  });
+
+  // Autocomplete username orang tua
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById('username_ot');
+    const list = document.getElementById('usernameParentAutocomplete');
+    let currentFocus = -1;
+
+    if (input) {
+      input.addEventListener('input', async function () {
+        const val = this.value.trim();
+        list.innerHTML = '';
+        list.style.display = 'none';
+        if (val.length < 1) return;
+        try {
+          const res = await fetch(`/api/parent-usernames?q=${encodeURIComponent(val)}`);
           if (!res.ok) return;
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
