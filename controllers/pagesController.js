@@ -248,6 +248,10 @@ exports.data = async (req, res) => {
             student.dob = format(new Date(student.dob), 'yyyy-MM-dd');
         });
 
+        // Simpan alert ke variabel lokal, lalu hapus dari session SEBELUM render
+        const alert = req.session.alert || null;
+        delete req.session.alert;
+
         // Render halaman dengan data yang diambil
         res.render('data', {
             layout: 'layouts/main-layout',
@@ -257,9 +261,8 @@ exports.data = async (req, res) => {
             students: students || [],
             teachers: teachers || [],
             users: users || [],
-            alert: req.session.alert || null // Tambahkan alert
+            alert // hanya tampil sekali
         });
-        req.session.alert = null; // Reset alert setelah render
     } catch (err) {
         console.error(err);
         res.status(500).send('Terjadi kesalahan pada server.');
@@ -297,8 +300,8 @@ exports.deleteSession = async (req, res) => {
 exports.addUser = async (req, res) => {
     try {
         const { username, password, email, role, wa_num } = req.body;
-        if (!username || !password || !email || !role || !wa_num) {
-            req.session.alert = { type: 'danger', message: 'Semua field wajib diisi.' };
+        if (!username || !password || !role || !wa_num) {
+            req.session.alert = { type: 'danger', message: 'Username, password, role, dan nomor WA wajib diisi.' };
             return res.redirect('/data');
         }
         // Validasi role agar sesuai enum di database
@@ -307,11 +310,15 @@ exports.addUser = async (req, res) => {
             req.session.alert = { type: 'danger', message: 'Role tidak valid.' };
             return res.redirect('/data');
         }
-        // Cek username/email/wa_num unik
-        const [exist] = await db.promise().query(
-            'SELECT * FROM users WHERE username = ? OR email = ? OR wa_num = ?',
-            [username, email, wa_num]
-        );
+        // Cek username/wa_num unik (email boleh kosong dan tidak dicek unik jika kosong)
+        let checkQuery = 'SELECT * FROM users WHERE username = ? OR wa_num = ?';
+        let checkParams = [username, wa_num];
+        let emailValue = email && email.trim() !== '' ? email : 'N/A';
+        if (email && email.trim() !== '') {
+            checkQuery += ' OR email = ?';
+            checkParams.push(email);
+        }
+        const [exist] = await db.promise().query(checkQuery, checkParams);
         if (exist.length > 0) {
             req.session.alert = { type: 'danger', message: 'Username, email, atau nomor WA sudah terdaftar.' };
             return res.redirect('/data');
@@ -319,7 +326,7 @@ exports.addUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await db.promise().query(
             'INSERT INTO users (username, password, email, role, wa_num) VALUES (?, ?, ?, ?, ?)',
-            [username, hashedPassword, email, role, wa_num]
+            [username, hashedPassword, emailValue, role, wa_num]
         );
         req.session.alert = { type: 'success', message: 'User berhasil ditambahkan.' };
         res.redirect('/data');
@@ -445,6 +452,217 @@ exports.addParent = async (req, res) => {
     } catch (err) {
         console.error(err);
         req.session.alert = { type: 'danger', message: 'Gagal menambah orang tua.' };
+        res.redirect('/data');
+    }
+};
+
+// API untuk autocomplete username siswa
+exports.autocompleteStudentUsernames = async (req, res) => {
+    try {
+        const q = (req.query.q || '').trim();
+        if (!q) return res.json([]);
+        // Cari username student yang belum dipakai di students
+        const [rows] = await db.promise().query(
+            `SELECT username FROM users 
+             WHERE role = 'student' 
+             AND user_id NOT IN (SELECT user_id FROM students WHERE user_id IS NOT NULL)
+             AND username LIKE ? 
+             ORDER BY username ASC
+             LIMIT 3`,
+            [`%${q}%`]
+        );
+        res.json(rows.map(r => r.username));
+    } catch (err) {
+        res.json([]);
+    }
+};
+
+// API untuk autocomplete parent siswa (Nama Orang Tua + username)
+exports.autocompleteParentSiswa = async (req, res) => {
+    try {
+        const q = (req.query.q || '').trim();
+        if (!q) return res.json([]);
+        // Cari parent yang punya user_id dan belum dipakai di students.parent_id
+        const [rows] = await db.promise().query(
+            `SELECT p.parent_id, p.parent_name, u.username
+             FROM parents p
+             JOIN users u ON p.user_id = u.user_id
+             WHERE u.role = 'parent'
+             AND p.parent_id NOT IN (SELECT parent_id FROM students WHERE parent_id IS NOT NULL)
+             AND (p.parent_name LIKE ? OR u.username LIKE ?)
+             ORDER BY p.parent_name ASC
+             LIMIT 3`,
+            [`%${q}%`, `%${q}%`]
+        );
+        res.json(rows);
+    } catch (err) {
+        res.json([]);
+    }
+};
+
+// API untuk autocomplete parent siswa (berdasarkan nama orang tua, tampilkan "Nama Ortu (username)" jika ada username)
+exports.autocompleteParentSiswa = async (req, res) => {
+    try {
+        const q = (req.query.q || '').trim();
+        if (!q) return res.json([]);
+        // Cari parent yang belum dipakai di students.parent_id, pencarian berdasarkan parent_name
+        const [rows] = await db.promise().query(
+            `SELECT p.parent_id, p.parent_name, u.username
+             FROM parents p
+             LEFT JOIN users u ON p.user_id = u.user_id
+             WHERE p.parent_id NOT IN (SELECT parent_id FROM students WHERE parent_id IS NOT NULL)
+             AND p.parent_name LIKE ?
+             ORDER BY p.parent_name ASC
+             LIMIT 3`,
+            [`%${q}%`]
+        );
+        res.json(rows);
+    } catch (err) {
+        res.json([]);
+    }
+};
+
+// Handler tambah siswa
+exports.addStudent = async (req, res) => {
+    try {
+        const {
+            student_name, nis, nisn, dob, pob, address, rfid, username, parent_id
+        } = req.body;
+        let photo_path = 'default/default.jpg';
+        if (req.file) {
+            photo_path = req.file.filename;
+        }
+
+        // Cari user_id jika username diisi
+        let user_id = null;
+        if (username && username.trim() !== '') {
+            const [users] = await db.promise().query(
+                "SELECT user_id FROM users WHERE username = ? AND role = 'student'", [username]
+            );
+            if (users.length === 0) {
+                req.session.alert = { type: 'danger', message: 'Username siswa tidak tersedia.' };
+                return res.redirect('/data');
+            }
+            user_id = users[0].user_id;
+            // Pastikan user_id belum dipakai di students
+            const [students] = await db.promise().query(
+                'SELECT student_id FROM students WHERE user_id = ?', [user_id]
+            );
+            if (students.length > 0) {
+                req.session.alert = { type: 'danger', message: 'Username siswa sudah dipakai siswa lain.' };
+                return res.redirect('/data');
+            }
+        }
+
+        // Ambil parent_id dari input (bisa berupa "Nama Ortu (username)" atau hanya nama)
+        let parentIdValue = null;
+        if (parent_id && parent_id.trim() !== '') {
+            // Coba ambil parent_id dari database berdasarkan nama (dan username jika ada)
+            let parentName = parent_id;
+            let usernameOrtu = null;
+            const match = parent_id.match(/^(.*?)\s*\((.*?)\)$/);
+            if (match) {
+                parentName = match[1].trim();
+                usernameOrtu = match[2].trim();
+            }
+            let query = "SELECT parent_id FROM parents";
+            let params = [];
+            if (usernameOrtu) {
+                query += " p LEFT JOIN users u ON p.user_id = u.user_id WHERE p.parent_name = ? AND u.username = ?";
+                params = [parentName, usernameOrtu];
+            } else {
+                query += " WHERE parent_name = ?";
+                params = [parentName];
+            }
+            const [parents] = await db.promise().query(query, params);
+            if (parents.length > 0) {
+                parentIdValue = parents[0].parent_id;
+            }
+        }
+
+        await db.promise().query(
+            `INSERT INTO students 
+            (student_name, nis, nisn, dob, pob, photo_path, address, rfid, user_id, parent_id) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                student_name, nis, nisn, dob, pob, photo_path, address || '', rfid || null, user_id, parentIdValue
+            ]
+        );
+        req.session.alert = { type: 'success', message: 'Data siswa berhasil ditambahkan.' };
+        res.redirect('/data');
+    } catch (err) {
+        console.error(err);
+        req.session.alert = { type: 'danger', message: 'Gagal menambah siswa.' };
+        res.redirect('/data');
+    }
+};
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+        await db.promise().query('DELETE FROM users WHERE user_id = ?', [id]);
+        req.session.alert = { type: 'success', message: 'User berhasil dihapus.' };
+        res.redirect('/data');
+    } catch (err) {
+        req.session.alert = { type: 'danger', message: 'Gagal menghapus user.' };
+        res.redirect('/data');
+    }
+};
+
+exports.deleteTeacher = async (req, res) => {
+    try {
+        const id = req.params.id;
+        // Ambil photo_path sebelum delete
+        const [rows] = await db.promise().query('SELECT photo_path FROM teachers WHERE teacher_id = ?', [id]);
+        if (rows.length > 0) {
+            const photoPath = rows[0].photo_path;
+            if (photoPath && photoPath !== 'default/default.jpg') {
+                const fullPath = path.join(__dirname, '..', 'public', 'img', 'profile', photoPath);
+                if (fs.existsSync(fullPath)) {
+                    try { fs.unlinkSync(fullPath); } catch (e) {}
+                }
+            }
+        }
+        await db.promise().query('DELETE FROM teachers WHERE teacher_id = ?', [id]);
+        req.session.alert = { type: 'success', message: 'Guru berhasil dihapus.' };
+        res.redirect('/data');
+    } catch (err) {
+        req.session.alert = { type: 'danger', message: 'Gagal menghapus guru.' };
+        res.redirect('/data');
+    }
+};
+
+exports.deleteParent = async (req, res) => {
+    try {
+        const id = req.params.id;
+        await db.promise().query('DELETE FROM parents WHERE parent_id = ?', [id]);
+        req.session.alert = { type: 'success', message: 'Orang tua berhasil dihapus.' };
+        res.redirect('/data');
+    } catch (err) {
+        req.session.alert = { type: 'danger', message: 'Gagal menghapus orang tua.' };
+        res.redirect('/data');
+    }
+};
+
+exports.deleteStudent = async (req, res) => {
+    try {
+        const id = req.params.id;
+        // Ambil photo_path sebelum delete
+        const [rows] = await db.promise().query('SELECT photo_path FROM students WHERE student_id = ?', [id]);
+        if (rows.length > 0) {
+            const photoPath = rows[0].photo_path;
+            if (photoPath && photoPath !== 'default/default.jpg') {
+                const fullPath = path.join(__dirname, '..', 'public', 'img', 'profile', photoPath);
+                if (fs.existsSync(fullPath)) {
+                    try { fs.unlinkSync(fullPath); } catch (e) {}
+                }
+            }
+        }
+        await db.promise().query('DELETE FROM students WHERE student_id = ?', [id]);
+        req.session.alert = { type: 'success', message: 'Siswa berhasil dihapus.' };
+        res.redirect('/data');
+    } catch (err) {
+        req.session.alert = { type: 'danger', message: 'Gagal menghapus siswa.' };
         res.redirect('/data');
     }
 };

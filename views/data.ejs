@@ -3,7 +3,10 @@
 
   <main class="container py-4 position-relative" style="flex-grow: 1;">
     <!-- Floating Alert -->
-    <% if (typeof alert !== 'undefined' && alert) { %>
+    <% if (typeof alert !== 'undefined' && alert && !locals._alertShown) { %>
+      <%
+        locals._alertShown = true;
+      %>
       <div id="floatingAlert" class="alert alert-<%= alert.type %> alert-dismissible fade show position-fixed"
         role="alert"
         style="top: 30px; right: 30px; min-width: 300px; max-width: 90vw; z-index: 2000; box-shadow: 0 2px 16px rgba(0,0,0,0.15);">
@@ -64,7 +67,10 @@
                     <td><%= user.created_at || 'N/A' %></td>
                     <td>
                       <button class="btn btn-sm btn-warning">Edit</button>
-                      <button class="btn btn-sm btn-danger">Hapus</button>
+                      <button class="btn btn-sm btn-danger btn-delete"
+                        data-type="user"
+                        data-id="<%= user.user_id %>"
+                        data-name="<%= user.username %>">Hapus</button>
                     </td>
                   </tr>
                   <% }); %>
@@ -103,7 +109,7 @@
             </div>
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
-              <input type="email" name="email" class="form-control" id="email" required>
+              <input type="email" name="email" class="form-control" id="email" placeholder="Opsional, jika kosong akan diisi N/A">
             </div>
             <div class="mb-3">
               <label for="role" class="form-label">Role</label>
@@ -167,7 +173,10 @@
                       <td><%= teacher.created_at || 'N/A' %></td>
                       <td>
                         <button class="btn btn-sm btn-warning">Edit</button>
-                        <button class="btn btn-sm btn-danger">Hapus</button>
+                        <button class="btn btn-sm btn-danger btn-delete"
+                          data-type="teacher"
+                          data-id="<%= teacher.teacher_id %>"
+                          data-name="<%= teacher.teacher_name %>">Hapus</button>
                       </td>
                     </tr>
                     <% }); %>
@@ -208,7 +217,7 @@
             </div>
             <div class="mb-3 position-relative">
               <label for="username_guru" class="form-label">Username (Opsional)</label>
-              <input type="text" name="username" class="form-control" id="username_guru" autocomplete="off">
+              <input type="text" name="username" class="form-control" id="username_guru" autocomplete="off" autocapitalize="off" spellcheck="false">
               <div id="usernameGuruAutocomplete" class="list-group position-absolute w-100" style="z-index: 1051; top:100%;"></div>
             </div>
           </div>
@@ -257,7 +266,10 @@
                       <td><%= parent.updated_at || 'N/A' %></td>
                       <td>
                         <button class="btn btn-sm btn-warning">Edit</button>
-                        <button class="btn btn-sm btn-danger">Hapus</button>
+                        <button class="btn btn-sm btn-danger btn-delete"
+                          data-type="parent"
+                          data-id="<%= parent.parent_id %>"
+                          data-name="<%= parent.parent_name %>">Hapus</button>
                       </td>
                     </tr>
                     <% }); %>
@@ -289,7 +301,7 @@
             </div>
             <div class="mb-3 position-relative">
               <label for="username_ot" class="form-label">Username (Opsional)</label>
-              <input type="text" name="username" class="form-control" id="username_ot" autocomplete="off">
+              <input type="text" name="username" class="form-control" id="username_ot" autocomplete="off" autocapitalize="off" spellcheck="false">
               <div id="usernameParentAutocomplete" class="list-group position-absolute w-100" style="z-index: 1051; top:100%;"></div>
             </div>
           </div>
@@ -353,7 +365,10 @@
                       <td><%= student.updated_at || 'N/A' %></td>
                       <td>
                         <button class="btn btn-sm btn-warning">Edit</button>
-                        <button class="btn btn-sm btn-danger">Hapus</button>
+                        <button class="btn btn-sm btn-danger btn-delete"
+                          data-type="student"
+                          data-id="<%= student.student_id %>"
+                          data-name="<%= student.student_name %>">Hapus</button>
                       </td>
                     </tr>
                     <% }); %>
@@ -399,6 +414,10 @@
               <input type="text" name="pob" class="form-control" id="pob" required>
             </div>
             <div class="mb-3">
+              <label for="address" class="form-label">Alamat</label>
+              <input type="text" name="address" class="form-control" id="address" required>
+            </div>
+            <div class="mb-3">
               <label for="student_photo" class="form-label">Foto (1:1)</label>
               <input type="file" name="photo" accept="image/*" class="form-control" id="student_photo" onchange="previewImage(event, 'previewSiswa')">
               <img id="previewSiswa" class="img-thumbnail mt-2" style="display:none; max-width: 150px;">
@@ -407,13 +426,15 @@
               <label for="rfid" class="form-label">RFID (opsional)</label>
               <input type="text" name="rfid" class="form-control" id="rfid">
             </div>
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
               <label for="username_siswa" class="form-label">Username (Opsional)</label>
-              <input type="text" name="username" class="form-control" id="username_siswa">
+              <input type="text" name="username" class="form-control" id="username_siswa" autocomplete="off" autocapitalize="off" spellcheck="false">
+              <div id="usernameSiswaAutocomplete" class="list-group position-absolute w-100" style="z-index: 1051; top:100%;"></div>
             </div>
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
               <label for="parent_id" class="form-label">Orang tua</label>
-              <input type="text" name="parent_id" class="form-control" id="parent_id">
+              <input type="text" name="parent_id" class="form-control" id="parent_id" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Cari Nama Orang Tua">
+              <div id="parentSiswaAutocomplete" class="list-group position-absolute w-100" style="z-index: 1051; top:100%;"></div>
             </div>
           </div>
           <div class="modal-footer">
@@ -424,6 +445,25 @@
       </div>
     </div>
     
+    <div class="modal fade" id="modalDeleteConfirm" tabindex="-1" aria-labelledby="modalDeleteConfirmLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="formDeleteConfirm" method="POST">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalDeleteConfirmLabel">Konfirmasi Hapus</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+              <p id="deleteConfirmText">Apakah Anda yakin ingin menghapus data ini?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-danger">Hapus</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   </main>
 </div>
 <script>
@@ -622,5 +662,179 @@
         }
       });
     }
+  });
+
+  // Autocomplete username siswa
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById('username_siswa');
+    const list = document.getElementById('usernameSiswaAutocomplete');
+    let currentFocus = -1;
+
+    if (input) {
+      input.addEventListener('input', async function () {
+        const val = this.value.trim();
+        list.innerHTML = '';
+        list.style.display = 'none';
+        if (val.length < 1) return;
+        try {
+          const res = await fetch(`/api/student-usernames?q=${encodeURIComponent(val)}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            data.forEach(username => {
+              const item = document.createElement('button');
+              item.type = 'button';
+              item.className = 'list-group-item list-group-item-action';
+              item.textContent = username;
+              item.onclick = function () {
+                input.value = username;
+                list.innerHTML = '';
+                list.style.display = 'none';
+              };
+              list.appendChild(item);
+            });
+            list.style.display = 'block';
+          }
+        } catch (e) {}
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!input.contains(e.target) && !list.contains(e.target)) {
+          list.innerHTML = '';
+          list.style.display = 'none';
+        }
+      });
+
+      input.addEventListener('keydown', function(e) {
+        const items = list.querySelectorAll('.list-group-item');
+        if (!items.length) return;
+        if (e.key === 'ArrowDown') {
+          currentFocus++;
+          if (currentFocus >= items.length) currentFocus = 0;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          currentFocus--;
+          if (currentFocus < 0) currentFocus = items.length - 1;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'Enter') {
+          if (currentFocus > -1 && items[currentFocus]) {
+            items[currentFocus].click();
+            e.preventDefault();
+          }
+        } else {
+          currentFocus = -1;
+        }
+      });
+    }
+  });
+
+  // Autocomplete parent siswa (Nama Orang Tua (username))
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById('parent_id');
+    const list = document.getElementById('parentSiswaAutocomplete');
+    let currentFocus = -1;
+
+    if (input) {
+      input.addEventListener('input', async function () {
+        const val = this.value.trim();
+        list.innerHTML = '';
+        list.style.display = 'none';
+        if (val.length < 1) return;
+        try {
+          const res = await fetch(`/api/parent-siswa?q=${encodeURIComponent(val)}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            data.forEach(parent => {
+              const label = parent.username
+                ? `${parent.parent_name} (${parent.username})`
+                : parent.parent_name;
+              const item = document.createElement('button');
+              item.type = 'button';
+              item.className = 'list-group-item list-group-item-action';
+              item.textContent = label;
+              item.onclick = function () {
+                input.value = label;
+                input.dataset.parentId = parent.parent_id; // simpan id jika perlu
+                list.innerHTML = '';
+                list.style.display = 'none';
+              };
+              list.appendChild(item);
+            });
+            list.style.display = 'block';
+          }
+        } catch (e) {}
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!input.contains(e.target) && !list.contains(e.target)) {
+          list.innerHTML = '';
+          list.style.display = 'none';
+        }
+      });
+
+      input.addEventListener('keydown', function(e) {
+        const items = list.querySelectorAll('.list-group-item');
+        if (!items.length) return;
+        if (e.key === 'ArrowDown') {
+          currentFocus++;
+          if (currentFocus >= items.length) currentFocus = 0;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          currentFocus--;
+          if (currentFocus < 0) currentFocus = items.length - 1;
+          items.forEach((el, idx) => el.classList.toggle('active', idx === currentFocus));
+          e.preventDefault();
+        } else if (e.key === 'Enter') {
+          if (currentFocus > -1 && items[currentFocus]) {
+            items[currentFocus].click();
+            e.preventDefault();
+          }
+        } else {
+          currentFocus = -1;
+        }
+      });
+    }
+  });
+
+  // Handler tombol hapus (semua tabel)
+  document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById('modalDeleteConfirm');
+    const form = document.getElementById('formDeleteConfirm');
+    const text = document.getElementById('deleteConfirmText');
+    let bsModal = null;
+    if (window.bootstrap && bootstrap.Modal) {
+      bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+    }
+
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const type = btn.getAttribute('data-type');
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name') || '';
+        let action = '';
+        let label = '';
+        if (type === 'user') {
+          action = `/user/delete/${id}`;
+          label = `user <b>${name}</b>`;
+        } else if (type === 'teacher') {
+          action = `/guru/delete/${id}`;
+          label = `guru <b>${name}</b>`;
+        } else if (type === 'parent') {
+          action = `/orangtua/delete/${id}`;
+          label = `orang tua <b>${name}</b>`;
+        } else if (type === 'student') {
+          action = `/siswa/delete/${id}`;
+          label = `siswa <b>${name}</b>`;
+        }
+        form.action = action;
+        text.innerHTML = `Apakah Anda yakin ingin menghapus ${label}?`;
+        if (bsModal) bsModal.show();
+        else $(modal).modal('show');
+      });
+    });
   });
 </script>

@@ -21,5 +21,16 @@ router.get('/api/teacher-usernames', pagesController.autocompleteTeacherUsername
 router.post('/user/add', pagesController.addUser);
 router.get('/api/parent-usernames', pagesController.autocompleteParentUsernames);
 router.post('/orangtua/add', pagesController.addParent);
+router.get('/api/student-usernames', pagesController.autocompleteStudentUsernames);
+router.get('/api/parent-siswa', pagesController.autocompleteParentSiswa);
+
+// Tambahkan route berikut agar /siswa/add tidak 404:
+router.post('/siswa/add', pagesController.uploadTeacherPhoto.single('photo'), pagesController.addStudent);
+
+// Tambahkan route POST untuk delete user, guru, orang tua, siswa.
+router.post('/user/delete/:id', pagesController.deleteUser);
+router.post('/guru/delete/:id', pagesController.deleteTeacher);
+router.post('/orangtua/delete/:id', pagesController.deleteParent);
+router.post('/siswa/delete/:id', pagesController.deleteStudent);
 
 module.exports = router;
