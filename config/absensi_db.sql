@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3310
--- Waktu pembuatan: 14 Bulan Mei 2025 pada 09.40
+-- Waktu pembuatan: 15 Bulan Mei 2025 pada 04.26
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -43,9 +43,11 @@ CREATE TABLE `attendance_sessions` (
 --
 
 INSERT INTO `attendance_sessions` (`as_id`, `as_name`, `as_type`, `as_start_time`, `as_end_time`, `created_at`, `updated_at`, `number_of_student`) VALUES
-(1, 'Math Class - 10th Grade', 'class', '2025-05-07 00:10:00', '2025-05-14 07:24:00', '2025-05-06 18:38:39', '2025-05-14 07:23:51', 1),
-(2, 'School Annual Event', 'event', '2025-05-10 01:00:00', '2025-05-14 07:45:00', '2025-05-06 18:38:39', '2025-05-14 06:56:11', 1),
-(3, 'Science Class - 11th Grade', 'class', '2025-05-12 00:30:00', '2025-05-14 07:45:00', '2025-05-06 18:38:39', '2025-05-14 06:55:50', 1);
+(1, 'Math Class - 10th Grade', 'class', '2025-05-07 00:10:00', '2025-05-14 15:58:00', '2025-05-06 18:38:39', '2025-05-14 14:52:35', 1),
+(2, 'School Annual Event', 'event', '2025-05-10 01:00:00', '2025-05-14 07:45:00', '2025-05-06 18:38:39', '2025-05-14 23:44:54', 5),
+(3, 'Science Class - 11th Grade', 'class', '2025-05-12 00:30:00', '2025-05-14 07:45:00', '2025-05-06 18:38:39', '2025-05-14 06:55:50', 1),
+(7, 'Contoh Sesi', 'class', '2025-05-14 23:45:00', '2025-05-15 01:15:00', '2025-05-14 23:45:46', '2025-05-15 01:00:06', 50),
+(8, 'dasdasd', 'class', '2025-05-15 01:53:00', '2025-05-15 02:17:00', '2025-05-15 01:53:21', '2025-05-15 01:53:21', 144);
 
 -- --------------------------------------------------------
 
@@ -66,9 +68,16 @@ CREATE TABLE `parents` (
 --
 
 INSERT INTO `parents` (`parent_id`, `parent_name`, `created_at`, `updated_at`, `user_id`) VALUES
-(1, 'Yanto Wijaya', '2025-05-06 18:37:43', '2025-05-06 18:37:43', NULL),
-(2, 'Rina Suryani', '2025-05-06 18:37:43', '2025-05-06 18:37:43', NULL),
-(3, 'Dedi Nugroho', '2025-05-06 18:37:43', '2025-05-06 18:37:43', NULL);
+(6, 'dasdas', '2025-05-14 12:25:08', '2025-05-14 13:56:35', 20),
+(7, 'heheh', '2025-05-14 14:03:26', '2025-05-15 01:32:40', 26),
+(8, 'dsd', '2025-05-14 14:10:03', '2025-05-14 14:10:03', NULL),
+(9, 'dsadasd', '2025-05-14 14:10:12', '2025-05-14 14:10:12', NULL),
+(10, 'dasda', '2025-05-14 14:10:15', '2025-05-14 14:10:15', NULL),
+(11, 'adasds', '2025-05-14 14:10:19', '2025-05-14 14:10:19', NULL),
+(12, 'dsads', '2025-05-14 14:10:23', '2025-05-14 14:10:23', NULL),
+(13, 'dasdad', '2025-05-14 14:10:27', '2025-05-14 14:10:27', NULL),
+(14, 'dasdasd', '2025-05-14 14:10:31', '2025-05-14 14:10:31', NULL),
+(15, 'dasdsad', '2025-05-14 14:10:36', '2025-05-14 14:10:36', NULL);
 
 -- --------------------------------------------------------
 
@@ -97,9 +106,14 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`student_id`, `nis`, `nisn`, `student_name`, `dob`, `pob`, `photo_path`, `address`, `rfid`, `created_at`, `updated_at`, `user_id`, `parent_id`) VALUES
-(1, '123456789', '987654321', 'Aliyah Putri', '2007-02-15', 'Jakarta', 'shirokodddd1.jpg', 'Jl. Melati No. 10', NULL, '2025-05-06 18:37:43', '2025-05-07 01:40:17', NULL, NULL),
-(2, '234567890', '876543210', 'Bram Satria', '2008-06-20', 'Bandung', 'photos/bram.jpg', 'Jl. Merpati No. 5', NULL, '2025-05-06 18:37:43', '2025-05-06 18:37:43', NULL, NULL),
-(3, '345678901', '765432109', 'Citra Dewi', '2009-10-10', 'Surabaya', 'photos/citra.jpg', 'Jl. Pahlawan No. 7', NULL, '2025-05-06 18:37:43', '2025-05-06 18:37:43', NULL, NULL);
+(6, '2131', '2131', 'Yefta Asyel', '2025-05-14', '123', '1747231680588_27.png', 'dasd', NULL, '2025-05-14 14:08:00', '2025-05-14 14:08:00', 21, 6),
+(7, 'dasd', 'sdasd', 'dasdasd', '2025-05-14', 'dasd', 'default/default.jpg', 'dasds', NULL, '2025-05-14 14:11:02', '2025-05-14 14:11:02', NULL, NULL),
+(8, 'N/A', 'N/A', 'Yefta Asyeldsa', '2025-05-14', 'N/A', 'default/default.jpg', 'N/A', NULL, '2025-05-14 14:24:30', '2025-05-14 14:24:30', NULL, NULL),
+(12, 'dsad', 'dasd', 'dasdas', '2025-05-14', 'N/A', 'default/default.jpg', 'N/A', NULL, '2025-05-14 14:25:26', '2025-05-14 14:25:26', NULL, NULL),
+(14, 'dddd', 'dddd', 'dasd', '2025-05-14', 'N/A', '1747265109535_72.jpg', 'N/A', NULL, '2025-05-14 14:27:32', '2025-05-14 23:25:09', 23, 7),
+(15, 'dsadasdasd', 'dasdas', 'dasda', '2025-05-14', 'N/A', 'default/default.jpg', 'N/A', NULL, '2025-05-14 14:31:43', '2025-05-14 14:31:43', NULL, NULL),
+(16, 'dasdadaaa', 'aaaaa', 'dasdasd', '2025-05-14', 'N/A', 'default/default.jpg', 'N/A', NULL, '2025-05-14 14:31:50', '2025-05-14 14:31:50', NULL, NULL),
+(17, '64564', '64564', '64564', '2025-05-14', 'N/A', 'default/default.jpg', 'N/A', NULL, '2025-05-14 14:31:58', '2025-05-14 14:31:58', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -122,10 +136,9 @@ CREATE TABLE `student_attendances` (
 --
 
 INSERT INTO `student_attendances` (`sa_id`, `sa_time`, `sa_photo_path`, `updated_at`, `as_id`, `student_id`, `pos`) VALUES
-(1, '2025-05-08 00:05:00', 'shiroko1.jpg', '2025-05-07 01:37:37', 1, 1, 'Front row'),
-(2, '2025-05-10 01:15:00', 'attendance_photos/bram_2025_05_10.jpg', '2025-05-06 18:38:39', 2, 2, 'Middle row'),
-(3, '2025-05-12 00:35:00', 'attendance_photos/citra_2025_05_12.jpg', '2025-05-06 18:38:39', 3, 3, 'Back row'),
-(4, '2025-05-08 00:05:01', 'hehhe', '2025-05-07 00:57:44', 1, 2, 'ok');
+(5, '2025-05-15 00:03:10', NULL, '2025-05-15 00:03:10', 3, 8, NULL),
+(6, '2025-05-15 00:03:43', NULL, '2025-05-15 00:03:43', 3, 7, NULL),
+(7, '2025-05-15 00:03:51', NULL, '2025-05-15 00:03:51', 7, 7, NULL);
 
 -- --------------------------------------------------------
 
@@ -148,9 +161,19 @@ CREATE TABLE `teachers` (
 --
 
 INSERT INTO `teachers` (`teacher_id`, `teacher_name`, `nip`, `photo_path`, `created_at`, `updated_at`, `user_id`) VALUES
-(1, 'Budi Santoso', '12345', 'photos/budi.jpg', '2025-05-06 18:37:43', '2025-05-06 18:37:43', NULL),
-(2, 'Siti Nurhaliza', '67890', 'photos/siti.jpg', '2025-05-06 18:37:43', '2025-05-06 18:37:43', NULL),
-(3, 'Ahmad Fauzi', '54321', 'photos/ahmad.jpg', '2025-05-06 18:37:43', '2025-05-06 18:37:43', NULL);
+(11, 'Guru 1', 'dasd', 'default/default.jpg', '2025-05-14 12:24:57', '2025-05-14 13:13:32', 19),
+(12, 'Yefta Asyel', '1232123', '1747263910994_13.jpg', '2025-05-14 12:38:36', '2025-05-14 23:20:27', 17),
+(13, 'dasdsa', '', 'default/default.jpg', '2025-05-14 14:09:08', '2025-05-14 14:09:08', NULL),
+(14, 'dsadadasd', '', 'default/default.jpg', '2025-05-14 14:09:18', '2025-05-14 14:09:18', NULL),
+(15, 'dasdas', '', 'default/default.jpg', '2025-05-14 14:09:21', '2025-05-14 14:09:21', NULL),
+(16, 'dasdasd', '', 'default/default.jpg', '2025-05-14 14:09:23', '2025-05-14 14:09:23', NULL),
+(17, 'adasdasdasd', '', 'default/default.jpg', '2025-05-14 14:09:26', '2025-05-14 14:09:26', NULL),
+(18, 'dsadasdasdasd', '', 'default/default.jpg', '2025-05-14 14:09:28', '2025-05-14 14:09:28', NULL),
+(19, 'dasdasdsafasfdsad', '', 'default/default.jpg', '2025-05-14 14:09:33', '2025-05-14 14:09:33', NULL),
+(20, 'dasdasdasd', '', 'default/default.jpg', '2025-05-14 14:09:36', '2025-05-14 14:09:36', NULL),
+(21, 'asdasda', '', 'default/default.jpg', '2025-05-14 14:09:44', '2025-05-14 14:09:44', NULL),
+(22, 'dsadas', '', 'default/default.jpg', '2025-05-14 14:10:06', '2025-05-14 14:10:06', NULL),
+(23, 'dasd', '', 'default/default.jpg', '2025-05-14 14:10:08', '2025-05-14 14:10:08', NULL);
 
 -- --------------------------------------------------------
 
@@ -174,7 +197,16 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `password`, `email`, `created_at`, `updated_at`, `role`, `wa_num`) VALUES
-(2, 'admin', '$2b$10$b963.NauQRMrthqtMBVUwO7ucTD8Qx3hccc8y6EdmNwsE9OBGu9iu', 'admin@example.com', '2025-05-14 04:19:26', '2025-05-14 04:19:26', 'admin', '081234567890');
+(2, 'admin', '$2b$10$rW/K1o/.XAOdGTq2HkAsmeP5luZHk9y/v2ljHTRVN0tcmKMZWsv3e', 'admin@example.com', '2025-05-14 04:19:26', '2025-05-14 12:35:58', 'admin', '081234567890'),
+(17, 'yefta', '$2b$10$iRGmy4nNE9MNj5r9ADdtKunouCadUtU0GAVBWS81w/fB5OV0SjWoG', 'N/A', '2025-05-14 12:38:05', '2025-05-14 12:38:05', 'teacher', '082325960260'),
+(19, 'ssssrr', '$2b$10$.lsvsUP5O5gx4Cryr2Y7T.2xuIysyUadDVgzZqjLy1K..fdRVk3H.', 'N/A', '2025-05-14 13:02:18', '2025-05-14 13:02:18', 'teacher', 'dasdasd'),
+(20, 'orangtua1', '$2b$10$Sm2c15vN3q2c/nSAfXdmROLsXT17vJo4gLfTCdbLBjGHjmlzc4fMu', 'N/A', '2025-05-14 13:08:04', '2025-05-14 13:08:04', 'parent', '13123123'),
+(21, 'student1', '$2b$10$xvm/.uHJbIkwNzwUGWaz0eqzbfdhsxNfE9yIMVrYnDgZW/oGSmIAm', 'N/A', '2025-05-14 14:04:01', '2025-05-14 14:04:01', 'student', '12312312312'),
+(22, '6546', '$2b$10$gq7rVFnnMpF2CUjf3DOG2.A.jhBWCtQyPW5IJH3wtPmEy/jMx3fOW', 'N/A', '2025-05-14 14:32:07', '2025-05-14 14:32:07', 'teacher', '6456'),
+(23, 'aaaa', '$2b$10$3.yz4A5jKSPr9Jj6MFmcTer9CmgWO.6KhQE.NSfLSUgG9OnrG5S.a', 'N/A', '2025-05-14 23:24:35', '2025-05-14 23:25:16', 'student', 'aaaa'),
+(24, 'scanner1', '$2b$10$Kmk33Hnt.I13H1NArFUWuOAowqbe2F.9W22OIKpqHHzorz8BZyeES', 'N/A', '2025-05-15 00:40:21', '2025-05-15 00:40:21', 'scanner', '111'),
+(25, '123', '$2b$10$KN5nLtEasfuVLMoscubGSe3Ch/ER/GBQsy/E2nEAYvRrWyNByfaB6', 'N/A', '2025-05-15 00:40:42', '2025-05-15 00:40:42', 'scanner', '213132'),
+(26, 'test11', '$2b$10$KsPeKHFZQ22Vc1QHfUFyXORZ0rg9X5PJWzbwum80QH2/DQrjN8pcy', 'N/A', '2025-05-15 01:32:30', '2025-05-15 01:32:30', 'parent', 'dsadsad');
 
 --
 -- Indexes for dumped tables
@@ -234,37 +266,37 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT untuk tabel `attendance_sessions`
 --
 ALTER TABLE `attendance_sessions`
-  MODIFY `as_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `as_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT untuk tabel `parents`
 --
 ALTER TABLE `parents`
-  MODIFY `parent_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `parent_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT untuk tabel `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT untuk tabel `student_attendances`
 --
 ALTER TABLE `student_attendances`
-  MODIFY `sa_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `sa_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT untuk tabel `teachers`
 --
 ALTER TABLE `teachers`
-  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
