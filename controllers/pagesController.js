@@ -27,14 +27,106 @@ exports.index = (req, res) => {
     });
   };
   
-exports.home = (req, res) => {
-    res.render('home', {
-      layout: 'layouts/main-layout',
-      title: "Home",
-      name: req.session.name,
-      loggedin: req.session.loggedin || false
-    });
-  };
+exports.home = async (req, res) => {
+    try {
+        const now = new Date();
+        const todayStr = format(now, 'yyyy-MM-dd');
+        // 1. Jumlah guru/admin
+        const [guruAdminRows] = await db.promise().query(
+            "SELECT COUNT(*) as total FROM users WHERE role IN ('admin','teacher')"
+        );
+        // 2. Jumlah siswa terdaftar
+        const [studentRows] = await db.promise().query(
+            "SELECT COUNT(*) as total FROM students"
+        );
+        // 3. Sesi aktif (end_time > now)
+        const [activeSessions] = await db.promise().query(
+            "SELECT as_id, number_of_student FROM attendance_sessions WHERE as_end_time > ?",
+            [format(now, 'yyyy-MM-dd HH:mm:ss')]
+        );
+        // 4. Siswa belum absen di sesi aktif
+        let totalBelumAbsen = 0;
+        let totalSesiAktif = activeSessions.length;
+        if (activeSessions.length > 0) {
+            // Ambil semua as_id aktif
+            const asIds = activeSessions.map(s => s.as_id);
+            // Total siswa seharusnya absen
+            const totalHarusAbsen = activeSessions.reduce((sum, s) => sum + (s.number_of_student || 0), 0);
+            // Hitung berapa absensi yang sudah dilakukan di sesi aktif
+            let sudahAbsen = 0;
+            if (asIds.length > 0) {
+                const [absenRows] = await db.promise().query(
+                    `SELECT COUNT(DISTINCT student_id) as total FROM student_attendances WHERE as_id IN (${asIds.map(() => '?').join(',')})`,
+                    asIds
+                );
+                sudahAbsen = absenRows[0]?.total || 0;
+            }
+            totalBelumAbsen = totalHarusAbsen - sudahAbsen;
+            if (totalBelumAbsen < 0) totalBelumAbsen = 0;
+        }
+        // 5. Absensi tercatat hari ini
+        const [absenHariIniRows] = await db.promise().query(
+            "SELECT COUNT(*) as total FROM student_attendances WHERE DATE(sa_time) = ?",
+            [todayStr]
+        );
+        // 6. Guru login hari ini (updated_at hari ini)
+        const [guruLoginRows] = await db.promise().query(
+            "SELECT COUNT(*) as total FROM users WHERE role = 'teacher' AND DATE(updated_at) = ?",
+            [todayStr]
+        );
+        // 7. Sesi berlangsung hari ini (start_time dan end_time hari ini)
+        const [sesiHariIniRows] = await db.promise().query(
+            "SELECT COUNT(*) as total FROM attendance_sessions WHERE DATE(as_start_time) = ? OR DATE(as_end_time) = ?",
+            [todayStr, todayStr]
+        );
+        // 8. Log aktivitas terakhir (ambil 10 dari student_attendances join students)
+        const [logRows] = await db.promise().query(
+            `SELECT sa.sa_time, s.student_name, sa.pos 
+             FROM student_attendances sa
+             JOIN students s ON sa.student_id = s.student_id
+             ORDER BY sa.sa_time DESC
+             LIMIT 10`
+        );
+        // 9. Log admin/guru (contoh: user update terbaru)
+        const [userLogRows] = await db.promise().query(
+            `SELECT updated_at, username, role FROM users ORDER BY updated_at DESC LIMIT 5`
+        );
+
+        // Compose log aktivitas
+        const aktivitasLog = [
+            ...logRows.map(l => ({
+                type: 'absen',
+                waktu: format(new Date(l.sa_time), 'HH:mm'),
+                nama: l.student_name,
+                pos: l.pos
+            })),
+            ...userLogRows.map(u => ({
+                type: 'user',
+                waktu: format(new Date(u.updated_at), 'HH:mm'),
+                nama: u.username,
+                role: u.role
+            }))
+        ].sort((a, b) => (a.waktu < b.waktu ? 1 : -1)).slice(0, 10);
+
+        res.render('home', {
+            layout: 'layouts/main-layout',
+            title: "Home",
+            name: req.session.name,
+            loggedin: req.session.loggedin || false,
+            totalGuruAdmin: guruAdminRows[0]?.total || 0,
+            totalSiswa: studentRows[0]?.total || 0,
+            totalBelumAbsen,
+            totalSesiAktif,
+            absenHariIni: absenHariIniRows[0]?.total || 0,
+            guruLoginHariIni: guruLoginRows[0]?.total || 0,
+            sesiHariIni: sesiHariIniRows[0]?.total || 0,
+            aktivitasLog
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Terjadi kesalahan pada server.');
+    }
+};
 
 exports.about = (req, res) => {
     res.render('about', {
