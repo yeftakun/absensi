@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3310
--- Waktu pembuatan: 15 Bulan Mei 2025 pada 04.26
+-- Waktu pembuatan: 15 Bulan Mei 2025 pada 04.29
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -189,24 +189,26 @@ CREATE TABLE `users` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `role` enum('admin','teacher','parent','student','scanner') NOT NULL,
-  `wa_num` varchar(20) NOT NULL
+  `wa_num` varchar(20) NOT NULL,
+  `is_online` tinyint(1) DEFAULT 0,
+  `last_active` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `users`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `password`, `email`, `created_at`, `updated_at`, `role`, `wa_num`) VALUES
-(2, 'admin', '$2b$10$rW/K1o/.XAOdGTq2HkAsmeP5luZHk9y/v2ljHTRVN0tcmKMZWsv3e', 'admin@example.com', '2025-05-14 04:19:26', '2025-05-14 12:35:58', 'admin', '081234567890'),
-(17, 'yefta', '$2b$10$iRGmy4nNE9MNj5r9ADdtKunouCadUtU0GAVBWS81w/fB5OV0SjWoG', 'N/A', '2025-05-14 12:38:05', '2025-05-14 12:38:05', 'teacher', '082325960260'),
-(19, 'ssssrr', '$2b$10$.lsvsUP5O5gx4Cryr2Y7T.2xuIysyUadDVgzZqjLy1K..fdRVk3H.', 'N/A', '2025-05-14 13:02:18', '2025-05-14 13:02:18', 'teacher', 'dasdasd'),
-(20, 'orangtua1', '$2b$10$Sm2c15vN3q2c/nSAfXdmROLsXT17vJo4gLfTCdbLBjGHjmlzc4fMu', 'N/A', '2025-05-14 13:08:04', '2025-05-14 13:08:04', 'parent', '13123123'),
-(21, 'student1', '$2b$10$xvm/.uHJbIkwNzwUGWaz0eqzbfdhsxNfE9yIMVrYnDgZW/oGSmIAm', 'N/A', '2025-05-14 14:04:01', '2025-05-14 14:04:01', 'student', '12312312312'),
-(22, '6546', '$2b$10$gq7rVFnnMpF2CUjf3DOG2.A.jhBWCtQyPW5IJH3wtPmEy/jMx3fOW', 'N/A', '2025-05-14 14:32:07', '2025-05-14 14:32:07', 'teacher', '6456'),
-(23, 'aaaa', '$2b$10$3.yz4A5jKSPr9Jj6MFmcTer9CmgWO.6KhQE.NSfLSUgG9OnrG5S.a', 'N/A', '2025-05-14 23:24:35', '2025-05-14 23:25:16', 'student', 'aaaa'),
-(24, 'scanner1', '$2b$10$Kmk33Hnt.I13H1NArFUWuOAowqbe2F.9W22OIKpqHHzorz8BZyeES', 'N/A', '2025-05-15 00:40:21', '2025-05-15 00:40:21', 'scanner', '111'),
-(25, '123', '$2b$10$KN5nLtEasfuVLMoscubGSe3Ch/ER/GBQsy/E2nEAYvRrWyNByfaB6', 'N/A', '2025-05-15 00:40:42', '2025-05-15 00:40:42', 'scanner', '213132'),
-(26, 'test11', '$2b$10$KsPeKHFZQ22Vc1QHfUFyXORZ0rg9X5PJWzbwum80QH2/DQrjN8pcy', 'N/A', '2025-05-15 01:32:30', '2025-05-15 01:32:30', 'parent', 'dsadsad');
+INSERT INTO `users` (`user_id`, `username`, `password`, `email`, `created_at`, `updated_at`, `role`, `wa_num`, `is_online`, `last_active`) VALUES
+(2, 'admin', '$2b$10$rW/K1o/.XAOdGTq2HkAsmeP5luZHk9y/v2ljHTRVN0tcmKMZWsv3e', 'admin@example.com', '2025-05-14 04:19:26', '2025-05-14 12:35:58', 'admin', '081234567890', 0, NULL),
+(17, 'yefta', '$2b$10$iRGmy4nNE9MNj5r9ADdtKunouCadUtU0GAVBWS81w/fB5OV0SjWoG', 'N/A', '2025-05-14 12:38:05', '2025-05-14 12:38:05', 'teacher', '082325960260', 0, NULL),
+(19, 'ssssrr', '$2b$10$.lsvsUP5O5gx4Cryr2Y7T.2xuIysyUadDVgzZqjLy1K..fdRVk3H.', 'N/A', '2025-05-14 13:02:18', '2025-05-14 13:02:18', 'teacher', 'dasdasd', 0, NULL),
+(20, 'orangtua1', '$2b$10$Sm2c15vN3q2c/nSAfXdmROLsXT17vJo4gLfTCdbLBjGHjmlzc4fMu', 'N/A', '2025-05-14 13:08:04', '2025-05-14 13:08:04', 'parent', '13123123', 0, NULL),
+(21, 'student1', '$2b$10$xvm/.uHJbIkwNzwUGWaz0eqzbfdhsxNfE9yIMVrYnDgZW/oGSmIAm', 'N/A', '2025-05-14 14:04:01', '2025-05-14 14:04:01', 'student', '12312312312', 0, NULL),
+(22, '6546', '$2b$10$gq7rVFnnMpF2CUjf3DOG2.A.jhBWCtQyPW5IJH3wtPmEy/jMx3fOW', 'N/A', '2025-05-14 14:32:07', '2025-05-14 14:32:07', 'teacher', '6456', 0, NULL),
+(23, 'aaaa', '$2b$10$3.yz4A5jKSPr9Jj6MFmcTer9CmgWO.6KhQE.NSfLSUgG9OnrG5S.a', 'N/A', '2025-05-14 23:24:35', '2025-05-14 23:25:16', 'student', 'aaaa', 0, NULL),
+(24, 'scanner1', '$2b$10$Kmk33Hnt.I13H1NArFUWuOAowqbe2F.9W22OIKpqHHzorz8BZyeES', 'N/A', '2025-05-15 00:40:21', '2025-05-15 00:40:21', 'scanner', '111', 0, NULL),
+(25, '123', '$2b$10$KN5nLtEasfuVLMoscubGSe3Ch/ER/GBQsy/E2nEAYvRrWyNByfaB6', 'N/A', '2025-05-15 00:40:42', '2025-05-15 00:40:42', 'scanner', '213132', 0, NULL),
+(26, 'test11', '$2b$10$KsPeKHFZQ22Vc1QHfUFyXORZ0rg9X5PJWzbwum80QH2/DQrjN8pcy', 'N/A', '2025-05-15 01:32:30', '2025-05-15 01:32:30', 'parent', 'dsadsad', 0, NULL);
 
 --
 -- Indexes for dumped tables
