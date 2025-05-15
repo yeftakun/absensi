@@ -31,10 +31,12 @@ exports.home = async (req, res) => {
     try {
         const now = new Date();
         const todayStr = format(now, 'yyyy-MM-dd');
-        // 1. Jumlah guru/admin
-        const [guruAdminRows] = await db.promise().query(
-            "SELECT COUNT(*) as total FROM users WHERE role IN ('admin','teacher')"
+        // 1. Jumlah guru (teachers yang punya user_id)
+        const [guruRows] = await db.promise().query(
+            "SELECT COUNT(*) as total FROM teachers WHERE user_id IS NOT NULL"
         );
+        // 1b. Jumlah guru yang punya akun (parafrase)
+        const totalGuruWithAccount = guruRows[0]?.total || 0;
         // 2. Jumlah siswa terdaftar
         const [studentRows] = await db.promise().query(
             "SELECT COUNT(*) as total FROM students"
@@ -48,11 +50,8 @@ exports.home = async (req, res) => {
         let totalBelumAbsen = 0;
         let totalSesiAktif = activeSessions.length;
         if (activeSessions.length > 0) {
-            // Ambil semua as_id aktif
             const asIds = activeSessions.map(s => s.as_id);
-            // Total siswa seharusnya absen
             const totalHarusAbsen = activeSessions.reduce((sum, s) => sum + (s.number_of_student || 0), 0);
-            // Hitung berapa absensi yang sudah dilakukan di sesi aktif
             let sudahAbsen = 0;
             if (asIds.length > 0) {
                 const [absenRows] = await db.promise().query(
@@ -71,7 +70,8 @@ exports.home = async (req, res) => {
         );
         // 6. Guru login hari ini (updated_at hari ini)
         const [guruLoginRows] = await db.promise().query(
-            "SELECT COUNT(*) as total FROM users WHERE role = 'teacher' AND DATE(updated_at) = ?",
+            `SELECT COUNT(*) as total FROM users 
+             WHERE role = 'teacher' AND DATE(updated_at) = ?`,
             [todayStr]
         );
         // 7. Sesi berlangsung hari ini (start_time dan end_time hari ini)
@@ -92,7 +92,6 @@ exports.home = async (req, res) => {
             `SELECT updated_at, username, role FROM users ORDER BY updated_at DESC LIMIT 5`
         );
 
-        // Compose log aktivitas
         const aktivitasLog = [
             ...logRows.map(l => ({
                 type: 'absen',
@@ -108,19 +107,32 @@ exports.home = async (req, res) => {
             }))
         ].sort((a, b) => (a.waktu < b.waktu ? 1 : -1)).slice(0, 10);
 
+        // Orang tua yang sudah punya akun
+        const [parentWithAccountRows] = await db.promise().query(
+            "SELECT COUNT(*) as total FROM parents WHERE user_id IS NOT NULL"
+        );
+        const [parentTotalRows] = await db.promise().query(
+            "SELECT COUNT(*) as total FROM parents"
+        );
+        const totalParentWithAccount = parentWithAccountRows[0]?.total || 0;
+        const totalParent = parentTotalRows[0]?.total || 0;
+
         res.render('home', {
             layout: 'layouts/main-layout',
             title: "Home",
             name: req.session.name,
             loggedin: req.session.loggedin || false,
-            totalGuruAdmin: guruAdminRows[0]?.total || 0,
+            totalGuruAdmin: totalGuruWithAccount,
+            totalGuruWithAccount, // for explicit use in view
             totalSiswa: studentRows[0]?.total || 0,
             totalBelumAbsen,
             totalSesiAktif,
             absenHariIni: absenHariIniRows[0]?.total || 0,
             guruLoginHariIni: guruLoginRows[0]?.total || 0,
             sesiHariIni: sesiHariIniRows[0]?.total || 0,
-            aktivitasLog
+            aktivitasLog,
+            totalParentWithAccount,
+            totalParent
         });
     } catch (err) {
         console.error(err);
