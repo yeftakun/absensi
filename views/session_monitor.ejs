@@ -94,7 +94,7 @@
   
       <!-- Absensi Terbaru (Scroll Horizontal) -->
       <div class="mb-4">
-        <h4>Absensi Terbaru (Kelas X - Matematika)</h4>
+        <h4>Absensi Terbaru (<%= session.as_name %>)</h4>
         <div class="d-flex overflow-auto gap-3" id="latest-logs-container">
           <% latestLogs.forEach(log => { %>
             <div class="card" style="min-width: 200px;">
