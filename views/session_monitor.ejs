@@ -95,7 +95,7 @@
       <!-- Absensi Terbaru (Scroll Horizontal) -->
       <div class="mb-4">
         <h4>Absensi Terbaru (Kelas X - Matematika)</h4>
-        <div class="d-flex overflow-auto gap-3">
+        <div class="d-flex overflow-auto gap-3" id="latest-logs-container">
           <% latestLogs.forEach(log => { %>
             <div class="card" style="min-width: 200px;">
               <img src="/img/attendance_pic/<%= log.photo %>" class="card-img-top" alt="Foto Siswa" style="height: 200px; object-fit: cover;">
@@ -136,7 +136,7 @@
                 <th>Aksi</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="log-table-body">
               <% latestLogs.forEach((log, i) => { %>
                 <tr>
                   <td><%= i + 1 %></td>
@@ -244,33 +244,82 @@
       // Hide list on blur
       input.addEventListener('blur', () => setTimeout(() => list.innerHTML = '', 200));
 
+      // Modal konfirmasi hapus log kehadiran
+      function bindDeleteAttendanceButtons() {
+        document.querySelectorAll('.btn-delete-attendance').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const saId = this.getAttribute('data-attendance-id');
+            const studentName = this.getAttribute('data-student-name');
+            document.getElementById('deleteStudentName').textContent = studentName;
+            // Set form action
+            document.getElementById('deleteAttendanceForm').action = '/session/<%= session.as_id %>/delete-attendance/' + saId;
+          });
+        });
+      }
+      bindDeleteAttendanceButtons();
+
+      // POLLING: Update log kehadiran siswa & absensi terbaru setiap 1 detik
+      let logSearchValue = '';
+      setInterval(() => {
+        // Save search/filter value
+        logSearchValue = document.getElementById('log-search').value;
+        fetch('/session/<%= session.as_id %>/api/logs')
+          .then(res => res.json())
+          .then(data => {
+            // Update Absensi Terbaru
+            const latestLogsContainer = document.getElementById('latest-logs-container');
+            latestLogsContainer.innerHTML = '';
+            data.latestLogs.forEach(log => {
+              const card = document.createElement('div');
+              card.className = 'card';
+              card.style.minWidth = '200px';
+              card.innerHTML = `
+                <img src="/img/attendance_pic/${log.photo}" class="card-img-top" alt="Foto Siswa" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                  <h6 class="card-title">${log.name}</h6>
+                  <p class="card-text"><small>${log.position || ''}</small> | <small>${log.timestamp}</small></p>
+                </div>
+              `;
+              latestLogsContainer.appendChild(card);
+            });
+
+            // Update Log Kehadiran Siswa Table
+            const tbody = document.getElementById('log-table-body');
+            tbody.innerHTML = '';
+            let rowNum = 1;
+            data.latestLogs.forEach((log, i) => {
+              // Filter by search
+              const filter = logSearchValue.toLowerCase();
+              const rowText = `${log.name} ${log.nis} ${log.position} ${log.timestamp}`.toLowerCase();
+              if (filter && !rowText.includes(filter)) return;
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td>${rowNum++}</td>
+                <td>${log.name}</td>
+                <td>${log.nis}</td>
+                <td>${log.position || ''}</td>
+                <td>${log.timestamp}</td>
+                <td>
+                  <button 
+                    class="btn btn-danger btn-sm btn-delete-attendance"
+                    data-attendance-id="${log.sa_id}"
+                    data-student-name="${log.name}"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteAttendanceModal"
+                  >
+                    <i class="bi bi-trash"></i> Hapus
+                  </button>
+                </td>
+              `;
+              tbody.appendChild(tr);
+            });
+            bindDeleteAttendanceButtons();
+          });
+      }, 1000);
+
       // Search/filter log kehadiran siswa
       document.getElementById('log-search').addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        const table = document.getElementById('log-table');
-        const trs = table.querySelectorAll('tbody tr');
-        let rowNum = 1;
-        trs.forEach(tr => {
-          const text = tr.textContent.toLowerCase();
-          if (text.includes(filter)) {
-            tr.style.display = '';
-            // Update nomor urut agar tetap berurutan saat filter aktif
-            tr.querySelector('td').textContent = rowNum++;
-          } else {
-            tr.style.display = 'none';
-          }
-        });
-      });
-
-      // Modal konfirmasi hapus log kehadiran
-      document.querySelectorAll('.btn-delete-attendance').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const saId = this.getAttribute('data-attendance-id');
-          const studentName = this.getAttribute('data-student-name');
-          document.getElementById('deleteStudentName').textContent = studentName;
-          // Set form action
-          document.getElementById('deleteAttendanceForm').action = '/session/<%= session.as_id %>/delete-attendance/' + saId;
-        });
+        // No need to update table here, polling will handle it
       });
       </script>
   

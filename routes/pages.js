@@ -43,5 +43,6 @@ router.post('/session/edit/:id', pagesController.editSession);
 router.post('/session/:as_id/manual-attendance', pagesController.manualAttendance);
 router.get('/session/:as_id/monitor', pagesController.sessionMonitor);
 router.post('/session/:as_id/delete-attendance/:attendance_id', pagesController.deleteAttendance);
+router.get('/session/:as_id/api/logs', pagesController.sessionLogsApi);
 
 module.exports = router;

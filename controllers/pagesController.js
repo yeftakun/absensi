@@ -303,6 +303,31 @@ exports.sessionMonitor = async (req, res) => {
     }
 };
 
+// API polling log kehadiran siswa & absensi terbaru (realtime)
+exports.sessionLogsApi = async (req, res) => {
+    const as_id = req.params.as_id;
+    const latest_logs_query = `
+        SELECT s.student_name as name, s.nis, sa.sa_photo_path as photo, sa.sa_time as timestamp, sa.pos as position, sa.sa_id
+        FROM students s
+        JOIN student_attendances sa ON s.student_id = sa.student_id
+        WHERE sa.as_id = ?
+        ORDER BY sa.sa_time DESC
+    `;
+    try {
+        const latestLogs = await db.promise().query(latest_logs_query, [as_id]).then(([rows]) => rows);
+        latestLogs.forEach(log => {
+            log.timestamp = format(new Date(log.timestamp), 'HH:mm');
+            // Check photo existence
+            const photoPath = path.join(__dirname, '..', 'public', 'img', 'attendance_pic', log.photo || '');
+            if (!fs.existsSync(photoPath) || !fs.statSync(photoPath).isFile()) {
+                log.photo = 'photo_default.jpg';
+            }
+        });
+        res.json({ latestLogs });
+    } catch (err) {
+        res.json({ latestLogs: [] });
+    }
+};
 
 exports.data = async (req, res) => {
     const queries = {
