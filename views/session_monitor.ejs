@@ -197,7 +197,8 @@
               const el = document.createElement('button');
               el.type = 'button';
               el.className = 'list-group-item list-group-item-action';
-              el.textContent = item.student_name;
+              // Gunakan property yang benar untuk NIS, misal student_nis jika bukan nis
+              el.textContent = `${item.student_name} (${item.nis || item.student_nis || '-'})`;
               el.onclick = () => {
                 input.value = item.student_name;
                 hiddenId.value = item.student_id;

@@ -1058,7 +1058,7 @@ exports.autocompleteStudentName = async (req, res) => {
         const q = (req.query.q || '').trim();
         if (!q) return res.json([]);
         const [rows] = await db.promise().query(
-            `SELECT student_id, student_name FROM students WHERE student_name LIKE ? ORDER BY student_name ASC LIMIT 3`,
+            `SELECT student_id, student_name, nis FROM students WHERE student_name LIKE ? ORDER BY student_name ASC LIMIT 3`,
             [`%${q}%`]
         );
         res.json(rows);
