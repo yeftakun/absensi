@@ -1279,7 +1279,20 @@
         form.querySelector('#edit_pob').value = btn.getAttribute('data-pob') || '';
         form.querySelector('#edit_address').value = btn.getAttribute('data-address') || '';
         form.querySelector('#edit_rfid').value = btn.getAttribute('data-rfid') || '';
-        form.querySelector('#edit_username_siswa').value = '';
+        // Ambil username dari user_id siswa
+        const userId = btn.getAttribute('data-username') || '';
+        <% /* Render users as JS array for lookup */ %>
+        const usersData = <%- JSON.stringify(users || []) %>;
+        let usernameVal = '';
+        if (userId) {
+          const userObj = usersData.find(u => String(u.user_id) === String(userId));
+          if (userObj) {
+            usernameVal = userObj.username || userId;
+          } else {
+            usernameVal = userId;
+          }
+        }
+        form.querySelector('#edit_username_siswa').value = usernameVal;
         form.querySelector('#edit_student_photo').value = '';
         previewImg.style.display = 'none';
         const photo = btn.getAttribute('data-photo') || '';
@@ -1288,8 +1301,23 @@
         } else {
           currentPhotoDiv.innerHTML = '';
         }
-        // Untuk parent_id, Anda bisa menampilkan label "Nama Ortu (username)" jika ingin, atau biarkan kosong
-        form.querySelector('#edit_parent_id').value = '';
+        // Set parent_id ke label "Nama Ortu (username)" jika ada, atau parent_id saja
+        const parentId = btn.getAttribute('data-parentid') || '';
+        // Cari parent dari data parents di EJS
+        <% /* Render parents as JS array for lookup */ %>
+        const parentsData = <%- JSON.stringify(parents || []) %>;
+        let parentLabel = '';
+        if (parentId) {
+          const parentObj = parentsData.find(p => String(p.parent_id) === String(parentId));
+          if (parentObj) {
+            parentLabel = parentObj.username
+              ? `${parentObj.parent_name} (${parentObj.username})`
+              : parentObj.parent_name;
+          } else {
+            parentLabel = parentId;
+          }
+        }
+        form.querySelector('#edit_parent_id').value = parentLabel;
         if (bsModal) bsModal.show();
         else $(modal).modal('show');
       });
