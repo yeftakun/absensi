@@ -1427,29 +1427,62 @@
     }
   });
 
-  // Script untuk copy, auto-paste, dan alert saat menerima data dari WebSocket
+  // Script untuk menerima data RFID via WebSocket, embed ke input, dan tampilkan alert bootstrap
   (function() {
     // Hanya aktif di halaman ini
     const ws = new WebSocket(`ws://${window.location.host}`);
-    ws.onmessage = async function(event) {
+    ws.onmessage = function(event) {
       try {
         const data = JSON.parse(event.data);
         const uid = data.uid; // Encrypted UID
 
-        // Copy ke clipboard
-        await navigator.clipboard.writeText(uid);
-
-        // Jika ada input aktif, auto-paste
-        const active = document.activeElement;
-        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
-          // Paste UID ke input aktif
-          active.value = uid;
+        // Cari input aktif, jika tidak ada fallback ke #rfid-input
+        let targetInput = document.activeElement;
+        if (!(targetInput && (targetInput.tagName === 'INPUT' || targetInput.tagName === 'TEXTAREA'))) {
+          targetInput = document.getElementById('rfid-input');
+        }
+        if (targetInput) {
+          targetInput.value = uid;
         }
 
-        alert('Menerima data RFID');
+        // Tampilkan alert bootstrap dinamis (tanpa konfirmasi, auto-dismiss)
+        showRFIDAlert('Menerima data RFID');
+
       } catch (e) {
         // ignore
       }
     };
+
+    // Fungsi untuk menampilkan alert bootstrap dinamis
+    function showRFIDAlert(message) {
+      // Hapus alert lama jika ada
+      let old = document.getElementById('rfid-alert');
+      if (old) old.remove();
+
+      const alertDiv = document.createElement('div');
+      alertDiv.id = 'rfid-alert';
+      alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
+      alertDiv.style.top = '30px';
+      alertDiv.style.right = '30px';
+      alertDiv.style.minWidth = '300px';
+      alertDiv.style.maxWidth = '90vw';
+      alertDiv.style.zIndex = 2000;
+      alertDiv.style.boxShadow = '0 2px 16px rgba(0,0,0,0.15)';
+      alertDiv.innerHTML = `
+        <span>${message}</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      document.body.appendChild(alertDiv);
+
+      setTimeout(() => {
+        if (window.bootstrap && bootstrap.Alert) {
+          const bsAlert = bootstrap.Alert.getOrCreateInstance(alertDiv);
+          bsAlert.close();
+        } else {
+          alertDiv.classList.remove('show');
+          setTimeout(() => alertDiv.remove(), 500);
+        }
+      }, 2000);
+    }
   })();
 </script>
