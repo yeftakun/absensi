@@ -98,7 +98,7 @@
         <div class="d-flex overflow-auto gap-3">
           <% latestLogs.forEach(log => { %>
             <div class="card" style="min-width: 200px;">
-              <img src="../img/attendance_pic/<%= log.photo %>" class="card-img-top" alt="Foto Siswa" style="height: 200px; object-fit: cover;">
+              <img src="/img/attendance_pic/<%= log.photo %>" class="card-img-top" alt="Foto Siswa" style="height: 200px; object-fit: cover;">
               <div class="card-body">
                 <h6 class="card-title"><%= log.name %></h6>
                 <p class="card-text"><small><%= log.position %></small> | <small><%= log.timestamp %></small></p>
@@ -133,6 +133,7 @@
                 <th>NIS</th>
                 <th>Pos</th>
                 <th>Waktu Absen</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -143,6 +144,17 @@
                   <td><%= log.nis %></td>
                   <td><%= log.position %></td>
                   <td><%= log.timestamp %></td>
+                  <td>
+                    <button 
+                      class="btn btn-danger btn-sm btn-delete-attendance"
+                      data-attendance-id="<%= log.sa_id %>"
+                      data-student-name="<%= log.name %>"
+                      data-bs-toggle="modal"
+                      data-bs-target="#deleteAttendanceModal"
+                    >
+                      <i class="bi bi-trash"></i> Hapus
+                    </button>
+                  </td>
                 </tr>
               <% }) %>
             </tbody>
@@ -169,6 +181,27 @@
             <div class="modal-footer">
               <button type="submit" class="btn btn-success">Simpan</button>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal Konfirmasi Hapus Kehadiran -->
+      <div class="modal fade" id="deleteAttendanceModal" tabindex="-1" aria-labelledby="deleteAttendanceModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <form id="deleteAttendanceForm" method="POST">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="deleteAttendanceModalLabel">Konfirmasi Hapus Kehadiran</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus log kehadiran siswa <strong id="deleteStudentName"></strong>?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-danger">Hapus</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+              </div>
             </div>
           </form>
         </div>
@@ -226,6 +259,17 @@
           } else {
             tr.style.display = 'none';
           }
+        });
+      });
+
+      // Modal konfirmasi hapus log kehadiran
+      document.querySelectorAll('.btn-delete-attendance').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const saId = this.getAttribute('data-attendance-id');
+          const studentName = this.getAttribute('data-student-name');
+          document.getElementById('deleteStudentName').textContent = studentName;
+          // Set form action
+          document.getElementById('deleteAttendanceForm').action = '/session/<%= session.as_id %>/delete-attendance/' + saId;
         });
       });
       </script>

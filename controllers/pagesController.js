@@ -240,7 +240,7 @@ exports.sessionMonitor = async (req, res) => {
             ORDER BY sa.sa_time DESC
         `,
         latest_logs: `
-            SELECT s.student_name as name, s.nis, sa.sa_photo_path as photo, sa.sa_time as timestamp, sa.pos as position
+            SELECT s.student_name as name, s.nis, sa.sa_photo_path as photo, sa.sa_time as timestamp, sa.pos as position, sa.sa_id
             FROM students s
             JOIN student_attendances sa ON s.student_id = sa.student_id
             WHERE sa.as_id = ?
@@ -1080,5 +1080,18 @@ exports.manualAttendance = async (req, res) => {
         res.redirect(`/session/${as_id}/monitor?manual_success=1`);
     } catch (err) {
         res.status(500).send('Gagal input kehadiran manual.');
+    }
+};
+
+// Handler hapus log kehadiran siswa
+exports.deleteAttendance = async (req, res) => {
+    try {
+        const as_id = req.params.as_id;
+        const sa_id = req.params.attendance_id;
+        // Hapus log kehadiran berdasarkan sa_id
+        await db.promise().query('DELETE FROM student_attendances WHERE sa_id = ?', [sa_id]);
+        res.redirect(`/session/${as_id}/monitor`);
+    } catch (err) {
+        res.status(500).send('Gagal menghapus log kehadiran.');
     }
 };
