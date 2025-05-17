@@ -522,6 +522,7 @@
       </div>
     </div>
 
+    <!-- Modal Tambah Siswa -->
     <div class="modal fade" id="modalTambahSiswa" tabindex="-1" aria-labelledby="modalTambahSiswaLabel" aria-hidden="true">
       <div class="modal-dialog">
         <form action="/siswa/add" method="POST" enctype="multipart/form-data" class="modal-content">
@@ -560,8 +561,8 @@
               <img id="previewSiswa" class="img-thumbnail mt-2" style="display:none; max-width: 150px;">
             </div>
             <div class="mb-3">
-              <label for="rfid" class="form-label">RFID (opsional)</label>
-              <input type="text" name="rfid" class="form-control" id="rfid">
+              <label for="rfid-input-tambah" class="form-label">RFID (scan otomatis)</label>
+              <input type="text" name="rfid" class="form-control" id="rfid-input-tambah" placeholder="Tempelkan kartu RFID...">
             </div>
             <div class="mb-3 position-relative">
               <label for="username_siswa" class="form-label">Username (Opsional)</label>
@@ -622,8 +623,8 @@
                 <div id="currentPhotoSiswa" class="mt-2"></div>
               </div>
               <div class="mb-3">
-                <label for="edit_rfid" class="form-label">RFID (opsional)</label>
-                <input type="text" name="rfid" class="form-control" id="edit_rfid">
+                <label for="edit_rfid" class="form-label">RFID (scan otomatis)</label>
+                <input type="text" name="rfid" class="form-control" id="edit_rfid" placeholder="Tempelkan kartu RFID...">
               </div>
               <div class="mb-3 position-relative">
                 <label for="edit_username_siswa" class="form-label">Username (Opsional)</label>
@@ -666,7 +667,7 @@
     </div>
 
     <% /* Form/input yang ingin diisi otomatis */ %>
-    <input type="text" id="rfid-input" placeholder="Tempelkan kartu RFID..." autofocus>
+    <!-- <input type="text" id="rfid-input" placeholder="Tempelkan kartu RFID..." autofocus> -->
   </main>
 </div>
 <script>
@@ -1427,38 +1428,56 @@
     }
   });
 
-  // Script untuk menerima data RFID via WebSocket, embed ke input, dan tampilkan alert bootstrap
+  // Script WebSocket autofill RFID hanya saat modal siswa terbuka
   (function() {
-    // Hanya aktif di halaman ini
-    const ws = new WebSocket(`ws://${window.location.host}`);
-    ws.onmessage = function(event) {
-      try {
-        const data = JSON.parse(event.data);
-        const uid = data.uid; // Encrypted UID
+    let ws;
+    let modalTambah = document.getElementById('modalTambahSiswa');
+    let modalEdit = document.getElementById('modalEditSiswa');
+    let bsModalTambah = null, bsModalEdit = null;
 
-        // Cari input aktif, jika tidak ada fallback ke #rfid-input
-        let targetInput = document.activeElement;
-        if (!(targetInput && (targetInput.tagName === 'INPUT' || targetInput.tagName === 'TEXTAREA'))) {
-          targetInput = document.getElementById('rfid-input');
-        }
-        if (targetInput) {
-          targetInput.value = uid;
-        }
+    function connectWS() {
+      if (ws) return;
+      ws = new WebSocket(`ws://${window.location.host}`);
+      ws.onmessage = function(event) {
+        try {
+          const data = JSON.parse(event.data);
+          const uid = data.uid;
+          let targetInput = null;
+          // Cek modal mana yang terbuka
+          if (modalTambah.classList.contains('show')) {
+            targetInput = document.getElementById('rfid-input-tambah');
+          } else if (modalEdit.classList.contains('show')) {
+            targetInput = document.getElementById('edit_rfid');
+          }
+          if (targetInput) {
+            targetInput.value = uid;
+            showRFIDAlert('Menerima data RFID');
+          }
+        } catch (e) {}
+      };
+      ws.onclose = function() { ws = null; };
+    }
+    function disconnectWS() {
+      if (ws) { ws.close(); ws = null; }
+    }
 
-        // Tampilkan alert bootstrap dinamis (tanpa konfirmasi, auto-dismiss)
-        showRFIDAlert('Menerima data RFID');
-
-      } catch (e) {
-        // ignore
+    // Bootstrap modal event listener
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.bootstrap && bootstrap.Modal) {
+        bsModalTambah = bootstrap.Modal.getOrCreateInstance(modalTambah);
+        bsModalEdit = bootstrap.Modal.getOrCreateInstance(modalEdit);
       }
-    };
+      // Modal show/hide events
+      modalTambah.addEventListener('shown.bs.modal', connectWS);
+      modalTambah.addEventListener('hidden.bs.modal', disconnectWS);
+      modalEdit.addEventListener('shown.bs.modal', connectWS);
+      modalEdit.addEventListener('hidden.bs.modal', disconnectWS);
+    });
 
-    // Fungsi untuk menampilkan alert bootstrap dinamis
+    // Alert Bootstrap dinamis
     function showRFIDAlert(message) {
-      // Hapus alert lama jika ada
       let old = document.getElementById('rfid-alert');
       if (old) old.remove();
-
       const alertDiv = document.createElement('div');
       alertDiv.id = 'rfid-alert';
       alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
@@ -1473,7 +1492,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       `;
       document.body.appendChild(alertDiv);
-
       setTimeout(() => {
         if (window.bootstrap && bootstrap.Alert) {
           const bsAlert = bootstrap.Alert.getOrCreateInstance(alertDiv);
