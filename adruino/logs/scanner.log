@@ -1,0 +1,58 @@
+[2025-05-17T08:11:23.903Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:11:24.017Z] Gagal push UID ke server: Request failed with status code 400
+[2025-05-17T08:11:26.315Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:11:26.344Z] Gagal push UID ke server: Request failed with status code 400
+[2025-05-17T08:12:00.117Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:12:00.141Z] Gagal push UID ke server: Request failed with status code 400
+[2025-05-17T08:12:04.864Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:12:04.882Z] Gagal push UID ke server: Request failed with status code 400
+[2025-05-17T08:12:07.022Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:12:07.038Z] Gagal push UID ke server: Request failed with status code 400
+[2025-05-17T08:12:09.104Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:12:09.118Z] Gagal push UID ke server: Request failed with status code 400
+[2025-05-17T08:15:45.956Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:15:45.973Z] Gagal push UID ke server: Request failed with status code 400
+[2025-05-17T08:15:48.089Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:15:48.099Z] Gagal push UID ke server: Request failed with status code 400
+[2025-05-17T08:15:50.323Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:15:50.332Z] Gagal push UID ke server: Request failed with status code 400
+[2025-05-17T08:18:02.075Z] Arduino siap menerima scan kartu RFID
+[2025-05-17T08:18:04.761Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:18:04.843Z] Gagal push UID ke server: 
+[2025-05-17T08:18:06.792Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:18:06.805Z] Gagal push UID ke server: 
+[2025-05-17T08:19:08.809Z] Arduino siap menerima scan kartu RFID
+[2025-05-17T08:19:13.194Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:19:13.390Z] UID BD C6 5E 21 berhasil dikirim ke server
+[2025-05-17T08:19:19.236Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:19:19.275Z] UID BD C6 5E 21 berhasil dikirim ke server
+[2025-05-17T08:19:30.835Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:19:30.850Z] UID BD C6 5E 21 berhasil dikirim ke server
+[2025-05-17T08:19:33.577Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:19:33.611Z] UID BD C6 5E 21 berhasil dikirim ke server
+[2025-05-17T08:21:21.773Z] Arduino siap menerima scan kartu RFID
+[2025-05-17T08:21:24.409Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:21:24.427Z] UID BD C6 5E 21 berhasil dikirim ke server (internal call)
+[2025-05-17T08:21:37.751Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:21:37.837Z] UID BD C6 5E 21 berhasil dikirim ke server (internal call)
+[2025-05-17T08:21:40.223Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:21:40.227Z] UID BD C6 5E 21 berhasil dikirim ke server (internal call)
+[2025-05-17T08:21:45.502Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:21:45.505Z] UID BD C6 5E 21 berhasil dikirim ke server (internal call)
+[2025-05-17T08:21:49.641Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:21:49.646Z] UID BD C6 5E 21 berhasil dikirim ke server (internal call)
+[2025-05-17T08:22:14.489Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:22:14.501Z] UID BD C6 5E 21 berhasil dikirim ke server (internal call)
+[2025-05-17T08:22:18.745Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:22:18.760Z] UID BD C6 5E 21 berhasil dikirim ke server (internal call)
+[2025-05-17T08:27:51.102Z] Arduino siap menerima scan kartu RFID
+[2025-05-17T08:27:54.573Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:27:54.588Z] UID BD C6 5E 21 berhasil dikirim ke server (internal call)
+[2025-05-17T08:28:47.036Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:28:47.042Z] UID BD C6 5E 21 berhasil dikirim ke server (internal call)
+[2025-05-17T08:28:58.610Z] Data JSON: {"uid":"XzpLUjpNPVxFSV0=","pos":"Pos A"} | UID: 2C 7C D7 00 | POS: Pos A
+[2025-05-17T08:28:58.613Z] UID 2C 7C D7 00 berhasil dikirim ke server (internal call)
+[2025-05-17T08:29:12.620Z] Data JSON: {"uid":"XzpLUjpNPVxFSV0=","pos":"Pos A"} | UID: 2C 7C D7 00 | POS: Pos A
+[2025-05-17T08:29:12.624Z] UID 2C 7C D7 00 berhasil dikirim ke server (internal call)
+[2025-05-17T08:29:17.850Z] Data JSON: {"uid":"Lz1LJk9NTC5FS1w=","pos":"Pos A"} | UID: BD C6 5E 21 | POS: Pos A
+[2025-05-17T08:29:17.931Z] UID BD C6 5E 21 berhasil dikirim ke server (internal call)

@@ -131,6 +131,15 @@
               <label for="wa_num" class="form-label">WhatsApp number</label>
               <input type="text" name="wa_num" class="form-control" id="wa_num" required>
             </div>
+            <div class="mb-3">
+              <label for="user_rfid" class="form-label">RFID</label>
+              <div class="input-group">
+                <input type="text" name="rfid" class="form-control" id="user_rfid" readonly>
+                <button type="button" class="btn btn-outline-secondary" id="btnScanRFID" data-bs-toggle="modal" data-bs-target="#modalScanRFID">
+                  Scan RFID
+                </button>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Simpan</button>
@@ -140,53 +149,23 @@
       </div>
     </div>
 
-    <!-- Modal Edit User -->
-    <div class="modal fade" id="modalEditUser" tabindex="-1" aria-labelledby="modalEditUserLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <form id="formEditUser" method="POST">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalEditUserLabel">Edit Data User</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-            </div>
-            <div class="modal-body">
-              <div class="mb-3">
-                <label for="edit_username" class="form-label">Username</label>
-                <input type="text" name="username" class="form-control" id="edit_username" required>
-              </div>
-              <div class="mb-3">
-                <label for="edit_email" class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" id="edit_email" placeholder="Opsional, jika kosong akan diisi N/A">
-              </div>
-              <div class="mb-3">
-                <label for="edit_role" class="form-label">Role</label>
-                <select name="role" id="edit_role" class="form-select" required>
-                  <option value="">Pilih Role</option>
-                  <option value="admin">Admin</option>
-                  <option value="teacher">Guru</option>
-                  <option value="student">Murid</option>
-                  <option value="parent">Orang Tua</option>
-                  <option value="scanner">Scan Client</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="edit_wa_num" class="form-label">WhatsApp number</label>
-                <input type="text" name="wa_num" class="form-control" id="edit_wa_num" required>
-              </div>
-              <div class="mb-3">
-                <label for="edit_password" class="form-label">Password (kosongkan jika tidak ingin mengubah)</label>
-                <input type="password" name="password" class="form-control" id="edit_password" autocomplete="new-password">
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+    <!-- Modal Scan RFID -->
+    <div class="modal fade" id="modalScanRFID" tabindex="-1" aria-labelledby="modalScanRFIDLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalScanRFIDLabel">Scan Kartu RFID</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          </div>
+          <div class="modal-body text-center">
+            <div id="rfidScanStatus" class="mb-3">Tempelkan kartu RFID ke scanner...</div>
+            <div>
+              <span id="rfidScanValue" style="font-size:1.5em;font-weight:bold;"></span>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
-
 
     <!-- Wilayah Tabel Guru -->
     <div class="col-md-12 mb-4">
@@ -561,7 +540,7 @@
             </div>
             <div class="mb-3">
               <label for="rfid" class="form-label">RFID (opsional)</label>
-              <input type="text" name="rfid" class="form-control" id="rfid">
+              <input type="text" name="rfid" class="form-control" id="inputRFID">
             </div>
             <div class="mb-3 position-relative">
               <label for="username_siswa" class="form-label">Username (Opsional)</label>
@@ -1423,4 +1402,49 @@
       });
     }
   });
+
+  // Polling khusus untuk modal scan RFID user
+  (function() {
+    let scanInterval = null;
+    let lastUID = null;
+    const modalScan = document.getElementById('modalScanRFID');
+    const rfidScanValue = document.getElementById('rfidScanValue');
+    const rfidScanStatus = document.getElementById('rfidScanStatus');
+    const userRFIDInput = document.getElementById('user_rfid');
+
+    if (modalScan) {
+      modalScan.addEventListener('show.bs.modal', function() {
+        rfidScanValue.textContent = '';
+        rfidScanStatus.textContent = 'Tempelkan kartu RFID ke scanner...';
+        lastUID = null;
+        scanInterval = setInterval(() => {
+          fetch('/api/rfid/last')
+            .then(res => res.json())
+            .then(data => {
+              if (data.uid && data.uid !== lastUID) {
+                rfidScanValue.textContent = data.uid;
+                rfidScanStatus.textContent = 'Berhasil scan!';
+                if (userRFIDInput) userRFIDInput.value = data.uid;
+                lastUID = data.uid;
+                setTimeout(() => {
+                  const modal = bootstrap.Modal.getOrCreateInstance(modalScan);
+                  modal.hide();
+                }, 800);
+              }
+            });
+        }, 700);
+      });
+
+      modalScan.addEventListener('hide.bs.modal', function() {
+        clearInterval(scanInterval);
+        scanInterval = null;
+        rfidScanValue.textContent = '';
+        rfidScanStatus.textContent = 'Tempelkan kartu RFID ke scanner...';
+      });
+    }
+  })();
+</script>
+<script src="/js/rfid-poll.js"></script>
+<script>
+  pollRFIDInput('#inputRFID', '#modalTambahSiswa');
 </script>

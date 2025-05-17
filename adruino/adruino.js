@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { SerialPort } = require('serialport');
 const { ReadlineParser } = require('@serialport/parser-readline');
+const axios = require('axios'); // Tambahkan ini di bagian atas
 
 const logDir = path.join(__dirname, 'logs');
 const logFile = path.join(logDir, 'scanner.log');
@@ -17,7 +18,7 @@ function logToFile(message) {
 }
 
 const port = new SerialPort({
-  path: 'COM7', // Ganti sesuai port Arduino
+  path: 'COM5', // Ganti sesuai port Arduino
   baudRate: 9600
 });
 
@@ -35,6 +36,7 @@ function decryptXOR(data, key) {
 
 port.on('open', () => {
   console.log('Port serial terbuka');
+  logToFile('Arduino siap menerima scan kartu RFID');
 });
 
 parser.on('data', (data) => {
@@ -52,6 +54,17 @@ parser.on('data', (data) => {
 
     const logMessage = `Data JSON: ${data} | UID: ${uidDecrypted} | POS: ${json.pos}`;
     logToFile(logMessage);
+
+    // Kirim UID ke server web
+    axios.post('http://localhost:3001/api/rfid/push', { uid: uidDecrypted })
+      .then(() => {
+        console.log(`UID ${uidDecrypted} berhasil dikirim ke server`);
+        logToFile(`UID ${uidDecrypted} berhasil dikirim ke server`);
+      })
+      .catch(err => {
+        logToFile(`Gagal push UID ke server: ${err.message} | ${err.response ? JSON.stringify(err.response.data) : ''}`);
+        console.error('Gagal push UID ke server:', err.message, err.response ? err.response.data : '');
+      });
   } catch (err) {
     logToFile(`Gagal parsing/dekripsi: ${data}`);
   }
