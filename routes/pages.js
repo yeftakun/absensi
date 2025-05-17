@@ -23,6 +23,7 @@ router.get('/api/parent-usernames', pagesController.autocompleteParentUsernames)
 router.post('/orangtua/add', pagesController.addParent);
 router.get('/api/student-usernames', pagesController.autocompleteStudentUsernames);
 router.get('/api/parent-siswa', pagesController.autocompleteParentSiswa);
+router.get('/api/autocomplete-student', pagesController.autocompleteStudentName);
 
 // Tambahkan route berikut agar /siswa/add tidak 404:
 router.post('/siswa/add', pagesController.uploadTeacherPhoto.single('photo'), pagesController.addStudent);
@@ -39,5 +40,7 @@ router.post('/guru/edit/:id', pagesController.uploadTeacherPhoto.single('photo')
 router.post('/orangtua/edit/:id', pagesController.editParent);
 router.post('/siswa/edit/:id', pagesController.uploadTeacherPhoto.single('photo'), pagesController.editStudent);
 router.post('/session/edit/:id', pagesController.editSession);
+router.post('/session/:as_id/manual-attendance', pagesController.manualAttendance);
+router.get('/session/:as_id/monitor', pagesController.sessionMonitor);
 
 module.exports = router;

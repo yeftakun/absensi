@@ -109,7 +109,18 @@
       </div>
   
       <div class="mb-4">
-        <h4>Log Kehadiran Siswa</h4>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h4>Log Kehadiran Siswa</h4>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#manualAttendanceModal">
+            <i class="bi bi-plus-circle"></i> Input Kehadiran Manual
+          </button>
+        </div>
+        <% if (manual_success) { %>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            Kehadiran manual berhasil ditambahkan.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        <% } %>
         <div class="table-responsive">
           <table class="table table-striped table-bordered align-middle">
             <thead class="table-light">
@@ -137,6 +148,66 @@
         </div>
       </div>
   
+      <!-- Modal Input Kehadiran Manual -->
+      <div class="modal fade" id="manualAttendanceModal" tabindex="-1" aria-labelledby="manualAttendanceModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <form class="modal-content" method="POST" action="/session/<%= session.as_id %>/manual-attendance">
+            <div class="modal-header">
+              <h5 class="modal-title" id="manualAttendanceModalLabel">Input Kehadiran Manual</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="student_name_manual" class="form-label">Nama Siswa</label>
+                <input type="text" class="form-control" id="student_name_manual" name="student_name_manual" autocomplete="off" required>
+                <input type="hidden" id="student_id_manual" name="student_id_manual">
+                <div id="student-autocomplete-list" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-success">Simpan</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <script>
+      // Autocomplete Nama Siswa
+      const input = document.getElementById('student_name_manual');
+      const hiddenId = document.getElementById('student_id_manual');
+      const list = document.getElementById('student-autocomplete-list');
+      let lastVal = '';
+      input.addEventListener('input', function() {
+        const val = this.value.trim();
+        hiddenId.value = '';
+        if (!val) {
+          list.innerHTML = '';
+          return;
+        }
+        if (val === lastVal) return;
+        lastVal = val;
+        fetch('/api/autocomplete-student?q=' + encodeURIComponent(val))
+          .then(res => res.json())
+          .then(arr => {
+            list.innerHTML = '';
+            arr.forEach(item => {
+              const el = document.createElement('button');
+              el.type = 'button';
+              el.className = 'list-group-item list-group-item-action';
+              el.textContent = item.student_name;
+              el.onclick = () => {
+                input.value = item.student_name;
+                hiddenId.value = item.student_id;
+                list.innerHTML = '';
+              };
+              list.appendChild(el);
+            });
+          });
+      });
+      // Hide list on blur
+      input.addEventListener('blur', () => setTimeout(() => list.innerHTML = '', 200));
+      </script>
+  
     </main>
   </div>
-  

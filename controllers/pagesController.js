@@ -295,7 +295,8 @@ exports.sessionMonitor = async (req, res) => {
             loggedin: req.session.loggedin || false,
             session: attendance_sessions,
             students,
-            latestLogs
+            latestLogs,
+            manual_success: req.query.manual_success === '1' // tambahkan ini
           });          
 
     } catch (err) {
@@ -1050,5 +1051,36 @@ exports.editSession = async (req, res) => {
     } catch (err) {
         req.session.alert = { type: 'danger', message: 'Gagal update sesi.' };
         res.redirect('/session');
+    }
+};
+
+// API autocomplete nama siswa (max 3)
+exports.autocompleteStudentName = async (req, res) => {
+    try {
+        const q = (req.query.q || '').trim();
+        if (!q) return res.json([]);
+        const [rows] = await db.promise().query(
+            `SELECT student_id, student_name FROM students WHERE student_name LIKE ? ORDER BY student_name ASC LIMIT 3`,
+            [`%${q}%`]
+        );
+        res.json(rows);
+    } catch (err) {
+        res.json([]);
+    }
+};
+
+// POST manual attendance
+exports.manualAttendance = async (req, res) => {
+    try {
+        const as_id = req.params.as_id;
+        const student_id = req.body.student_id_manual;
+        if (!student_id) return res.status(400).send('Pilih siswa.');
+        await db.promise().query(
+            `INSERT INTO student_attendances (sa_photo_path, as_id, student_id, pos) VALUES (?, ?, ?, ?)`,
+            ['default/default.jpg', as_id, student_id, 'Manual']
+        );
+        res.redirect(`/session/${as_id}/monitor?manual_success=1`);
+    } catch (err) {
+        res.status(500).send('Gagal input kehadiran manual.');
     }
 };
