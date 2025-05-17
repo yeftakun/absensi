@@ -245,7 +245,7 @@ exports.sessionMonitor = async (req, res) => {
             JOIN student_attendances sa ON s.student_id = sa.student_id
             WHERE sa.as_id = ?
             ORDER BY sa.sa_time DESC
-            LIMIT 10`
+        `
     };
 
     try {
@@ -271,7 +271,6 @@ exports.sessionMonitor = async (req, res) => {
         ? format(new Date(attendance_sessions.updated_at), 'yyyy-MM-dd HH:mm:ss')
         : null;
 
-
         students.forEach(s => {
             s.sa_time = format(new Date(s.sa_time), 'HH:mm');
         });
@@ -281,7 +280,6 @@ exports.sessionMonitor = async (req, res) => {
         });
         
         // Check if student photo exists or is valid, otherwise set to default
-
         latestLogs.forEach(s => {
             const photoPath = path.join(__dirname, '..', 'public', 'img', 'attendance_pic', s.photo || '');
             if (!fs.existsSync(photoPath) || !fs.statSync(photoPath).isFile()) {
@@ -296,8 +294,8 @@ exports.sessionMonitor = async (req, res) => {
             session: attendance_sessions,
             students,
             latestLogs,
-            manual_success: req.query.manual_success === '1' // tambahkan ini
-          });          
+            manual_success: req.query.manual_success === '1'
+        });
 
     } catch (err) {
         console.error(err);

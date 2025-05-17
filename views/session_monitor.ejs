@@ -121,8 +121,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
           </div>
         <% } %>
-        <div class="table-responsive">
-          <table class="table table-striped table-bordered align-middle">
+        <div class="table-responsive" style="<% if (latestLogs.length > 10) { %>max-height: 420px; overflow-y: auto;<% } %>">
+          <table class="table table-striped table-bordered align-middle mb-0">
             <thead class="table-light">
               <tr>
                 <th>#</th>
@@ -141,8 +141,7 @@
                   <td><%= log.position %></td>
                   <td><%= log.timestamp %></td>
                 </tr>
-                <% }) %>                
-              <!-- Tambahkan baris dummy lainnya -->
+              <% }) %>
             </tbody>
           </table>
         </div>
