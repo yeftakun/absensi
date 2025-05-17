@@ -1441,7 +1441,7 @@
       ws.onmessage = function(event) {
         try {
           const data = JSON.parse(event.data);
-          const uid = data.uid;
+          const uid = data.uid; // Sekarang sudah hasil dekripsi dari server
           let targetInput = null;
           // Cek modal mana yang terbuka
           if (modalTambah.classList.contains('show')) {

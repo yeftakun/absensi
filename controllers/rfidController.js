@@ -59,8 +59,8 @@ exports.setupRFIDWebSocket = (server) => {
       wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify({
-            uid: uidEncrypted,
-            uidDecrypted,
+            uid: uidDecrypted, // Kirim UID hasil dekripsi
+            uidEncrypted,      // Jika ingin tetap kirim terenkripsi, bisa tambahkan field ini
             pos: json.pos
           }));
         }
