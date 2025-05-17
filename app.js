@@ -43,12 +43,14 @@ const authRoutes = require('./routes/auth');
 // const studentRoutes = require('./routes/student');
 const pageRoutes = require('./routes/pages');
 const apiRoutes = require('./routes/api');
+const rfidRoutes = require('./routes/rfid'); // Tambah route baru
 
 // ===== Use Routes =====
 app.use('/', authRoutes);
 // app.use('/', studentRoutes);
 app.use('/', pageRoutes);
 app.use('/', apiRoutes);
+app.use('/', rfidRoutes); // Gunakan route baru
 
 // ===== Global 404 Handler =====
 app.use((req, res) => {
@@ -58,7 +60,11 @@ app.use((req, res) => {
   });
 });
 
-// ===== Start Server =====
-app.listen(port, () => {
+// ===== Start Server & WebSocket =====
+const server = app.listen(port, () => {
   console.log(`✅ Server running at http://localhost:${port}`);
 });
+
+// WebSocket untuk RFID
+const { setupRFIDWebSocket } = require('./controllers/rfidController');
+setupRFIDWebSocket(server);

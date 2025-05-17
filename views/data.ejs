@@ -664,6 +664,9 @@
         </form>
       </div>
     </div>
+
+    <% /* Form/input yang ingin diisi otomatis */ %>
+    <input type="text" id="rfid-input" placeholder="Tempelkan kartu RFID..." autofocus>
   </main>
 </div>
 <script>
@@ -1423,4 +1426,30 @@
       });
     }
   });
+
+  // Script untuk copy, auto-paste, dan alert saat menerima data dari WebSocket
+  (function() {
+    // Hanya aktif di halaman ini
+    const ws = new WebSocket(`ws://${window.location.host}`);
+    ws.onmessage = async function(event) {
+      try {
+        const data = JSON.parse(event.data);
+        const uid = data.uid; // Encrypted UID
+
+        // Copy ke clipboard
+        await navigator.clipboard.writeText(uid);
+
+        // Jika ada input aktif, auto-paste
+        const active = document.activeElement;
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+          // Paste UID ke input aktif
+          active.value = uid;
+        }
+
+        alert('Menerima data RFID');
+      } catch (e) {
+        // ignore
+      }
+    };
+  })();
 </script>
