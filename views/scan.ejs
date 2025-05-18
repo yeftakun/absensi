@@ -53,57 +53,151 @@
   </div>  
   
   <script>
-    // Kamera 480p
-    const video = document.getElementById('video');
-    navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 360 }, audio: false })
-      .then(stream => {
-        video.srcObject = stream;
-      })
-      .catch(err => {
-        console.error('Gagal mengakses kamera:', err);
-        alert('Tidak bisa mengakses kamera. Pastikan Anda memberi izin!');
-      });
-  
-    // Sesi mekanisme baru
-    const sessionDisplay = document.getElementById('sessionDisplay');
-    let currentSession = null;
-  
-    // Ambil sesi dari server
-    async function fetchSession(next = false) {
-      let lastAsId = sessionStorage.getItem('lastAsId');
-      let url = '/api/nextSession';
-      if (next && lastAsId) {
-        url += '?after=' + encodeURIComponent(lastAsId);
+  // Kamera 480p
+  const video = document.getElementById('video');
+  let stream = null;
+  navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 360 }, audio: false })
+    .then(s => {
+      stream = s;
+      video.srcObject = stream;
+    })
+    .catch(err => {
+      console.error('Gagal mengakses kamera:', err);
+      alert('Tidak bisa mengakses kamera. Pastikan Anda memberi izin!');
+    });
+
+  // Sesi mekanisme baru
+  const sessionDisplay = document.getElementById('sessionDisplay');
+  let currentSession = null;
+
+  async function fetchSession(next = false) {
+    let lastAsId = sessionStorage.getItem('lastAsId');
+    let url = '/api/nextSession';
+    if (next && lastAsId) {
+      url += '?after=' + encodeURIComponent(lastAsId);
+    }
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data && data.session) {
+        currentSession = data.session;
+        sessionStorage.setItem('lastAsId', currentSession.as_id);
+        sessionDisplay.textContent = `${currentSession.as_name} (${data.sisa})`;
+      } else {
+        sessionDisplay.textContent = 'Tidak ada sesi aktif';
+        sessionStorage.removeItem('lastAsId');
       }
+    } catch (e) {
+      sessionDisplay.textContent = 'Gagal mengambil sesi';
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    sessionStorage.removeItem('lastAsId');
+    fetchSession();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+      e.preventDefault();
+      fetchSession(true);
+    }
+  });
+
+  // --- WebSocket untuk menerima UID RFID ---
+  let ws;
+  function setupWS() {
+    ws = new WebSocket(`ws://${window.location.host}`);
+    ws.onmessage = async (event) => {
       try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data.session) {
-          currentSession = data.session;
-          sessionStorage.setItem('lastAsId', currentSession.as_id);
-          sessionDisplay.textContent = `${currentSession.as_name} (${data.sisa})`;
-        } else {
-          sessionDisplay.textContent = 'Tidak ada sesi aktif';
-          sessionStorage.removeItem('lastAsId');
+        const data = JSON.parse(event.data);
+        if (data.uid) {
+          await handleRFIDScan(data.uid, data.pos || '');
         }
-      } catch (e) {
-        sessionDisplay.textContent = 'Gagal mengambil sesi';
+      } catch (e) {}
+    };
+    ws.onclose = () => setTimeout(setupWS, 2000);
+  }
+  setupWS();
+
+  // --- Ambil foto dari kamera dan upload ---
+  async function captureAndUploadPhoto() {
+    if (!stream) throw new Error('Kamera belum siap');
+    const track = stream.getVideoTracks()[0];
+    let blob;
+    // Gunakan ImageCapture jika tersedia, fallback ke canvas jika tidak
+    if ('ImageCapture' in window) {
+      try {
+        const imageCapture = new ImageCapture(track);
+        blob = await imageCapture.takePhoto();
+      } catch {
+        blob = null;
       }
     }
-  
-    // Saat reload, ambil sesi pertama
-    window.addEventListener('DOMContentLoaded', () => {
-      sessionStorage.removeItem('lastAsId');
-      fetchSession();
-    });
-  
-    // Tekan spasi untuk sesi berikutnya
-    document.addEventListener('keydown', (e) => {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        fetchSession(true);
+    if (!blob) {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+      blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
+    }
+    const formData = new FormData();
+    formData.append('photo', blob, 'photo.jpg');
+    // upload ke backend, dapatkan nama file
+    const res = await fetch('/api/uploadAttendancePhoto', { method: 'POST', body: formData });
+    const json = await res.json();
+    if (!json.success) throw new Error('Gagal upload foto');
+    return json.filename;
+  }
+
+  // --- Proses absensi ---
+  async function handleRFIDScan(uid, pos) {
+    if (!currentSession || !currentSession.as_id) {
+      showAlert('Tidak ada sesi aktif.', false);
+      return;
+    }
+    showAlert('Memproses absensi...', true, true);
+    try {
+      // 1. Cari siswa
+      const resSiswa = await fetch(`/api/findStudentByRFID?rfid=${encodeURIComponent(uid)}`);
+      const siswa = await resSiswa.json();
+      if (!siswa || !siswa.student_id) {
+        showAlert('Siswa dengan kartu ini tidak ditemukan.', false);
+        return;
       }
-    });
+      // 2. Ambil foto & upload
+      const photoFilename = await captureAndUploadPhoto();
+      // 3. Input absensi
+      const resAbsen = await fetch('/api/submitAttendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          student_id: siswa.student_id,
+          as_id: currentSession.as_id,
+          photo: photoFilename,
+          pos: pos || ''
+        })
+      });
+      const absenResult = await resAbsen.json();
+      if (absenResult.success) {
+        showAlert(`✅ Berhasil mengambil kehadiran <b>${siswa.student_name}</b> pada sesi <b>${currentSession.as_name}</b>!`, true);
+      } else {
+        showAlert(absenResult.message || 'Gagal input absensi.', false);
+      }
+    } catch (e) {
+      showAlert('Terjadi kesalahan saat absensi.', false);
+    }
+  }
+
+  // --- Alert Bootstrap ---
+  function showAlert(msg, success = true, loading = false) {
+    const alert = document.getElementById('successAlert');
+    alert.classList.remove('alert-success', 'alert-danger');
+    alert.classList.add(success ? 'alert-success' : 'alert-danger');
+    alert.innerHTML = loading ? `<span class="spinner-border spinner-border-sm"></span> ${msg}` : msg;
+    alert.style.display = 'block';
+    if (!loading) setTimeout(() => { alert.style.display = 'none'; }, 3500);
+  }
   </script>
   
   <style>
