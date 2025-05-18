@@ -165,9 +165,18 @@
         showAlert('Siswa dengan kartu ini tidak ditemukan.', false);
         return;
       }
-      // 2. Ambil foto & upload
+
+      // 2. Cek apakah sudah absen di sesi ini
+      const checkRes = await fetch(`/api/checkAttendance?student_id=${siswa.student_id}&as_id=${currentSession.as_id}`);
+      const checkData = await checkRes.json();
+      if (checkData && checkData.already) {
+        showAlert(`<b>${siswa.student_name}</b> telah melakukan absensi di <b>${currentSession.as_name}</b>`, false);
+        return;
+      }
+
+      // 3. Ambil foto & upload
       const photoFilename = await captureAndUploadPhoto();
-      // 3. Input absensi
+      // 4. Input absensi
       const resAbsen = await fetch('/api/submitAttendance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

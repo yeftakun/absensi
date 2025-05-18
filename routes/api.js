@@ -59,4 +59,20 @@ router.post('/api/submitAttendance', async (req, res) => {
   }
 });
 
+// Cek apakah sudah absen di sesi ini
+router.get('/api/checkAttendance', async (req, res) => {
+  const db = require('../config/db');
+  const { student_id, as_id } = req.query;
+  if (!student_id || !as_id) return res.json({ already: false });
+  try {
+    const [rows] = await db.promise().query(
+      'SELECT COUNT(*) as total FROM student_attendances WHERE student_id = ? AND as_id = ?',
+      [student_id, as_id]
+    );
+    res.json({ already: rows[0].total > 0 });
+  } catch {
+    res.json({ already: false });
+  }
+});
+
 module.exports = router;
