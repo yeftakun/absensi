@@ -98,13 +98,13 @@
         <div class="d-flex overflow-auto gap-3" id="latest-logs-container">
           <% latestLogs.forEach(log => { %>
             <div class="card" style="min-width: 200px;">
-              <img src="/img/attendance_pic/<%= log.photo %>" class="card-img-top" alt="Foto Siswa" style="height: 200px; object-fit: cover;">
+              <img src="/img/attendance_pic/<%= log.photo %>" class="card-img-top attendance-photo" alt="Foto Siswa" style="height: 200px; object-fit: cover;">
               <div class="card-body">
                 <h6 class="card-title"><%= log.name %></h6>
                 <p class="card-text"><small><%= log.position %></small> | <small><%= log.timestamp %></small></p>
               </div>
             </div>
-            <% }); %>            
+          <% }); %>            
         </div>
       </div>
   
@@ -258,6 +258,18 @@
       }
       bindDeleteAttendanceButtons();
 
+      // Ganti gambar error dengan default/default.jpg
+      function setAttendancePhotoFallback() {
+        document.querySelectorAll('.attendance-photo').forEach(img => {
+          img.onerror = function() {
+            if (!this.src.includes('default/default.jpg')) {
+              this.src = '/img/attendance_pic/default/default.jpg';
+            }
+          };
+        });
+      }
+      setAttendancePhotoFallback();
+
       // POLLING: Update log kehadiran siswa & absensi terbaru setiap 1 detik
       let logSearchValue = '';
       setInterval(() => {
@@ -274,7 +286,7 @@
               card.className = 'card';
               card.style.minWidth = '200px';
               card.innerHTML = `
-                <img src="/img/attendance_pic/${log.photo}" class="card-img-top" alt="Foto Siswa" style="height: 200px; object-fit: cover;">
+                <img src="/img/attendance_pic/${log.photo}" class="card-img-top attendance-photo" alt="Foto Siswa" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                   <h6 class="card-title">${log.name}</h6>
                   <p class="card-text"><small>${log.position || ''}</small> | <small>${log.timestamp}</small></p>
@@ -282,6 +294,9 @@
               `;
               latestLogsContainer.appendChild(card);
             });
+
+            // Setelah update konten, panggil fallback
+            setAttendancePhotoFallback();
 
             // Update Log Kehadiran Siswa Table
             const tbody = document.getElementById('log-table-body');
