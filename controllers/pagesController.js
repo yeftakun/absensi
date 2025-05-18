@@ -1125,6 +1125,17 @@ exports.deleteAttendance = async (req, res) => {
     try {
         const as_id = req.params.as_id;
         const sa_id = req.params.attendance_id;
+        // Ambil nama file foto sebelum delete
+        const [rows] = await db.promise().query('SELECT sa_photo_path FROM student_attendances WHERE sa_id = ?', [sa_id]);
+        if (rows.length > 0) {
+            const photoPath = rows[0].sa_photo_path;
+            if (photoPath && photoPath !== 'default/default.jpg') {
+                const fullPath = path.join(__dirname, '..', 'public', 'img', 'attendance_pic', photoPath);
+                if (fs.existsSync(fullPath)) {
+                    try { fs.unlinkSync(fullPath); } catch (e) {}
+                }
+            }
+        }
         // Hapus log kehadiran berdasarkan sa_id
         await db.promise().query('DELETE FROM student_attendances WHERE sa_id = ?', [sa_id]);
         res.redirect(`/session/${as_id}/monitor`);
