@@ -23,8 +23,26 @@
             <!-- Kamera -->
             <div class="flex-fill" style="max-width: 480px;">
               <label class="form-label">Kamera:</label>
-              <div class="border rounded p-2">
+              <div class="border rounded p-2" style="position: relative;">
                 <video id="video" autoplay playsinline width="100%" style="border-radius: 10px;"></video>
+                <!-- Overlay crosshair -->
+                <div id="crosshair-overlay"
+                  style="
+                    position: absolute;
+                    left: 50%; top: 50%;
+                    width: 230px; height: 250px;
+                    transform: translate(-50%, -50%);
+                    pointer-events: none;
+                    z-index: 10;
+                    display: flex; align-items: center; justify-content: center;
+                  ">
+                  <svg width="230" height="250" style="display:block;">
+                    <!-- Horizontal line -->
+                    <line x1="0" y1="125" x2="230" y2="125" stroke="#ff0000" stroke-width="2" stroke-dasharray="8,8"/>
+                    <!-- Vertical line -->
+                    <line x1="115" y1="0" x2="115" y2="250" stroke="#ff0000" stroke-width="2" stroke-dasharray="8,8"/>
+                  </svg>
+                </div>
               </div>
             </div>
   
