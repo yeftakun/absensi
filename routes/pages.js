@@ -3,10 +3,11 @@ const router = express.Router();
 
 // Tambahkan ini
 const pagesController = require('../controllers/pagesController');
+const { requireAdminOrTeacher } = require('../middlewares/authMiddleware');
 
 // Rute-rute lainnya
 router.get('/', pagesController.index);
-router.get('/home', pagesController.home);
+router.get('/home', requireAdminOrTeacher, pagesController.home);
 router.get('/about', pagesController.about);
 router.get('/scan', pagesController.scan);
 router.get('/session', pagesController.session);
@@ -25,7 +26,7 @@ router.get('/api/student-usernames', pagesController.autocompleteStudentUsername
 router.get('/api/parent-siswa', pagesController.autocompleteParentSiswa);
 router.get('/api/autocomplete-student', pagesController.autocompleteStudentName);
 
-// Tambahkan route berikut agar /siswa/add tidak 404:
+// Tambahkan route agar /siswa/add tidak 404:
 router.post('/siswa/add', pagesController.uploadTeacherPhoto.single('photo'), pagesController.addStudent);
 
 // Tambahkan route POST untuk delete user, guru, orang tua, siswa.
