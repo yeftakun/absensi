@@ -53,7 +53,39 @@ router.post('/api/submitAttendance', async (req, res) => {
       'INSERT INTO student_attendances (sa_photo_path, as_id, student_id, pos) VALUES (?, ?, ?, ?)',
       [photo, as_id, student_id, pos || null]
     );
-    res.json({ success: true });
+
+    // Ambil nomor WA siswa
+    const [[student]] = await db.promise().query(
+      `SELECT s.student_name, u.wa_num FROM students s
+      LEFT JOIN users u ON s.user_id = u.user_id
+      WHERE s.student_id = ?`, [student_id]
+    );
+    let wa_num = student && student.wa_num ? student.wa_num : null;
+    let student_name = student && student.student_name ? student.student_name : '';
+    let waSent = false;
+
+    if (wa_num) {
+      try {
+        // Kirim ke WhatsApp bot
+        await fetch('http://localhost:3000/send-image-url', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': 'abcdXD'
+          },
+          body: JSON.stringify({
+            number: wa_num,
+            filename: photo,
+            caption: `Absensi berhasil untuk ${student_name}`
+          })
+        });
+        waSent = true;
+      } catch (e) {
+        waSent = false;
+      }
+    }
+
+    res.json({ success: true, waSent });
   } catch (e) {
     res.json({ success: false, message: 'Gagal input absensi.' });
   }
