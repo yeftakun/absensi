@@ -4,6 +4,9 @@ const pagesController = require('../controllers/pagesController');
 const multer = require('multer');
 const path = require('path');
 
+// Tambahkan middleware ini agar bisa menerima JSON POST
+router.use(express.json());
+
 // Upload foto absensi
 const attendancePhotoStorage = multer.diskStorage({
   destination: function (req, file, cb) {
