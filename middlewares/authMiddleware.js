@@ -1,12 +1,12 @@
-function requireAdminOrTeacher(req, res, next) {
+function homeAuth(req, res, next) {
   if (!req.session || !req.session.loggedin) {
     return res.redirect('/'); // redirect ke login
   }
   const role = req.session.role;
-  if (role === 'admin' || role === 'teacher') {
+  if (role === 'admin') {
     return next();
   }
   return res.status(403).send('Akses ditolak');
 }
 
-module.exports = { requireAdminOrTeacher };
+module.exports = { homeAuth };

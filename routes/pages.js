@@ -3,11 +3,11 @@ const router = express.Router();
 
 // Tambahkan ini
 const pagesController = require('../controllers/pagesController');
-const { requireAdminOrTeacher } = require('../middlewares/authMiddleware');
+const { homeAuth } = require('../middlewares/authMiddleware');
 
 // Rute-rute lainnya
 router.get('/', pagesController.index);
-router.get('/home', requireAdminOrTeacher, pagesController.home);
+router.get('/home', homeAuth, pagesController.home); // hanya admin
 router.get('/about', pagesController.about);
 router.get('/scan', pagesController.scan);
 router.get('/session', pagesController.session);
