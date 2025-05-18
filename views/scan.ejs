@@ -30,26 +30,16 @@
   
             <!-- Opsi Sesi -->
             <div class="flex-fill" style="max-width: 400px;">
-              <label class="form-label">Pilih Sesi Aktif:</label>
-  
-              <div class="d-flex justify-content-center mb-2">
-                <button class="btn btn-outline-secondary btn-sm" onclick="scrollUp()">▲</button>
+              <label class="form-label">Sesi Aktif:</label>
+              <div id="sessionContainer" class="border rounded p-2 d-flex flex-column align-items-center justify-content-center" style="height: 120px; overflow: hidden; position: relative;">
+                <div id="sessionDisplay" class="text-center" style="font-size: 1.1rem; font-weight: bold; min-height: 2em;">Memuat sesi...</div>
               </div>
-  
-              <div id="sessionContainer" class="border rounded p-2" style="height: 180px; overflow: hidden; position: relative;">
-                <ul id="sessionList" class="list-unstyled m-0"></ul>
-              </div>
-  
-              <div class="d-flex justify-content-center mt-2">
-                <button class="btn btn-outline-secondary btn-sm" onclick="scrollDown()">▼</button>
-              </div>
-  
-              <small class="text-muted d-block text-center mt-2">Gunakan ↑ ↓ atau klik tombol untuk memilih sesi</small>
+              <small class="text-muted d-block text-center mt-2">Tekan <b>Spasi</b> untuk menampilkan sesi berikutnya</small>
             </div>
           </div>
   
-          <div class="alert alert-success mt-4 text-center" role="alert">
-            ✅ Berhasil mengambil kehadiran {nama siswa} pada sesi {sesi aktif}!
+          <div class="alert alert-success mt-4 text-center" role="alert" style="display:none;" id="successAlert">
+            ✅ Berhasil mengambil kehadiran <span id="namaSiswa">{nama siswa}</span> pada sesi <span id="namaSesi">{sesi aktif}</span>!
           </div>
         </div>
       </div>
@@ -73,152 +63,58 @@
         console.error('Gagal mengakses kamera:', err);
         alert('Tidak bisa mengakses kamera. Pastikan Anda memberi izin!');
       });
-      
-      // Simulasi sesi
-      // const allSessions = [
-        // ];
-    let allSessions = [];
-  const sessionList = document.getElementById('sessionList');
-  let selectedIndex = 0;
-
-  async function fetchSessions() {
-    try {
-      const res = await fetch('/api/allSessions');
-      allSessions = await res.json();
-      if (selectedIndex >= allSessions.length) selectedIndex = 0;
-      renderSessions();
-    } catch (e) {
-      console.error('Gagal mengambil data sesi:', e);
-    }
-  }
-
-  function renderSessions() {
-    sessionList.innerHTML = '';
-    if (!allSessions.length) {
-      const item = document.createElement('li');
-      item.textContent = 'Tidak ada sesi aktif';
-      sessionList.appendChild(item);
-      return;
-    }
-    for (let offset = -2; offset <= 2; offset++) {
-      const index = (selectedIndex + offset + allSessions.length) % allSessions.length;
-      const item = document.createElement('li');
-      item.className = 'session-item';
-      item.textContent = allSessions[index];
-      if (offset === 0) {
-        item.style.opacity = '1';
-        item.style.fontWeight = 'bold';
-        item.style.fontSize = '1.1rem';
-      } else if (Math.abs(offset) === 1) {
-        item.style.opacity = '0.5';
-      } else if (Math.abs(offset) === 2) {
-        item.style.opacity = '0.25';
+  
+    // Sesi mekanisme baru
+    const sessionDisplay = document.getElementById('sessionDisplay');
+    let currentSession = null;
+  
+    // Ambil sesi dari server
+    async function fetchSession(next = false) {
+      let lastAsId = sessionStorage.getItem('lastAsId');
+      let url = '/api/nextSession';
+      if (next && lastAsId) {
+        url += '?after=' + encodeURIComponent(lastAsId);
       }
-      sessionList.appendChild(item);
-    }
-  }
-
-  function scrollUp() {
-    if (!allSessions.length) return;
-    selectedIndex = (selectedIndex - 1 + allSessions.length) % allSessions.length;
-    renderSessions();
-  }
-
-  function scrollDown() {
-    if (!allSessions.length) return;
-    selectedIndex = (selectedIndex + 1) % allSessions.length;
-    renderSessions();
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.code === 'ArrowDown' || e.code === 'Space') {
-      e.preventDefault();
-      scrollDown();
-    } else if (e.code === 'ArrowUp') {
-      scrollUp();
-    }
-  });
-
-  // Ambil data sesi pertama kali dan setiap 1 detik
-  fetchSessions();
-  setInterval(fetchSessions, 1000);
-        
-    function renderSessions() {
-      sessionList.innerHTML = '';
-      if (allSessions.length === 0) {
-        const item = document.createElement('li');
-        item.className = 'session-item text-muted';
-        item.style.opacity = '1';
-        item.style.fontWeight = 'normal';
-        item.textContent = 'Tidak ada sesi aktif';
-        sessionList.appendChild(item);
-        return;
-      }
-      for (let offset = -2; offset <= 2; offset++) {
-        const index = (selectedIndex + offset + allSessions.length) % allSessions.length;
-        const item = document.createElement('li');
-        item.className = 'session-item';
-        item.textContent = allSessions[index];
-
-        // Opacity dan style
-        if (offset === 0) {
-          item.style.opacity = '1';
-          item.style.fontWeight = 'bold';
-          item.style.fontSize = '1.1rem';
-        } else if (Math.abs(offset) === 1) {
-          item.style.opacity = '0.5';
-        } else if (Math.abs(offset) === 2) {
-          item.style.opacity = '0.25';
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data.session) {
+          currentSession = data.session;
+          sessionStorage.setItem('lastAsId', currentSession.as_id);
+          sessionDisplay.textContent = `${currentSession.as_name} (${data.sisa})`;
+        } else {
+          sessionDisplay.textContent = 'Tidak ada sesi aktif';
+          sessionStorage.removeItem('lastAsId');
         }
-
-        sessionList.appendChild(item);
+      } catch (e) {
+        sessionDisplay.textContent = 'Gagal mengambil sesi';
       }
     }
   
-    // Duplicate removed; see above for the correct renderSessions() function.
-  
-    // Tombol virtual
-    function scrollUp() {
-      selectedIndex = (selectedIndex - 1 + allSessions.length) % allSessions.length;
-      renderSessions();
-    }
-  
-    function scrollDown() {
-      selectedIndex = (selectedIndex + 1) % allSessions.length;
-      renderSessions();
-    }
-  
-    // Keyboard
-    document.addEventListener('keydown', (e) => {
-      if (e.code === 'ArrowDown' || e.code === 'Space') {
-        e.preventDefault();
-        scrollDown();
-      } else if (e.code === 'ArrowUp') {
-        scrollUp();
-      }
+    // Saat reload, ambil sesi pertama
+    window.addEventListener('DOMContentLoaded', () => {
+      sessionStorage.removeItem('lastAsId');
+      fetchSession();
     });
   
-    renderSessions();
+    // Tekan spasi untuk sesi berikutnya
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        fetchSession(true);
+      }
+    });
   </script>
   
   <style>
     #sessionList {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 0.2rem;
-      padding: 0;
-      margin: 0;
+      /* tidak dipakai lagi */
+      display: none;
     }
-  
     .session-item {
-      transition: opacity 0.3s, font-size 0.3s;
-      list-style: none;
-      white-space: nowrap;
+      /* tidak dipakai lagi */
+      display: none;
     }
-  
     @media (max-width: 768px) {
       .flex-md-row {
         flex-direction: column !important;
@@ -253,4 +149,3 @@
       }
     });
   </script>
-  

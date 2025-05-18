@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const pagesController = require('../controllers/pagesController');
 
-// Tambahkan ini
-const pagesController = require('../controllers/apiController');
-
-// API
-router.get('/api/allSessions', pagesController.apiAllSessions);
+// Endpoint untuk sesi berikutnya (scan.ejs)
+router.get('/api/nextSession', pagesController.nextSessionApi);
 
 module.exports = router;

@@ -1120,3 +1120,63 @@ exports.deleteAttendance = async (req, res) => {
         res.status(500).send('Gagal menghapus log kehadiran.');
     }
 };
+
+// API: Ambil sesi berikutnya (untuk scan.ejs)
+exports.nextSessionApi = async (req, res) => {
+    try {
+        const after = req.query.after ? Number(req.query.after) : null;
+        let sessionRow = null;
+        if (!after) {
+            // Ambil sesi pertama
+            const [rows] = await db.promise().query(
+                "SELECT * FROM attendance_sessions WHERE as_end_time > NOW() ORDER BY as_id ASC LIMIT 1"
+            );
+            if (rows.length > 0) sessionRow = rows[0];
+        } else {
+            // Ambil sesi berikutnya
+            const [rows] = await db.promise().query(
+                "SELECT * FROM attendance_sessions WHERE as_end_time > NOW() AND as_id > ? ORDER BY as_id ASC LIMIT 1",
+                [after]
+            );
+            if (rows.length > 0) {
+                sessionRow = rows[0];
+            } else {
+                // Jika tidak ada, ulang dari awal
+                const [firstRows] = await db.promise().query(
+                    "SELECT * FROM attendance_sessions WHERE as_end_time > NOW() ORDER BY as_id ASC LIMIT 1"
+                );
+                if (firstRows.length > 0) sessionRow = firstRows[0];
+            }
+        }
+        if (!sessionRow) return res.json({ session: null });
+
+        // Hitung sisa waktu
+        const now = new Date();
+        const end = new Date(sessionRow.as_end_time);
+        const diffMs = end - now;
+        let sisa = '';
+        if (diffMs <= 0) {
+            sisa = 'Berakhir';
+        } else {
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+            const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60);
+            if (diffDays > 0) {
+                sisa = `Sisa ${diffDays} hari ${diffHours} jam`;
+            } else if (diffHours > 0) {
+                sisa = `Sisa ${diffHours} jam ${diffMinutes} menit`;
+            } else {
+                sisa = `Sisa ${diffMinutes} menit`;
+            }
+        }
+        res.json({
+            session: {
+                as_id: sessionRow.as_id,
+                as_name: sessionRow.as_name
+            },
+            sisa
+        });
+    } catch (err) {
+        res.json({ session: null });
+    }
+};
