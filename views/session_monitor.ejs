@@ -98,7 +98,7 @@
         <div class="d-flex overflow-auto gap-3" id="latest-logs-container">
           <% latestLogs.forEach(log => { %>
             <div class="card" style="min-width: 200px;">
-              <img src="/img/attendance_pic/<%= log.photo %>" class="card-img-top attendance-photo" alt="Foto Siswa" style="width: 100%; height: 280px; object-fit: contain; object-position: center;">
+              <img src="/img/attendance_pic/<%= log.photo %>" class="card-img-top attendance-photo" alt="Foto Siswa" style="width: 250px; height: 280px; object-fit: cover; object-position: center;">
               <div class="card-body">
                 <h6 class="card-title"><%= log.name %></h6>
                 <p class="card-text"><small><%= log.position %></small> | <small><%= log.timestamp %></small></p>
@@ -286,7 +286,7 @@
               card.className = 'card';
               card.style.minWidth = '200px';
               card.innerHTML = `
-                <img src="/img/attendance_pic/${log.photo}" class="card-img-top attendance-photo" alt="Foto Siswa" style="width: 100%; height: 280px; object-fit: contain; object-position: center;">
+                <img src="/img/attendance_pic/${log.photo}" class="card-img-top attendance-photo" alt="Foto Siswa" style="width: 250px; height: 280px; object-fit: cover; object-position: center;">
                 <div class="card-body">
                   <h6 class="card-title">${log.name}</h6>
                   <p class="card-text"><small>${log.position || ''}</small> | <small>${log.timestamp}</small></p>
