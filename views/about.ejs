@@ -10,24 +10,41 @@
       <div class="col-12">
         <div class="card shadow-sm">
           <div class="card-body">
-            <h3 class="card-title mb-3">Tentang Aplikasi</h3>
+            <h3 class="card-title mb-3">Tentang Aplikasi Absensi RFID & Kamera</h3>
             <p class="card-text">
-              Aplikasi ini dirancang untuk membantu pengelolaan sesi kelas secara efektif dan efisien. Dengan fitur pencarian, filter status, dan pemantauan sesi secara real-time, aplikasi ini memberikan kemudahan bagi guru, admin, maupun pengelola kegiatan pembelajaran.
+              Aplikasi ini adalah sistem absensi siswa berbasis web yang mengintegrasikan kartu RFID dan kamera untuk verifikasi kehadiran secara real-time. Setiap siswa melakukan absensi dengan men-tap kartu RFID, lalu sistem otomatis mengambil foto melalui kamera dan menyimpan data kehadiran ke database.
             </p>
             <p class="card-text">
               Fitur utama:
               <ul>
-                <li>Manajemen sesi dengan filter dan pencarian</li>
-                <li>Monitoring status sesi aktif dan selesai</li>
-                <li>Notifikasi dan laporan aktivitas</li>
+                <li>Absensi siswa menggunakan kartu RFID dan kamera (foto otomatis)</li>
+                <li>Notifikasi otomatis ke WhatsApp siswa setelah absensi berhasil</li>
+                <li>Manajemen sesi absensi (kelas & event) secara dinamis</li>
+                <li>Monitoring status sesi aktif, riwayat kehadiran, dan laporan</li>
+                <li>Antarmuka responsif untuk desktop dan mobile (scan hanya di desktop)</li>
               </ul>
             </p>
             <p class="card-text">
-              Aplikasi ini merupakan bagian dari proyek <strong>PKM Karya Inovatif</strong> dan dikembangkan oleh tim mahasiswa Universitas Sam Ratulangi.
+              <b>Teknologi yang digunakan:</b>
+              <ul>
+                <li>Node.js, Express.js, EJS (server & frontend)</li>
+                <li>MySQL/MariaDB (database)</li>
+                <li>WebSocket untuk komunikasi real-time RFID</li>
+                <li>Bootstrap untuk tampilan antarmuka</li>
+                <li>Integrasi WhatsApp bot (notifikasi absensi)</li>
+                <li>Multer untuk upload foto absensi</li>
+              </ul>
             </p>
             <p class="card-text">
-              Versi: <strong>1.0.0</strong><br>
-              Tanggal Rilis: <strong>April 2025</strong>
+              Aplikasi ini dikembangkan sebagai solusi inovatif untuk digitalisasi absensi di sekolah dan mendukung monitoring kehadiran secara transparan.<br>
+              <b>Versi:</b> 1.0.0<br>
+              <b>Tanggal Rilis:</b> Mei 2025
+            </p>
+            <p class="card-text">
+              <small>
+                Bagian dari proyek <strong>PKM Karya Inovatif</strong> oleh tim mahasiswa Universitas Sam Ratulangi.<br>
+                Sumber kode dan dokumentasi dapat diakses melalui pengelola sistem.
+              </small>
             </p>
           </div>
         </div>
