@@ -1098,6 +1098,18 @@ exports.manualAttendance = async (req, res) => {
         const as_id = req.params.as_id;
         const student_id = req.body.student_id_manual;
         if (!student_id) return res.status(400).send('Pilih siswa.');
+
+        // Cek apakah sudah ada absensi untuk student_id dan as_id ini
+        const [rows] = await db.promise().query(
+            'SELECT COUNT(*) as total FROM student_attendances WHERE student_id = ? AND as_id = ?',
+            [student_id, as_id]
+        );
+        if (rows[0].total > 0) {
+            // Sudah absen, jangan insert lagi
+            req.session.alert = { type: 'danger', message: 'Siswa sudah melakukan absensi pada sesi ini.' };
+            return res.redirect(`/session/${as_id}/monitor`);
+        }
+
         await db.promise().query(
             `INSERT INTO student_attendances (sa_photo_path, as_id, student_id, pos) VALUES (?, ?, ?, ?)`,
             ['default/default.jpg', as_id, student_id, 'Manual']

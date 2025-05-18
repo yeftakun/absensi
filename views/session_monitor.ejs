@@ -336,6 +336,38 @@
       document.getElementById('log-search').addEventListener('input', function() {
         // No need to update table here, polling will handle it
       });
+
+      // Alert error manual attendance
+      function showManualAttendanceError(msg) {
+        let alert = document.getElementById('manualAttendanceError');
+        if (!alert) {
+          alert = document.createElement('div');
+          alert.id = 'manualAttendanceError';
+          alert.className = 'alert alert-danger mt-2';
+          document.querySelector('#manualAttendanceModal .modal-body').prepend(alert);
+        }
+        alert.innerHTML = msg;
+        alert.style.display = 'block';
+        setTimeout(() => { alert.style.display = 'none'; }, 3500);
+      }
+
+      // Validasi sebelum submit manual attendance
+      document.querySelector('#manualAttendanceModal form').addEventListener('submit', async function(e) {
+        const studentId = document.getElementById('student_id_manual').value;
+        if (!studentId) return; // biarkan validasi HTML
+        // Cek kehadiran
+        try {
+          const res = await fetch(`/api/checkAttendance?student_id=${studentId}&as_id=<%= session.as_id %>`);
+          const data = await res.json();
+          if (data && data.already) {
+            e.preventDefault();
+            showManualAttendanceError('Siswa sudah melakukan absensi pada sesi ini.');
+            return false;
+          }
+        } catch {
+          // Jika error, biarkan submit (fail open)
+        }
+      });
       </script>
   
     </main>
