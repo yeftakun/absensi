@@ -21,18 +21,20 @@ exports.login = async (req, res) => {
         db.query('SELECT photo_path FROM teachers WHERE user_id = ?', [userId], (err2, teacherResults) => {
           if (err2) throw err2;
           req.session.photo = (teacherResults.length > 0) ? teacherResults[0].photo_path : null;
-          res.redirect('/home');
+          return res.redirect('/session'); // teacher ke /session
         });
       } else if (role === 'student') {
         db.query('SELECT photo_path FROM students WHERE user_id = ?', [userId], (err2, studentResults) => {
           if (err2) throw err2;
           req.session.photo = (studentResults.length > 0) ? studentResults[0].photo_path : null;
-          res.redirect('/home');
+          return res.redirect('/home');
         });
-      } else {
-        // Role lain atau tidak ada relasi
+      } else if (role === 'admin') {
         req.session.photo = null;
-        res.redirect('/home');
+        return res.redirect('/home'); // admin ke /home
+      } else {
+        req.session.photo = null;
+        return res.redirect('/home');
       }
     } else {
       res.render('index', {

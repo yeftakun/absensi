@@ -10,13 +10,10 @@ router.get('/', pagesController.index);
 router.get('/home', homeAuth, pagesController.home); // hanya admin
 router.get('/about', pagesController.about);
 router.get('/scan', pagesController.scan);
-router.get('/session', pagesController.session);
 router.get('/session', sessionAuth, pagesController.session); // hanya admin dan guru
 router.post('/session/add', pagesController.addSession);
 router.post('/session/delete/:as_id', pagesController.deleteSession);
-router.get('/session_monitor/:as_id', pagesController.sessionMonitor);
-router.get('/session_monitor/:as_id', sessionAuth, pagesController.session);
-router.get('/data', pagesController.data);
+router.get('/session_monitor/:as_id', sessionAuth, pagesController.sessionMonitor);
 router.get('/data', dataAuth, pagesController.data); // hanya admin
 router.post('/guru/add', pagesController.uploadTeacherPhoto.single('photo'), pagesController.addTeacher);
 router.get('/api/teacher-usernames', pagesController.autocompleteTeacherUsernames);

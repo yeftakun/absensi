@@ -17,7 +17,7 @@ function sessionAuth(req, res, next) {
   if (role === 'admin' || role === 'teacher') {
     return next();
   }
-  return res.status(403).render('403');
+  return res.status(403).render('Akses ditolak'); // akses ditolak
 }
 
 function dataAuth(req, res, next) {
@@ -28,7 +28,7 @@ function dataAuth(req, res, next) {
   if (role === 'admin') {
     return next();
   }
-  return res.status(403).render('403');
+  return res.status(403).send('Akses ditolak');
 }
 
 module.exports = { homeAuth, sessionAuth, dataAuth };
