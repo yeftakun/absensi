@@ -25,11 +25,20 @@
         </a>
       </li>
     <% } %>
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white d-flex align-items-center" href="/scan">
-        <i class="bi bi-upc-scan me-2"></i> RFID Scan
-      </a>
-    </li>
+    <% if (role === 'parent' || role === 'student') { %>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/student_profile">
+          <i class="bi bi-person-badge me-2"></i> Info Siswa
+        </a>
+      </li>
+    <% } %>
+    <% if (role !== 'parent' && role !== 'student') { %>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/scan">
+          <i class="bi bi-upc-scan me-2"></i> RFID Scan
+        </a>
+      </li>
+    <% } %>
     <li class="nav-item mb-2">
       <a class="nav-link text-white d-flex align-items-center" href="/about">
         <i class="bi bi-info-circle me-2"></i> About
@@ -76,11 +85,20 @@
         </a>
       </li>
     <% } %>
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white d-flex align-items-center" href="/scan">
-        <i class="bi bi-upc-scan me-2"></i> RFID Scan
-      </a>
-    </li>
+    <% if (role === 'parent' || role === 'student') { %>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/student_profile">
+          <i class="bi bi-person-badge me-2"></i> Info Siswa
+        </a>
+      </li>
+    <% } %>
+    <% if (role !== 'parent' && role !== 'student') { %>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/scan">
+          <i class="bi bi-upc-scan me-2"></i> RFID Scan
+        </a>
+      </li>
+    <% } %>
     <li class="nav-item mb-2">
       <a class="nav-link text-white d-flex align-items-center" href="/about">
         <i class="bi bi-info-circle me-2"></i> About
