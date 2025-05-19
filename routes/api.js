@@ -63,7 +63,11 @@ router.post('/api/submitAttendance', async (req, res) => {
     let wa_num = student && student.wa_num ? student.wa_num : null;
     let student_name = student && student.student_name ? student.student_name : '';
     let waSent = false;
-
+    
+    // Ambil nama sesi yang dihadiri (perbaikan: langsung dari attendance_sessions)
+    const [[session]] = await db.promise().query(
+      `SELECT as_name FROM attendance_sessions WHERE as_id = ?`, [as_id]
+    );
     if (wa_num) {
       try {
         // Kirim ke WhatsApp bot
@@ -76,7 +80,7 @@ router.post('/api/submitAttendance', async (req, res) => {
           body: JSON.stringify({
             number: wa_num,
             filename: photo,
-            caption: `Absensi berhasil untuk ${student_name}`
+            caption: `Absensi berhasil untuk ${student_name} di sesi ${session.as_name}.`
           })
         });
         waSent = true;
@@ -85,7 +89,44 @@ router.post('/api/submitAttendance', async (req, res) => {
       }
     }
 
-    res.json({ success: true, waSent });
+    // Ambil no_wa dari akun ortu yang berelasi dengan siswa
+    let wa_ortu = null;
+    let ortu_name = '';
+    try {
+      const [[ortu]] = await db.promise().query(
+        `SELECT p.parent_name, u.wa_num FROM students s
+         LEFT JOIN parents p ON s.parent_id = p.parent_id
+         LEFT JOIN users u ON p.user_id = u.user_id
+         WHERE s.student_id = ?`, [student_id]
+      );
+      wa_ortu = ortu && ortu.wa_num ? ortu.wa_num : null;
+      ortu_name = ortu && ortu.parent_name ? ortu.parent_name : '';
+    } catch (e) {
+      wa_ortu = null;
+    }
+
+    let waOrtuSent = false;
+    if (wa_ortu) {
+      try {
+        await fetch('http://localhost:3000/send-image-url', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': 'abcdXD'
+          },
+          body: JSON.stringify({
+            number: wa_ortu,
+            filename: photo,
+            caption: `Siswa ${student_name} telah melakukan kehadiran pada sesi ${session.as_name}.`
+          })
+        });
+        waOrtuSent = true;
+      } catch (e) {
+        waOrtuSent = false;
+      }
+    }
+
+    res.json({ success: true, waSent, waOrtuSent });
   } catch (e) {
     res.json({ success: false, message: 'Gagal input absensi.' });
   }
