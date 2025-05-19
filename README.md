@@ -43,7 +43,8 @@ Sistem ini adalah aplikasi absensi siswa yang terintegrasi dengan perangkat RFID
 
 1. Clone repository
 ```
-git clone https://github.com/yeftakun/absensi.git clone https://github.com/yeftakun/wa-api-msg.git
+git clone https://github.com/yeftakun/absensi.git
+git clone https://github.com/yeftakun/wa-api-msg.git
 ```
 2. Install dependencies - Jalankan di kedua direktori
 ```
