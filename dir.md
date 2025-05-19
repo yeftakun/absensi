@@ -1,7 +1,7 @@
 ## Tools & Libs
 
 ```
-npm install express ejs express-ejs-layouts nodemon
+npm install express ejs express-ejs-layouts nodemon serialport @serialport/parser-readline ws whatsapp-web.js
 ```
 ```
 absensi/
@@ -21,7 +21,8 @@ absensi/
 │   └── db.js
 ├── controllers/
 │   ├── authController.js
-│   └── pagesController.js
+│   ├── pagesController.js
+│   └── rfidController.js
 ├── logs/
 │   ├── scanner.log
 │   └── server.log
@@ -36,19 +37,20 @@ absensi/
 │       └── ...
 ├── routes/
 │   ├── auth.js
-│   └── pages.js
-└── views/
-    ├── 403.ejs
-    ├── 404.ejs
-    ├── about.ejs
-    ├── data.ejs
-    ├── home.ejs
-    ├── index.ejs
-    ├── scan.ejs
-    ├── session_monitor.ejs
-    ├── session.ejs
-    └── layouts/
-        ├── header-main.ejs
-        ├── main-layout.ejs
-        └── nav.ejs
+│   ├── pages.js
+│   └── rfid.js
+├── views/
+│   ├── 403.ejs
+│   ├── 404.ejs
+│   ├── about.ejs
+│   ├── data.ejs
+│   ├── home.ejs
+│   ├── index.ejs
+│   ├── scan.ejs
+│   ├── session_monitor.ejs
+│   ├── session.ejs
+│   └── layouts/
+│       ├── header-main.ejs
+│       ├── main-layout.ejs
+│       └── nav.ejs
 ```
