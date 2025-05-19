@@ -1,0 +1,54 @@
+<div style="display: flex; min-height: 100vh;">
+  <%- include('layouts/nav') %>
+  <main class="container py-4 position-relative" style="flex-grow: 1;">
+    <%- include('layouts/header-main') %>
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h2 class="mb-4">Profil Siswa</h2>
+        <% if (message) { %>
+          <div class="alert alert-warning"><%= message %></div>
+        <% } else if (role === 'student' && siswa) { %>
+          <div class="card mb-3">
+            <div class="row g-0">
+              <div class="col-md-4 text-center">
+                <img src="/img/profile/<%= siswa.photo_path %>" alt="Foto Siswa" class="img-fluid rounded" style="max-height:180px; margin:20px;">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title"><%= siswa.student_name %></h5>
+                  <p class="card-text mb-1"><strong>NIS:</strong> <%= siswa.nis %></p>
+                  <p class="card-text mb-1"><strong>NISN:</strong> <%= siswa.nisn %></p>
+                  <p class="card-text mb-1"><strong>Tanggal Lahir:</strong> <%= siswa.dob %></p>
+                  <p class="card-text mb-1"><strong>Tempat Lahir:</strong> <%= siswa.pob %></p>
+                  <p class="card-text mb-1"><strong>Alamat:</strong> <%= siswa.address %></p>
+                  <p class="card-text mb-1"><strong>RFID:</strong> <%= siswa.rfid || '-' %></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } else if (role === 'parent' && siswaList && siswaList.length > 0) { %>
+          <% siswaList.forEach(function(siswa) { %>
+            <div class="card mb-3">
+              <div class="row g-0">
+                <div class="col-md-4 text-center">
+                  <img src="/img/profile/<%= siswa.photo_path %>" alt="Foto Siswa" class="img-fluid rounded" style="max-height:180px; margin:20px;">
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= siswa.student_name %></h5>
+                    <p class="card-text mb-1"><strong>NIS:</strong> <%= siswa.nis %></p>
+                    <p class="card-text mb-1"><strong>NISN:</strong> <%= siswa.nisn %></p>
+                    <p class="card-text mb-1"><strong>Tanggal Lahir:</strong> <%= siswa.dob %></p>
+                    <p class="card-text mb-1"><strong>Tempat Lahir:</strong> <%= siswa.pob %></p>
+                    <p class="card-text mb-1"><strong>Alamat:</strong> <%= siswa.address %></p>
+                    <p class="card-text mb-1"><strong>RFID:</strong> <%= siswa.rfid || '-' %></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
+    </div>
+  </main>
+</div>
