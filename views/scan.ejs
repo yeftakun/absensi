@@ -62,6 +62,9 @@
           <div class="alert alert-warning mt-4 text-center" role="alert" style="display:none;" id="waAlert">
             📢 Notifikasi WhatsApp telah dikirim ke nomor siswa!
           </div>
+          <div class="alert alert-danger mt-4 text-center" role="alert" style="display:none;" id="waErrorAlert">
+            ❌ Gagal kirim notifikasi
+          </div>
         </div>
       </div>
 
@@ -212,6 +215,7 @@
       if (absenResult.success) {
         showAlert(`✅ Berhasil mengambil kehadiran <b>${siswa.student_name}</b> pada sesi <b>${currentSession.as_name}</b>!`, true);
         if (absenResult.waSent) showWAAlert();
+        if (absenResult.waSent === false) showWAErrorAlert();
       } else {
         showAlert(absenResult.message || 'Gagal input absensi.', false);
       }
@@ -234,6 +238,12 @@
     const waAlert = document.getElementById('waAlert');
     waAlert.style.display = 'block';
     setTimeout(() => { waAlert.style.display = 'none'; }, 3500);
+  }
+
+  function showWAErrorAlert() {
+    const waErrorAlert = document.getElementById('waErrorAlert');
+    waErrorAlert.style.display = 'block';
+    setTimeout(() => { waErrorAlert.style.display = 'none'; }, 3500);
   }
   </script>
   
@@ -291,6 +301,17 @@
       min-width: 320px;
       max-width: 90vw;
       box-shadow: 0 4px 16px rgba(255,193,7,0.15);
+      pointer-events: none;
+    }
+    #waErrorAlert {
+      position: fixed;
+      top: 148px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2000;
+      min-width: 320px;
+      max-width: 90vw;
+      box-shadow: 0 4px 16px rgba(255,0,0,0.15);
       pointer-events: none;
     }
   </style>
