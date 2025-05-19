@@ -2,21 +2,29 @@
 <nav id="sidebar" class="d-none d-md-block" style="width: 220px; background-color: #2b44ff; padding: 20px; min-height: 100vh; position: fixed; top: 0; left: 0; z-index: 1000;">
   <h4 class="text-white fw-bold" style="margin-top: 10px; font-size: 20px;">Menu.</h4>
   <ul class="nav flex-column mt-4">
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white d-flex align-items-center" href="/home">
-        <i class="bi bi-house me-2"></i> Home
-      </a>
-    </li>
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white d-flex align-items-center" href="/session">
-        <i class="bi bi-stopwatch me-2"></i> Session
-      </a>
-    </li>
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white d-flex align-items-center" href="/data">
-        <i class="bi bi-database me-2"></i> Data
-      </a>
-    </li>
+    <% if (role === 'admin') { %>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/home">
+          <i class="bi bi-house me-2"></i> Home
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/session">
+          <i class="bi bi-stopwatch me-2"></i> Session
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/data">
+          <i class="bi bi-database me-2"></i> Data
+        </a>
+      </li>
+    <% } else if (role === 'teacher') { %>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/session">
+          <i class="bi bi-stopwatch me-2"></i> Session
+        </a>
+      </li>
+    <% } %>
     <li class="nav-item mb-2">
       <a class="nav-link text-white d-flex align-items-center" href="/scan">
         <i class="bi bi-upc-scan me-2"></i> RFID Scan
@@ -45,21 +53,29 @@
 <div id="mobile-sidebar" class="d-md-none" style="width: 220px; background-color: #2b44ff; color: white; padding: 20px; min-height: 100vh; border-left: 1px solid #dee2e6; position: fixed; top: 0; right: -220px; z-index: 1000; transition: right 0.3s;">
   <h4 class="text-white fw-bold" style="margin-top: 8px;">Menu.</h4>
   <ul class="nav flex-column mt-4">
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white d-flex align-items-center" href="/home">
-        <i class="bi bi-house me-2"></i> Home
-      </a>
-    </li>
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white d-flex align-items-center" href="/session">
-        <i class="bi bi-stopwatch me-2"></i> Session
-      </a>
-    </li>
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white d-flex align-items-center" href="/data">
-        <i class="bi bi-database me-2"></i> Data
-      </a>
-    </li>
+    <% if (role === 'admin') { %>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/home">
+          <i class="bi bi-house me-2"></i> Home
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/session">
+          <i class="bi bi-stopwatch me-2"></i> Session
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/data">
+          <i class="bi bi-database me-2"></i> Data
+        </a>
+      </li>
+    <% } else if (role === 'teacher') { %>
+      <li class="nav-item mb-2">
+        <a class="nav-link text-white d-flex align-items-center" href="/session">
+          <i class="bi bi-stopwatch me-2"></i> Session
+        </a>
+      </li>
+    <% } %>
     <li class="nav-item mb-2">
       <a class="nav-link text-white d-flex align-items-center" href="/scan">
         <i class="bi bi-upc-scan me-2"></i> RFID Scan

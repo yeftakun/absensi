@@ -5,6 +5,13 @@ const router = express.Router();
 const pagesController = require('../controllers/pagesController');
 const { homeAuth, sessionAuth, dataAuth } = require('../middlewares/authMiddleware');
 
+// Middleware global untuk inject role dan loggedin ke semua view
+router.use((req, res, next) => {
+  res.locals.role = req.session ? req.session.role : null;
+  res.locals.loggedin = req.session ? req.session.loggedin : false;
+  next();
+});
+
 // Rute-rute lainnya
 router.get('/', pagesController.index);
 router.get('/home', homeAuth, pagesController.home); // hanya admin
