@@ -17,7 +17,7 @@ function logToFile(message) {
 }
 
 const port = new SerialPort({
-  path: 'COM7', // Ganti sesuai port Arduino
+  path: 'COM5', // Ganti sesuai port Arduino
   baudRate: 9600
 });
 

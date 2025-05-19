@@ -28,7 +28,7 @@ exports.setupRFIDWebSocket = (server) => {
   }
 
   const port = new SerialPort({
-    path: 'COM7',
+    path: 'COM5',
     baudRate: 9600
   });
 
