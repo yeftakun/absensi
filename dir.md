@@ -1,8 +1,5 @@
-## Tools & Libs
+## Direktori dan File
 
-```
-npm install express ejs express-ejs-layouts nodemon serialport @serialport/parser-readline ws whatsapp-web.js
-```
 ```
 absensi/
 ├── .gitignore
