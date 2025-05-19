@@ -28,6 +28,52 @@
                   <p class="card-text mb-1"><strong>Tempat Lahir:</strong> <%= siswa.pob %></p>
                   <p class="card-text mb-1"><strong>Alamat:</strong> <%= siswa.address %></p>
                   <p class="card-text mb-1"><strong>RFID:</strong> <%= siswa.rfid || '-' %></p>
+                  <!-- Tombol Modal Kehadiran -->
+                  <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#modalKehadiran-<%= siswa.nis %>">
+                    Lihat Kehadiran
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Modal Kehadiran -->
+          <div class="modal fade" id="modalKehadiran-<%= siswa.nis %>" tabindex="-1" aria-labelledby="modalKehadiranLabel-<%= siswa.nis %>" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalKehadiranLabel-<%= siswa.nis %>">Kehadiran - <%= siswa.student_name %></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div style="max-height:400px; overflow-y:auto;">
+                    <table class="table table-striped table-hover">
+                      <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                        <tr>
+                          <th>Nama Sesi</th>
+                          <th>Tipe Sesi</th>
+                          <th>Waktu Kehadiran</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% if (siswa.attendance && siswa.attendance.length > 0) { %>
+                          <% siswa.attendance.forEach(function(att) { %>
+                            <tr>
+                              <td><%= att.session_name %></td>
+                              <td><%= att.session_type %></td>
+                              <td><%= att.timestamp ? (typeof att.timestamp === 'string' ? att.timestamp.replace('T', ' ').slice(0, 19) : att.timestamp.toISOString().replace('T', ' ').slice(0, 19)) : '-' %></td>
+                            </tr>
+                          <% }); %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="3" class="text-center">Belum ada data kehadiran.</td>
+                          </tr>
+                        <% } %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
               </div>
             </div>
@@ -48,6 +94,52 @@
                     <p class="card-text mb-1"><strong>Tempat Lahir:</strong> <%= siswa.pob %></p>
                     <p class="card-text mb-1"><strong>Alamat:</strong> <%= siswa.address %></p>
                     <p class="card-text mb-1"><strong>RFID:</strong> <%= siswa.rfid || '-' %></p>
+                    <!-- Tombol Modal Kehadiran -->
+                    <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#modalKehadiran-<%= siswa.nis %>">
+                      Lihat Kehadiran
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Modal Kehadiran -->
+            <div class="modal fade" id="modalKehadiran-<%= siswa.nis %>" tabindex="-1" aria-labelledby="modalKehadiranLabel-<%= siswa.nis %>" aria-hidden="true">
+              <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modalKehadiranLabel-<%= siswa.nis %>">Kehadiran - <%= siswa.student_name %></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div style="max-height:400px; overflow-y:auto;">
+                      <table class="table table-striped table-hover">
+                        <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                          <tr>
+                            <th>Nama Sesi</th>
+                            <th>Tipe Sesi</th>
+                            <th>Waktu Kehadiran</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% if (siswa.attendance && siswa.attendance.length > 0) { %>
+                            <% siswa.attendance.forEach(function(att) { %>
+                              <tr>
+                                <td><%= att.session_name %></td>
+                                <td><%= att.session_type %></td>
+                                <td><%= att.timestamp ? (typeof att.timestamp === 'string' ? att.timestamp.replace('T', ' ').slice(0, 19) : att.timestamp.toISOString().replace('T', ' ').slice(0, 19)) : '-' %></td>
+                              </tr>
+                            <% }); %>
+                          <% } else { %>
+                            <tr>
+                              <td colspan="3" class="text-center">Belum ada data kehadiran.</td>
+                            </tr>
+                          <% } %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                   </div>
                 </div>
               </div>

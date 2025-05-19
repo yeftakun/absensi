@@ -1229,6 +1229,16 @@ exports.studentProfile = async (req, res) => {
                 role
             });
         }
+        // Ambil data kehadiran siswa
+        const [attendance] = await db.promise().query(`
+            SELECT s.as_name AS session_name, s.as_type AS session_type, sa.sa_time AS timestamp
+            FROM student_attendances sa
+            LEFT JOIN attendance_sessions s ON sa.as_id = s.as_id
+            WHERE sa.student_id = ?
+            ORDER BY sa.sa_time DESC
+        `, [students[0].student_id]);
+        students[0].attendance = attendance;
+
         return res.render('student_profile', {
             layout: 'layouts/main-layout',
             title: 'Profil Siswa',
