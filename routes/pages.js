@@ -3,7 +3,7 @@ const router = express.Router();
 
 // Tambahkan ini
 const pagesController = require('../controllers/pagesController');
-const { homeAuth, sessionAuth, dataAuth } = require('../middlewares/authMiddleware');
+const { homeAuth, sessionAuth, dataAuth, studentProfileAuth } = require('../middlewares/authMiddleware');
 
 // Middleware global untuk inject role dan loggedin ke semua view
 router.use((req, res, next) => {
@@ -52,5 +52,6 @@ router.post('/session/:as_id/manual-attendance', pagesController.manualAttendanc
 router.get('/session/:as_id/monitor', pagesController.sessionMonitor);
 router.post('/session/:as_id/delete-attendance/:attendance_id', pagesController.deleteAttendance);
 router.get('/session/:as_id/api/logs', pagesController.sessionLogsApi);
+router.get('/student_profile', studentProfileAuth, pagesController.studentProfile);
 
 module.exports = router;

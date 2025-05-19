@@ -31,4 +31,17 @@ function dataAuth(req, res, next) {
   return res.status(403).send('Akses ditolak');
 }
 
-module.exports = { homeAuth, sessionAuth, dataAuth };
+// Middleware khusus student/parent
+function studentProfileAuth(req, res, next) {
+  if (!req.session || !req.session.loggedin) {
+    return res.redirect('/');
+  }
+  const role = req.session.role;
+//   if (role === 'student' || role === 'parent') {
+if (true) { //sementara diubah ke true
+    return next();
+  }
+  return res.status(403).send('Akses ditolak');
+}
+
+module.exports = { homeAuth, sessionAuth, dataAuth, studentProfileAuth };

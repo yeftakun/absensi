@@ -1203,3 +1203,87 @@ exports.nextSessionApi = async (req, res) => {
         res.json({ session: null });
     }
 };
+
+exports.studentProfile = async (req, res) => {
+    const role = req.session.role;
+    const userId = req.session.user_id || req.session.userId || (req.session.user && req.session.user.user_id);
+    // fallback: cari userId dari username jika belum ada
+    let user_id = userId;
+    if (!user_id && req.session.name) {
+        const [userRows] = await db.promise().query('SELECT user_id FROM users WHERE username = ?', [req.session.name]);
+        if (userRows.length > 0) user_id = userRows[0].user_id;
+    }
+
+    if (role === 'student') {
+        // Ambil data siswa berdasarkan user_id
+        const [students] = await db.promise().query(
+            'SELECT * FROM students WHERE user_id = ?', [user_id]
+        );
+        if (students.length === 0) {
+            return res.render('student_profile', {
+                layout: 'layouts/main-layout',
+                title: 'Profil Siswa',
+                siswa: null,
+                siswaList: null,
+                message: 'Tidak ada data siswa ditemukan.',
+                role
+            });
+        }
+        return res.render('student_profile', {
+            layout: 'layouts/main-layout',
+            title: 'Profil Siswa',
+            siswa: students[0],
+            siswaList: null,
+            message: null,
+            role
+        });
+    } else if (role === 'parent') {
+        // Ambil parent_id dari user_id
+        const [parents] = await db.promise().query(
+            'SELECT parent_id FROM parents WHERE user_id = ?', [user_id]
+        );
+        if (parents.length === 0) {
+            return res.render('student_profile', {
+                layout: 'layouts/main-layout',
+                title: 'Profil Siswa',
+                siswa: null,
+                siswaList: [],
+                message: 'Tidak ada siswa terdaftar',
+                role
+            });
+        }
+        const parent_id = parents[0].parent_id;
+        // Ambil semua siswa yang parent_id-nya sama
+        const [students] = await db.promise().query(
+            'SELECT * FROM students WHERE parent_id = ?', [parent_id]
+        );
+        if (students.length === 0) {
+            return res.render('student_profile', {
+                layout: 'layouts/main-layout',
+                title: 'Profil Siswa',
+                siswa: null,
+                siswaList: [],
+                message: 'Tidak ada siswa terdaftar',
+                role
+            });
+        }
+        return res.render('student_profile', {
+            layout: 'layouts/main-layout',
+            title: 'Profil Siswa',
+            siswa: null,
+            siswaList: students,
+            message: null,
+            role
+        });
+    } else {
+        // Role lain
+        return res.render('student_profile', {
+            layout: 'layouts/main-layout',
+            title: 'Profil Siswa',
+            siswa: null,
+            siswaList: null,
+            message: 'Khusus untuk siswa dan orang tua',
+            role
+        });
+    }
+};
