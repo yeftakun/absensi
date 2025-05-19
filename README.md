@@ -37,7 +37,7 @@ Sistem ini adalah aplikasi absensi siswa yang terintegrasi dengan perangkat RFID
 - Node.js
 - Database MySQL
 - Arduino + RFID Reader
-- WhatsApp Bot
+- [WhatsApp Bot](https://github.com/yeftakun/wa-api-msg.git)
 
 ## Instalasi & Konfigurasi
 
