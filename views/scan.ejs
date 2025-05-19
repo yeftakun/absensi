@@ -130,13 +130,23 @@
 
   // --- WebSocket untuk menerima UID RFID ---
   let ws;
+  let isProcessingScan = false; // Tambahkan flag global
+
   function setupWS() {
+    if (ws && ws.readyState !== WebSocket.CLOSED && ws.readyState !== WebSocket.CLOSING) {
+      return; // Jangan buat koneksi baru jika sudah ada yang aktif
+    }
     ws = new WebSocket(`ws://${window.location.host}`);
     ws.onmessage = async (event) => {
       try {
         const data = JSON.parse(event.data);
         if (data.uid) {
+          // Cegah pemrosesan ganda
+          if (isProcessingScan) return;
+          isProcessingScan = true;
           await handleRFIDScan(data.uid, data.pos || '');
+          // Tunggu sedikit sebelum bisa scan lagi (misal 1 detik)
+          setTimeout(() => { isProcessingScan = false; }, 1000);
         }
       } catch (e) {}
     };
