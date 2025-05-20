@@ -90,7 +90,9 @@
                     <h5 class="card-title"><%= siswa.student_name %></h5>
                     <p class="card-text mb-1"><strong>NIS:</strong> <%= siswa.nis %></p>
                     <p class="card-text mb-1"><strong>NISN:</strong> <%= siswa.nisn %></p>
-                    <p class="card-text mb-1"><strong>Tanggal Lahir:</strong> <%= siswa.dob ? siswa.dob.split('T')[0] : '-' %></p>
+                    <p class="card-text mb-1"><strong>Tanggal Lahir:</strong> 
+                      <%= siswa.dob ? (typeof siswa.dob === 'string' ? siswa.dob.split('T')[0] : siswa.dob.toISOString().split('T')[0]) : '-' %>
+                    </p>
                     <p class="card-text mb-1"><strong>Tempat Lahir:</strong> <%= siswa.pob %></p>
                     <p class="card-text mb-1"><strong>Alamat:</strong> <%= siswa.address %></p>
                     <p class="card-text mb-1"><strong>RFID:</strong> <%= siswa.rfid || '-' %></p>
