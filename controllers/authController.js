@@ -27,8 +27,11 @@ exports.login = async (req, res) => {
         db.query('SELECT photo_path FROM students WHERE user_id = ?', [userId], (err2, studentResults) => {
           if (err2) throw err2;
           req.session.photo = (studentResults.length > 0) ? studentResults[0].photo_path : null;
-          return res.redirect('/home');
+          return res.redirect('/student_profile/'); // student ke /student_profile/
         });
+      } else if (role === 'parent') {
+        req.session.photo = null;
+        return res.redirect('/student_profile/'); // parent ke /student_profile/
       } else if (role === 'admin') {
         req.session.photo = null;
         return res.redirect('/home'); // admin ke /home
