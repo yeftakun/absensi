@@ -699,13 +699,12 @@ exports.addStudent = async (req, res) => {
                 parentName = match[1].trim();
                 usernameOrtu = match[2].trim();
             }
-            let query = "SELECT parent_id FROM parents";
-            let params = [];
+            let query, params;
             if (usernameOrtu) {
-                query += " p.LEFT JOIN users u ON p.user_id = u.user_id WHERE p.parent_name = ? AND u.username = ?";
+                query = "SELECT p.parent_id FROM parents p LEFT JOIN users u ON p.user_id = u.user_id WHERE p.parent_name = ? AND u.username = ?";
                 params = [parentName, usernameOrtu];
             } else {
-                query += " WHERE parent_name = ?";
+                query = "SELECT parent_id FROM parents WHERE parent_name = ?";
                 params = [parentName];
             }
             const [parents] = await db.promise().query(query, params);
@@ -1008,13 +1007,12 @@ exports.editStudent = async (req, res) => {
                 parentName = match[1].trim();
                 usernameOrtu = match[2].trim();
             }
-            let query = "SELECT parent_id FROM parents";
-            let params = [];
+            let query, params;
             if (usernameOrtu) {
-                query += " p LEFT JOIN users u ON p.user_id = u.user_id WHERE p.parent_name = ? AND u.username = ?";
+                query = "SELECT p.parent_id FROM parents p LEFT JOIN users u ON p.user_id = u.user_id WHERE p.parent_name = ? AND u.username = ?";
                 params = [parentName, usernameOrtu];
             } else {
-                query += " WHERE parent_name = ?";
+                query = "SELECT parent_id FROM parents WHERE parent_name = ?";
                 params = [parentName];
             }
             const [parents] = await db.promise().query(query, params);
