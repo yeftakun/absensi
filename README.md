@@ -35,7 +35,7 @@ Sistem ini adalah aplikasi absensi siswa yang terintegrasi dengan perangkat RFID
 ## Kebutuhan Sistem
 
 - Node.js
-- Database MySQL
+- Database MySQL (XAMPP)
 - Arduino + RFID Reader
 - [WhatsApp Bot](https://github.com/yeftakun/wa-api-msg.git)
 
@@ -51,7 +51,7 @@ git clone https://github.com/yeftakun/wa-api-msg.git
 npm install
 ```
 3. Konfigurasikan koneksi database dan perangkat Arduino.
-4. Jalankan aplikasi dan WhatsApp bot.
+4. Jalankan mysql, aplikasi dan WhatsApp bot.
 ```
 # Aplikasi:
 npm start
