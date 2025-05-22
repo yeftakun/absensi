@@ -1,4 +1,4 @@
-# Absensi Siswa Berbasis RFID & WhatsApp Bot
+# Absensi Siswa Berbasis RFID
 
 Sistem ini adalah aplikasi absensi siswa yang terintegrasi dengan perangkat RFID berbasis Arduino dan notifikasi otomatis melalui WhatsApp bot. Sistem ini memudahkan pencatatan kehadiran secara real-time dan pengiriman notifikasi ke wali murid.
 
@@ -41,7 +41,7 @@ Sistem ini adalah aplikasi absensi siswa yang terintegrasi dengan perangkat RFID
 
 ## Instalasi & Konfigurasi
 
-1. Clone repository
+1. Clone repository ini dan [wa-api-msg](https://github.com/yeftakun/wa-api-msg.git)
 ```
 git clone https://github.com/yeftakun/absensi.git
 git clone https://github.com/yeftakun/wa-api-msg.git
